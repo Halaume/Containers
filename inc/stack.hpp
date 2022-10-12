@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:01:38 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/12 10:10:43 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/12 15:00:25 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,52 +14,58 @@
 #define STACK_HPP
 
 #include "vector.hpp"
-
-template<class T, class Container = Vector<T>>
-class Stack
+#include <vector>
+namespace ft
 {
-	public:
-//		Stack(void);
-		explicit Stack(const Container & cont = Container());
-		Stack(const Stack & copy) 
+	template<class T, class Container = ft::vector<T> >
+		class stack
 		{
-			*this = copy;
-		}
-		~Stack(void)
-		{
-			~this->_cont();
-		}
-		Stack &	operator=(const Stack & src)
-		{
-			if (this = *src)
-				return (*this);
-			if (this->_cont)
-				delete this->_cont;
-			Container tmp = new Container(src.cont);
-			this->_cont = tmp;
-			return (*this);
+			public:
+				explicit stack(const Container & cont = Container()): c(cont)
+				{
+				}
+				stack(const stack & copy) 
+				{
+					*this = copy;
+				}
+				~stack(void)
+				{
+				}
+				stack &	operator=(const stack & src)
+				{
+					if (this == &src)
+						return (*this);
+					Container tmp = Container(src.c);
+					this->c = tmp;
+					return (*this);
 
-		}
-		T &			top(void)
-		{
-			return (this->_cont.end());
-		}
-		const T &	top(void) const
-		{
-			return (this->_cont.end());
-		}
-		bool		empty(void) const
-		{
-			return (this->_cont.empty());
-		}
-		size_t		size(void) const
-		{
-			return (this->_cont.size());
-		}
-		void		push(const T &);
-		void		pop(void);
-	private:
-		Container	_cont;
-};
-
+				}
+				T &			top(void)
+				{
+					return (*(this->c.end() - 1));
+				}
+				const T &	top(void) const
+				{
+					return (*(this->c.end() - 1));
+				}
+				bool		empty(void) const
+				{
+					return (this->c.empty());
+				}
+				std::size_t		size(void) const
+				{
+					return (this->c.size());
+				}
+				void		push(const T & elem)
+				{
+					this->c.insert(this->c.begin(), elem);
+				}
+				void		pop(void)
+				{
+					this->c.erase(this->c.end() - 1);
+				}
+			protected:
+				Container	c;
+		};
+}
 #endif

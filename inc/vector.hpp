@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/12 09:12:15 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/12 15:05:10 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,14 @@
 #include <memory>
 #include "vector.hpp"
 
-template<class T, class Allocator = std::allocator<T>>
-class Vector
+namespace ft
 {
-};
+	template<class T, class Allocator = std::allocator<T> >
+		class vector
+		{
+			public:
+
+		};
+}
 
 #endif
