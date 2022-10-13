@@ -17,10 +17,15 @@
 #include <vector>
 namespace ft
 {
-	template<class T, class Container = ft::vector<T> >
+	template<class T, class Container = std::vector<T> >
 		class stack
 		{
 			public:
+				typedef Container container_type;
+				typedef T value_type;
+				typedef std::size_t size_type;
+				typedef Container & reference;
+				typedef const Container & const_reference;
 				explicit stack(const Container & cont = Container()): c(cont)
 				{
 				}
@@ -63,6 +68,30 @@ namespace ft
 				void		pop(void)
 				{
 					this->c.erase(this->c.end() - 1);
+				}
+				bool friend operator==(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c == rhs.c);
+				}
+				bool friend operator!=(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c != rhs.c);
+				}
+				bool friend operator<(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c < rhs.c);
+				}
+				bool friend operator<=(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c <= rhs.c);
+				}
+				bool friend operator>(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c > rhs.c);
+				}
+				bool friend operator>=(const stack & lhs, const stack & rhs)
+				{
+					return (lhs.c >= rhs.c);
 				}
 			protected:
 				Container	c;
