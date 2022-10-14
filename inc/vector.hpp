@@ -113,7 +113,10 @@ namespace ft
 				{
 					return (*this->end() - 1);
 				}
-				T*	data(void);
+				T*	data(void)
+				{
+					return (this->_tab);
+				}
 				const T*	data(void) const;
 //				iterator	begin(void);
 //				const_iterator	begin(void) const;
