@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:01:38 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/12 15:00:25 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/17 14:17:20 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ namespace ft
 		{
 			public:
 				typedef Container container_type;
-				typedef T value_type;
-				typedef std::size_t size_type;
-				typedef Container & reference;
-				typedef const Container & const_reference;
+				typedef typename Container::value_type value_type;
+				typedef typename Container::size_type size_type;
+				typedef typename Container::reference reference;
+				typedef typename Container::const_reference const_reference;
 				explicit stack(const Container & cont = Container()): c(cont)
 				{
 				}
@@ -43,7 +43,6 @@ namespace ft
 					Container tmp = Container(src.c);
 					this->c = tmp;
 					return (*this);
-
 				}
 				T &			top(void)
 				{

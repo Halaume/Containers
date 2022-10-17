@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/12 15:05:10 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/17 14:48:01 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <cstddef>
 #include "vector.hpp"
 
 namespace ft
@@ -26,7 +27,7 @@ namespace ft
 				typedef T value_type;
 				typedef Allocator allocator_type;
 				typedef std::size_t size_type;
-//				typedef std::ptrdiff_t difference_type;
+				typedef std::ptrdiff_t difference_type;
 				typedef T & reference;
 				typedef const T & const_reference;
 				typedef typename Allocator::pointer pointer;
@@ -41,7 +42,6 @@ namespace ft
 					this->Allocator = alloc;
 					this->_tab = new T*;
 					this->_size = 0;
-
 				}
 				explicit vector(std::size_t count, const T & value = T(), const Allocator & alloc = Allocator())
 				{
