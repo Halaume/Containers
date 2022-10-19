@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/17 14:48:01 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/18 12:40:15 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <cstddef>
 #include "vector.hpp"
+#include "iterator.hpp"
 
 namespace ft
 {
