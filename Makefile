@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/10/12 13:54:15 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/10/20 14:04:51 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,14 +25,14 @@ OBJ =			$(SRC:./%.cpp=$(OBJ_DIR)/%.o)
 
 OBJ_DIRS =		$(OBJ_DIR)
 
-CC = c++ $(CFLAGS)
+CXX = c++ $(CXXFLAGS)
 
 RM = rm -fr
 
-CFLAGS = -Wall -Wextra -Werror -Wshadow -Wconversion -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 
 .cpp.o:
-	$(CC) -c $< -o $(<:.cpp=.o)
+	$(CXX) -c $< -o $(<:.cpp=.o)
 
 #HOW TO LIST .cpp
 #	ls -l | awk '{print $9}' | grep -E ".cpp$"| sed "s/\.cpp/ \\\/g" | sed '$s/\\$//g'
@@ -47,10 +47,10 @@ $(OBJ_DIRS):
 	mkdir -p $@
 
 $(OBJ_DIR)/%.o: ./%.cpp
-	$(CC) -c $< -o $@
+	$(CXX) -c $< -o $@
 
 $(NAME): $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CC) $(OBJ) -o $@
+	$(CXX) $(OBJ) -o $@
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -66,7 +66,7 @@ define print_aligned_coffee
     @t=$(NAME); \
 	l=$${#t};\
 	i=$$((8 - l / 2));\
-	echo "             \0033[1;32m\033[3C\033[$${i}CAnd Your program \"$(NAME)\" "
+	echo "             \0033[1;32m\033[3CXX\033[$${i}CXXAnd Your program \"$(NAME)\" "
 endef
 
 coffee: all clean
