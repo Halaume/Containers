@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/21 11:33:27 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/21 15:32:07 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ template <class T>
 class Iterator
 {
 	public:
-		typedef ptrdiff_t difference_value;
+		typedef ptrdiff_t difference_type;
 		typedef T value_type;
 		typedef T * pointer;
 		typedef T & reference;
@@ -86,8 +86,27 @@ class Iterator
 		bool		operator<=(Iterator other) const { return (this->_value <= other._value); }
 		bool		operator==(Iterator other) const { return (this->_value == other._value); }
 		bool		operator!=(Iterator other) const { return (this->_value != other._value); }
-		Iterator	operator+(Iterator other) const { return (this->_value + other._value); }
-		Iterator	operator-(Iterator other) const { return (this->_value - other._value); }
+
+		Iterator &	operator+=(difference_type other) const 
+		{
+			difference_type m = other;
+			if (m >= 0)
+			{
+				while (m--)
+					++*this;
+			}
+			else
+			{
+				while (m++)
+					--*this;
+			}
+			return (*this);
+		}
+		Iterator	operator+(difference_type nb) const { Iterator temp = this->value; return (temp += nb); }
+		Iterator &	operator-=(difference_type nb) const { return (*this += -nb); }
+		Iterator	operator-(Iterator other) const { return ((this->_value - other._value)); }
+//		Iterator	operator-(difference_type nb) const { Iterator temp = this->value; return (temp -= nb); }
+// A comprendre
 		Iterator	operator++(void) { return (this->_value++); }
 		Iterator	operator++(int)
 		{
@@ -102,9 +121,9 @@ class Iterator
 			--*this;
 			return (tmp);
 		}
-		Iterator	operator[](int i)
+		reference	operator[](int i)
 		{
-			return (this->_value[i]);
+			return (*(this->_value + i));
 		}
 
 	private:
@@ -112,7 +131,7 @@ class Iterator
 };
 
 template <class Iter>
-class reverse_iterator
+class Reverse_iterator
 {
 	public:
 		typedef Iter iterator_type;
@@ -121,42 +140,42 @@ class reverse_iterator
 		typedef typename Iter::difference_type difference_type;
 		typedef typename Iter::pointer pointer;
 		typedef typename Iter::reference reference;
-		reverse_iterator(void) { current = Iter(); }
-		explicit reverse_iterator(iterator_type x)
+		Reverse_iterator(void) { current = Iter(); }
+		explicit Reverse_iterator(iterator_type x)
 		{
 			current = x;
 		}
-		reverse_iterator(const reverse_iterator<Iter> & other)
+		Reverse_iterator(const Reverse_iterator<Iter> & other)
 		{
 			current = Iter(other);
 		}
-		reverse_iterator &	operator=(const reverse_iterator & src)
+		Reverse_iterator &	operator=(const Reverse_iterator & src)
 		{
 			if (this == &src)
 				return (*this);
 			this->_value = src._value;
 			return (*this);
 		}
-		bool		operator>(reverse_iterator other) const { return (this->_value > other._value); }
-		bool		operator<(reverse_iterator other) const { return (this->_value < other._value); }
-		bool		operator>=(reverse_iterator other) const { return (this->_value >= other._value); }
-		bool		operator<=(reverse_iterator other) const { return (this->_value <= other._value); }
-		bool		operator==(reverse_iterator other) const { return (this->_value == other._value); }
-		bool		operator!=(reverse_iterator other) const { return (this->_value != other._value); }
-		reverse_iterator	operator+(reverse_iterator other) const { return (this->_value + other._value); }
-		reverse_iterator	operator-(reverse_iterator other) const { return (this->_value - other._value); }
+		bool				operator>(Reverse_iterator other) const { return (this->_value > other._value); }
+		bool				operator<(Reverse_iterator other) const { return (this->_value < other._value); }
+		bool				operator>=(Reverse_iterator other) const { return (this->_value >= other._value); }
+		bool				operator<=(Reverse_iterator other) const { return (this->_value <= other._value); }
+		bool				operator==(Reverse_iterator other) const { return (this->_value == other._value); }
+		bool				operator!=(Reverse_iterator other) const { return (this->_value != other._value); }
+		Reverse_iterator	operator+(Reverse_iterator other) const { return (this->_value + other._value); }
+		Reverse_iterator	operator-(Reverse_iterator other) const { return (this->_value - other._value); }
 
-		reverse_iterator	operator++(void) { --current; return (*this); }
-		reverse_iterator	operator++(int)
+		Reverse_iterator	operator++(void) { --current; return (*this); }
+		Reverse_iterator	operator++(int)
 		{
-			reverse_iterator tmp = *this;
+			Reverse_iterator tmp = *this;
 			++*this;
 			return (tmp);
 		}
-		reverse_iterator	operator--(void) { ++current; return (*this); }
-		reverse_iterator	operator--(int)
+		Reverse_iterator	operator--(void) { ++current; return (*this); }
+		Reverse_iterator	operator--(int)
 		{
-			reverse_iterator tmp = *this;
+			Reverse_iterator tmp = *this;
 			--*this;
 			return (tmp);
 		}

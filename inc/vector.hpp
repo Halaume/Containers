@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/21 10:29:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/21 14:54:53 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ namespace ft
 				typedef const typename Allocator::pointer const_pointer;
 				typedef Iterator<T> iterator;
 				typedef const Iterator<T> const_iterator;
-//				typedef reverse_iterator reverse_iterator;
-//				typedef const reverse_iterator const_reverse_iterator;
+				typedef Reverse_iterator< Iterator<T> > reverse_iterator;
+				typedef const Reverse_iterator< const Iterator<T> > const_reverse_iterator;
 				vector(void) {}
 				explicit vector(const Allocator & alloc)
 				{
@@ -46,12 +46,17 @@ namespace ft
 				}
 				explicit vector(std::size_t count, const T & value = T(), const Allocator & alloc = Allocator())
 				{
+					(void)value;
+					(void)alloc;
 					this->_size = count;
 					this->_tab = new T*;
 				}
 				template<class InputIt>
 				vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
 				{
+					(void)first;
+					(void)last;
+					(void)alloc;
 					//this->_size = my_dist(first, last);
 					this->_tab = new T*;
 				}
@@ -81,13 +86,13 @@ namespace ft
 				reference at(std::size_t pos)
 				{
 					if (pos < 0 || pos > this->_size)
-						throw std::out_of_range();
+						throw std::out_of_range("Invalid size");
 					return (this->_tab[pos]);
 				}
 				const_reference at(std::size_t pos) const
 				{
 					if (pos < 0 || pos > this->_size)
-						throw std::out_of_range();
+						throw std::out_of_range("Invalid size");
 					return (this->_tab[pos]);
 				}
 				reference operator[](size_type pos)
@@ -119,14 +124,14 @@ namespace ft
 					return (this->_tab);
 				}
 				const T*	data(void) const;
-//				iterator	begin(void);
-//				const_iterator	begin(void) const;
-//				iterator	end(void);
-//				const_iterator	end(void) const;
-//				reverse_iterator	rbegin(void);
-//				const_reverse_iterator	rbegin(void) const;
-//				reverse_iterator	rend(void);
-//				const_reverse_iterator	rend(void) const;
+				iterator	begin(void);
+				const_iterator	begin(void) const;
+				iterator	end(void);
+				const_iterator	end(void) const;
+				reverse_iterator	rbegin(void);
+				const_reverse_iterator	rbegin(void) const;
+				reverse_iterator	rend(void);
+				const_reverse_iterator	rend(void) const;
 				bool	empty(void) const
 				{
 					if (this->_size == 0)
@@ -147,22 +152,21 @@ namespace ft
 				{
 				//	iterator
 				}
-//				iterator	insert(const_iterator pos, const T & value);
-//				iterator	insert(const_iterator pos, size_type count, const T & value);
-//				iterator	insert(const_iterator pos, size_type count, const T & value);
-//				template<class InputIt>
-//				iterator	insert(const_iterator pos, InputIt first, InputIt last);
-//				iterator	erase(iterator pos);
-//				iterator	erase(iterator first, iterator last);
+				iterator	insert(const_iterator pos, const T & value);
+				iterator	insert(const_iterator pos, size_type count, const T & value);
+				template<class InputIt>
+				iterator	insert(const_iterator pos, InputIt first, InputIt last);
+				iterator	erase(iterator pos);
+				iterator	erase(iterator first, iterator last);
 				void	push_back(const T & value)
 				{
-					this->_tab[size] = value;
-					size++;
+					this->_tab[this->_size] = value;
+					this->_size++;
 				}
 				void	pop_back(void)
 				{
-					size--;
-					delete this->_tab[size];
+					this->_size--;
+					delete this->_tab[this->_size];
 				}
 				void	resize(size_type count, T value = T());
 				void	swap(vector & other);
