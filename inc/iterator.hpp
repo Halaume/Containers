@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/20 16:37:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/21 11:33:27 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ class Iterator
 		}
 		Iterator(pointer value) { this->_value = value; }
 		~Iterator(void) {}
-		Iterator & operator=(const Iterator & src)
+		Iterator &	operator=(const Iterator & src)
 		{
 			if (this == &src)
 				return (*this);
@@ -109,6 +109,60 @@ class Iterator
 
 	private:
 		pointer	_value;
+};
+
+template <class Iter>
+class reverse_iterator
+{
+	public:
+		typedef Iter iterator_type;
+		typedef typename Iter::iterator_category iterator_category;
+		typedef typename Iter::value_type value_type;
+		typedef typename Iter::difference_type difference_type;
+		typedef typename Iter::pointer pointer;
+		typedef typename Iter::reference reference;
+		reverse_iterator(void) { current = Iter(); }
+		explicit reverse_iterator(iterator_type x)
+		{
+			current = x;
+		}
+		reverse_iterator(const reverse_iterator<Iter> & other)
+		{
+			current = Iter(other);
+		}
+		reverse_iterator &	operator=(const reverse_iterator & src)
+		{
+			if (this == &src)
+				return (*this);
+			this->_value = src._value;
+			return (*this);
+		}
+		bool		operator>(reverse_iterator other) const { return (this->_value > other._value); }
+		bool		operator<(reverse_iterator other) const { return (this->_value < other._value); }
+		bool		operator>=(reverse_iterator other) const { return (this->_value >= other._value); }
+		bool		operator<=(reverse_iterator other) const { return (this->_value <= other._value); }
+		bool		operator==(reverse_iterator other) const { return (this->_value == other._value); }
+		bool		operator!=(reverse_iterator other) const { return (this->_value != other._value); }
+		reverse_iterator	operator+(reverse_iterator other) const { return (this->_value + other._value); }
+		reverse_iterator	operator-(reverse_iterator other) const { return (this->_value - other._value); }
+
+		reverse_iterator	operator++(void) { --current; return (*this); }
+		reverse_iterator	operator++(int)
+		{
+			reverse_iterator tmp = *this;
+			++*this;
+			return (tmp);
+		}
+		reverse_iterator	operator--(void) { ++current; return (*this); }
+		reverse_iterator	operator--(int)
+		{
+			reverse_iterator tmp = *this;
+			--*this;
+			return (tmp);
+		}
+
+	private:
+		Iter	current;
 };
 
 #endif
