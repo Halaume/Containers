@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/25 09:58:32 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/25 15:18:22 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,18 +104,18 @@ class Iterator
 			return (*this);
 		}
 		Iterator		operator+(difference_type nb) const { Iterator temp = *this; return (temp += nb); }
-//		Iterator friend	operator+(difference_type & nb, Iterator & it) const { return (it + nb); }
+		friend Iterator	operator+(int nb, Iterator const & it) { Iterator temp(it); return (temp += nb); }
 		Iterator &		operator-=(difference_type nb) { return (*this += -nb); }
 		Iterator		operator-(difference_type nb) const { Iterator temp = *this; return (temp -= nb); }
 		difference_type	operator-(Iterator other) const { return ((this->_value - other._value)); }
-		Iterator		operator++(void) { return (this->_value++); }
+		Iterator &		operator++(void) { this->_value--; return (*this); }
 		Iterator		operator++(int)
 		{
 			Iterator tmp = *this;
 			++*this;
 			return (tmp);
 		}
-		Iterator	operator--(void) { return (this->_value--); }
+		Iterator &	operator--(void) { this->_value--; return (*this); }
 		Iterator	operator--(int)
 		{
 			Iterator tmp = *this;
@@ -124,7 +124,7 @@ class Iterator
 		}
 		reference	operator[](int i)
 		{
-			return (*(*this->_value + i));
+			return (*(*this + i));
 		}
 		reference	operator*(void) { return (*(this->_value)); }
 		pointer		operator->(void) { return (this->_value); }
@@ -166,7 +166,7 @@ class Reverse_iterator
 		bool		operator==(Reverse_iterator other) const { return (this->_current == other._current); }
 		bool		operator!=(Reverse_iterator other) const { return (this->_current != other._current); }
 
-		Reverse_iterator &	operator+=(difference_type other) const 
+		Reverse_iterator &	operator+=(difference_type other) 
 		{
 			difference_type m = other;
 			if (m >= 0)

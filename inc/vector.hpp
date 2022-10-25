@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/25 09:28:39 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/25 12:03:45 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,14 +124,14 @@ namespace ft
 					return (this->_tab);
 				}
 				const T*	data(void) const;
-				iterator	begin(void);
-				const_iterator	begin(void) const;
-				iterator	end(void);
-				const_iterator	end(void) const;
-				reverse_iterator	rbegin(void);
-				const_reverse_iterator	rbegin(void) const;
-				reverse_iterator	rend(void);
-				const_reverse_iterator	rend(void) const;
+				iterator	begin(void) { return (this->_tab); }
+				const_iterator	begin(void) const { iterator tmp = this->_tab; return (tmp); }
+				iterator	end(void) { iterator tmp = this->_tab; tmp += this->_size; return (tmp); }
+				const_iterator	end(void) const { iterator tmp = this->_tab; tmp += this->_size; return (tmp); }
+				reverse_iterator	rbegin(void) { reverse_iterator tmp = this->end(); return (tmp); }
+				const_reverse_iterator	rbegin(void) const { reverse_iterator tmp = this->end(); return (tmp); }
+				reverse_iterator	rend(void) { reverse_iterator tmp = this->begin(); return (tmp); }
+				const_reverse_iterator	rend(void) const { reverse_iterator tmp = this->begin(); return (tmp); }
 				bool	empty(void) const
 				{
 					if (this->_size == 0)
@@ -156,7 +156,27 @@ namespace ft
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
 				iterator	insert(const_iterator pos, InputIt first, InputIt last);
-				iterator	erase(iterator pos);
+				iterator	erase(iterator pos)
+				{
+					T*	tmp = new T;
+					size_type	i = 0;
+					size_type	j = 0;
+					delete this->_tab[pos];
+					this->_tab[pos] = NULL;
+					while (i < this->_size)
+					{
+						if (this->_tab[i] != NULL)
+						{
+							tmp[j] = this->_tab[i];
+							j++;
+						}
+						i++;
+					}
+					this->_size--;
+					delete this->_tab;
+					this->_tab = tmp;
+					return (this->tab[pos]);
+				}
 				iterator	erase(iterator first, iterator last);
 				void	push_back(const T & value)
 				{
