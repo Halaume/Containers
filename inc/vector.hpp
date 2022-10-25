@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/21 14:54:53 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/25 09:28:39 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,15 @@ namespace ft
 				typedef const T & const_reference;
 				typedef typename Allocator::pointer pointer;
 				typedef const typename Allocator::pointer const_pointer;
-				typedef Iterator<T> iterator;
-				typedef const Iterator<T> const_iterator;
-				typedef Reverse_iterator< Iterator<T> > reverse_iterator;
-				typedef const Reverse_iterator< const Iterator<T> > const_reverse_iterator;
+				typedef Iterator<std::random_access_iterator_tag, T> iterator;
+				typedef Iterator<std::random_access_iterator_tag, T> const_iterator;
+				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, T> > reverse_iterator;
+				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, T> > const_reverse_iterator;
 				vector(void) {}
 				explicit vector(const Allocator & alloc)
 				{
 					this->Allocator = alloc;
-					this->_tab = new T*;
+					this->_tab = new T;
 					this->_size = 0;
 				}
 				explicit vector(std::size_t count, const T & value = T(), const Allocator & alloc = Allocator())
@@ -49,7 +49,7 @@ namespace ft
 					(void)value;
 					(void)alloc;
 					this->_size = count;
-					this->_tab = new T*;
+					this->_tab = new T;
 				}
 				template<class InputIt>
 				vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
@@ -58,7 +58,7 @@ namespace ft
 					(void)last;
 					(void)alloc;
 					//this->_size = my_dist(first, last);
-					this->_tab = new T*;
+					this->_tab = new T;
 				}
 				vector(const vector & copy)
 				{
@@ -71,7 +71,7 @@ namespace ft
 						return (*this);
 					if (this->tab)
 						delete [] this->tab;
-					T* tmp = new T*;
+					T* tmp = new T;
 					//tmp = src._tab; //C'est de la bite en bois
 					this->_tab = tmp;
 					this->_size = src.size;
