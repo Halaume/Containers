@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/25 15:18:22 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/10/26 16:43:56 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define ITERATOR_HPP
 
 #include <cstddef>
+#include <iterator>
 
 /*template <class Category, class T, class Distance = ptrdiff_t,
   class Pointer = T*, class Reference = T&>
@@ -25,7 +26,7 @@
   typedef Category  iterator_category;
   };*/
 
-/*template <class Iterator> 
+template <class Iterator> 
 class iterator_traits
 {
 	public:
@@ -44,7 +45,7 @@ class iterator_traits<T*>
 		typedef T value_type;
 		typedef T * pointer;
 		typedef T & reference;
-		//		typedef random_access_iterator_tag iterator_category;
+		typedef std::random_access_iterator_tag iterator_category;
 };
 
 template <class T> 
@@ -55,8 +56,8 @@ class iterator_traits<const T*>
 		typedef T value_type;
 		typedef T * pointer;
 		typedef T & reference;
-		//		typedef random_access_iterator_tag iterator_category;
-};*/
+		typedef std::random_access_iterator_tag iterator_category;
+};
 
 template <class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
 class Iterator
@@ -68,9 +69,8 @@ class Iterator
 		typedef Pointer pointer;
 		typedef Reference reference;
 		Iterator(void) {}
-		Iterator(const Iterator & copy)
+		Iterator(const Iterator & copy): _value(copy._value)
 		{
-			*this = copy;
 		}
 		Iterator(pointer value) { this->_value = value; }
 		~Iterator(void) {}
@@ -80,6 +80,10 @@ class Iterator
 				return (*this);
 			this->_value = src._value;
 			return (*this);
+		}
+		operator	Iterator<Category, const T>(void) const
+		{
+			return (Iterator<Category, const T>(this->_value));
 		}
 		bool		operator>(Iterator other) const { return (other < *this); }
 		bool		operator<(Iterator other) const { return ((other - *this) < 0); }
@@ -108,7 +112,7 @@ class Iterator
 		Iterator &		operator-=(difference_type nb) { return (*this += -nb); }
 		Iterator		operator-(difference_type nb) const { Iterator temp = *this; return (temp -= nb); }
 		difference_type	operator-(Iterator other) const { return ((this->_value - other._value)); }
-		Iterator &		operator++(void) { this->_value--; return (*this); }
+		Iterator &		operator++(void) { this->_value++; return (*this); }
 		Iterator		operator++(int)
 		{
 			Iterator tmp = *this;

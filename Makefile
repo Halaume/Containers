@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/10/20 14:04:51 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/10/26 17:11:43 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ vpath %.cpp ./src/
 
 OBJ_DIR = 		obj
 
-INC =			$(addsuffix .hpp, stack vector map rbTree set)
+INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant)
 
 SRC =			$(SRC_FT:%=./%.cpp)
 
