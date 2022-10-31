@@ -46,7 +46,6 @@ namespace ft
 					this->_tab = this->_alloc.allocate(0);
 					this->_size = 0;
 					this->_capacity = 0;
-					this->_end = this->_tab;
 				}
 
 				explicit vector(std::size_t count, const T & value = T(), const Allocator & alloc = Allocator())
@@ -61,7 +60,6 @@ namespace ft
 						this->_alloc.construct(this->_tab[i], value);
 						i++;
 					}
-					this->_end = this->_tab + this->_size;               
 				}
 
 				template<class InputIt>
@@ -71,10 +69,9 @@ namespace ft
 					//this->_size = my_dist(first, last);
 					this->_tab = this->_alloc.allocate(last - first);
 					this->_capacity = last - first;
-					this->_end = this->_tab + this->_size;
 				}
 
-				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _end(copy._end), _size(copy._size), _capacity(copy._capacity)
+				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _size(copy._size), _capacity(copy._capacity)
 				{
 				}
 
@@ -171,11 +168,10 @@ namespace ft
 				const T*	data(void) const;
 				iterator	begin(void) { iterator temp = this->_tab; return (temp); }
 
-				const_iterator	begin(void) const { const_iterator tmp = this->_tab; return (tmp); }
 
-				iterator	end(void) { iterator tmp = this->_end; return (tmp); }
+				iterator	end(void) { iterator tmp = this->_tab[this->_size]; return (tmp); }
 
-				const_iterator	end(void) const { const_iterator tmp = this->_end; return (tmp); }
+				const_iterator	end(void) const { const_iterator tmp = this->_tab[this->_size]; return (tmp); }
 
 				reverse_iterator	rbegin(void) { reverse_iterator tmp = this->end(); return (tmp); }
 
@@ -265,7 +261,6 @@ namespace ft
 				void	swap(vector & other);
 			private:
 				size_type	_capacity;
-				T*			_end;
 				T*			_tab;
 				Allocator	_alloc;
 				size_type	_size;
