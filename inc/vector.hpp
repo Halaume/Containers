@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/14 11:23:01 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/14 14:57:09 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,12 @@ namespace ft
 				{
 					this->clear();
 					if (this->_capacity)
+					{
+						size_t	i = -1;
+						while	(++i < this->_size)
+							this->_alloc.destroy(this->_tab[i]);
 						this->_alloc.deallocate(this->_tab, this->_capacity);
+					}
 				}
 
 				vector &	operator=(const vector & src)
@@ -99,7 +104,7 @@ namespace ft
 							this->_alloc.deallocate(this->_tab, this->_capacity);
 					}
 					this->_alloc = src._alloc;
-					this->_tab = this->_alloc.allocate(src._size);
+					this->_tab = src._alloc.allocate(src._capacity);
 					this->_size = src._size;
 					this->_end = src.end;
 					this->_capacity = src.capacity;
@@ -201,7 +206,7 @@ namespace ft
 
 				size_type	max_size(void) const
 				{
-					return (Allocator::max_size());
+					return (this->_alloc.max_size());
 				}
 
 				void	reserve(size_type new_cap);
@@ -253,14 +258,29 @@ namespace ft
 				iterator	erase(iterator first, iterator last);
 				void	push_back(const T & value)
 				{
-					this->_tab[this->_size] = value;
-					this->_size++;
+					if (this->_size + 1 > this->_capacity)
+					{
+						vector<T> newvec(size + 1);
+						size_type	i = 0;
+						while (i < this->_size)
+						{
+							newvec[i] = this->_tab[i];
+							i++;
+						}
+						newvec[i] = newvec._alloc.construct(value);
+						*this = newvec;
+					}
+					else
+					{
+						this->_tab[this->_size] = value;
+						this->_size++;
+					}
 				}
 
 				void	pop_back(void)
 				{
 					this->_size--;
-					delete this->_tab[this->_size];
+					this->_alloc.destroy(this->_tab[this->_size]);
 				}
 
 				void	resize(size_type count, T value = T())
@@ -276,7 +296,14 @@ namespace ft
 							this->push_back(value);
 					}
 				}
-				void	swap(vector & other);
+				void	swap(vector & other)
+				{
+					vector<T> tmp;
+
+					tmp = other;
+					other = *this;
+					*this = tmp;
+				}
 			private:
 				size_type	_capacity;
 				T*			_tab;
