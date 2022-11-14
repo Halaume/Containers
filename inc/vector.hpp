@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/14 14:57:09 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/14 17:21:43 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,26 +69,29 @@ namespace ft
 				}
 
 				template<class InputIt>
-				vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
-				{
-					this->_alloc = alloc;
-					//this->_size = my_dist(first, last);
-					this->_tab = this->_alloc.allocate(last - first);
-					this->_capacity = last - first;
-				}
+					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
+					{
+						this->_alloc = alloc;
+						//this->_size = my_dist(first, last);
+						this->_tab = this->_alloc.allocate(last - first);
+						this->_capacity = last - first;
+					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _size(copy._size), _capacity(copy._capacity)
-				{
-				}
+			{
+			}
 
 				~vector(void) 
 				{
 					this->clear();
 					if (this->_capacity)
 					{
-						size_t	i = -1;
-						while	(++i < this->_size)
+						size_type	i = 0;
+						while	(i < this->_size)
+						{
 							this->_alloc.destroy(this->_tab[i]);
+							i++;
+						}
 						this->_alloc.deallocate(this->_tab, this->_capacity);
 					}
 				}
@@ -117,10 +120,15 @@ namespace ft
 					}
 				}
 
-				void	assign(std::size_t count, const T & value);
+				void	assign(std::size_t count, const T & value)
+				{
+					//TODO si count plus petit, reduire en gardant capacity
+					//sinon
+					//capacity = count = size;
+				}
 
 				template<class InputIt>
-				void	assign(InputIt first, InputIt last);
+					void	assign(InputIt first, InputIt last);
 
 				allocator_type	get_allocator() const
 				{
@@ -232,49 +240,53 @@ namespace ft
 				iterator	insert(const_iterator pos, const T & value);
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
-				iterator	insert(const_iterator pos, InputIt first, InputIt last);
+					iterator	insert(const_iterator pos, InputIt first, InputIt last);
 				iterator	erase(iterator pos);
 				/*{
-					T*	tmp = new T;
-					size_type	i = 0;
-					size_type	j = 0;
-					delete this->_tab[pos];
-					this->_tab[pos] = NULL;
-					while (i < this->_size)
-					{
-						if (this->_tab[i] != NULL)
-						{
-							tmp[j] = this->_tab[i];
-							j++;
-						}
-						i++;
-					}
-					this->_size--;
-					delete this->_tab;
-					this->_tab = tmp;
-					return (this->tab[pos]);
-				}*/
+				  T*	tmp = new T;
+				  size_type	i = 0;
+				  size_type	j = 0;
+				  delete this->_tab[pos];
+				  this->_tab[pos] = NULL;
+				  while (i < this->_size)
+				  {
+				  if (this->_tab[i] != NULL)
+				  {
+				  tmp[j] = this->_tab[i];
+				  j++;
+				  }
+				  i++;
+				  }
+				  this->_size--;
+				  delete this->_tab;
+				  this->_tab = tmp;
+				  return (this->tab[pos]);
+				  }*/
 
 				iterator	erase(iterator first, iterator last);
 				void	push_back(const T & value)
 				{
 					if (this->_size + 1 > this->_capacity)
 					{
-						vector<T> newvec(size + 1);
 						size_type	i = 0;
-						while (i < this->_size)
+						if (!this->_tab)
 						{
-							newvec[i] = this->_tab[i];
-							i++;
+							this->capacity++;
+							this->_tab = this->_alloc.allocate(this->_capacity);
 						}
-						newvec[i] = newvec._alloc.construct(value);
-						*this = newvec;
+						else
+						{
+							vector<T> newvec(size);
+							while (i < this->_size)
+							{
+								newvec.tab[i] = newvec._alloc.construct(this->_tab[i]);
+								i++;
+							}
+							*this = newvec;
+						}
 					}
-					else
-					{
-						this->_tab[this->_size] = value;
-						this->_size++;
-					}
+					this->_tab[this->_size] = this->_alloc.construct(value);
+					this->_size++;
 				}
 
 				void	pop_back(void)
