@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/26 16:55:11 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/14 11:23:01 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,13 @@ namespace ft
 				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, T> > reverse_iterator;
 				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, const T> > const_reverse_iterator;
 
-				vector(void) {}
+				vector(void)
+				{
+					this->_alloc = Allocator();
+					this->_capacity = 0;
+					this->_tab = this->_alloc.allocate(0);
+					this->_size = 0;
+				}
 
 				explicit vector(const Allocator & alloc)
 				{
@@ -53,8 +59,8 @@ namespace ft
 					size_type	i = 0;
 					this->_alloc = alloc;
 					this->_size = count;
-					this->_tab = this->_alloc.allocate(this->_size);
-					this->_capacity = this->_size;
+					this->_tab = this->_alloc.allocate(this->_size * 2);
+					this->_capacity = this->_size * 2;
 					while (i < this->_size)
 					{
 						this->_alloc.construct(this->_tab[i], value);
@@ -257,7 +263,19 @@ namespace ft
 					delete this->_tab[this->_size];
 				}
 
-				void	resize(size_type count, T value = T());
+				void	resize(size_type count, T value = T())
+				{
+					if (this->_size > count)
+					{
+						while (this->_size != count)
+							this->pop_back();
+					}
+					else
+					{
+						while (this->_size != count)
+							this->push_back(value);
+					}
+				}
 				void	swap(vector & other);
 			private:
 				size_type	_capacity;

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:01:38 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/17 14:17:20 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/14 11:00:26 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ namespace ft
 				typedef typename Container::reference reference;
 				typedef typename Container::const_reference const_reference;
 				explicit stack(const Container & cont = Container()): c(cont)
-				{
-				}
+			{
+			}
 				stack(const stack & copy) 
 				{
 					*this = copy;
@@ -95,6 +95,7 @@ namespace ft
 			protected:
 				Container	c;
 		};
+
 }
 
 #endif

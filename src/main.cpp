@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 13:23:53 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/10/12 14:59:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/14 11:15:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,12 @@ int main(void)
 	std::cout << "-------------------" << std::endl;
 	std::cout << c1.size() << std::endl;
 	std::cout << c2.size() << std::endl;
+
+	std::cout << std::endl << "---VECTOR---" << std::endl << std::endl;
+	ft::vector<int> v1;
+	std::vector<int> v2;
+	v2.push_back(5);
+//	v1.push_back(5);
+
+	return (0);
 }
