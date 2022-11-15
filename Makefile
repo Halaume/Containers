@@ -6,18 +6,19 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/10/26 17:11:43 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/15 16:17:41 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = Containers
+FT = Containers_ft
+STD = Containers_std
 
 vpath %.hpp ./inc/
 vpath %.cpp ./src/
 
 OBJ_DIR = 		obj
 
-INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant)
+INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair)
 
 SRC =			$(SRC_FT:%=./%.cpp)
 
@@ -39,7 +40,7 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 
 SRC_FT = main \
 
-all: $(NAME)
+all: $(FT) $(STD)
 
 $(OBJ) : $(INC) | $(OBJ_DIR)
 
@@ -49,24 +50,29 @@ $(OBJ_DIRS):
 $(OBJ_DIR)/%.o: ./%.cpp
 	$(CXX) -c $< -o $@
 
-$(NAME): $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) $(OBJ) -o $@
+$(FT): $(OBJ_DIRS) $(SRC) $(OBJ)
+	$(CXX) -DNAMESPACE=ft $(OBJ) -o $@
+
+$(STD): $(OBJ_DIRS) $(SRC) $(OBJ)
+	$(CXX) -DNAMESPACE=std $(OBJ) -o $@
 
 clean:
 	@$(RM) $(OBJ_DIR)
 	@echo "Cleaned object"
 
 fclean: clean
-	@$(RM) $(NAME)
+	@$(RM) $(FT)
+	@$(RM) $(STD)
 	@echo "Cleaned program"
 
 re: fclean all
 
 define print_aligned_coffee
-    @t=$(NAME); \
+    @t=$(FT); \
+    @t=$(STD); \
 	l=$${#t};\
 	i=$$((8 - l / 2));\
-	echo "             \0033[1;32m\033[3CXX\033[$${i}CXXAnd Your program \"$(NAME)\" "
+	echo "             \0033[1;32m\033[3CXX\033[$${i}CXXAnd Your program Container "
 endef
 
 coffee: all clean

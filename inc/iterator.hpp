@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/11 17:24:06 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/15 16:18:56 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,20 @@ namespace ft
 				typedef T value_type;
 				typedef Pointer pointer;
 				typedef Reference reference;
-				Iterator(void) {}
+				Iterator(void)
+				{
+				}
+
 				Iterator(const Iterator & copy): _value(copy._value)
-			{
-			}
+				{
+				}
+
 				Iterator(pointer value) { this->_value = value; }
-				~Iterator(void) {}
+
+				~Iterator(void) 
+				{
+				}
+
 				Iterator &	operator=(const Iterator & src)
 				{
 					if (this == &src)
@@ -152,7 +160,7 @@ namespace ft
 				Reverse_iterator(void) { _current = Iter(); }
 				explicit Reverse_iterator(iterator_type x)
 				{
-					_current = x;
+					this->_current = x;
 				}
 				Reverse_iterator(const Reverse_iterator<Iter> & other)
 				{

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/15 11:55:32 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/15 15:57:58 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <cstddef>
 #include <iterator>
 #include "iterator.hpp"
+#include <iostream>
 
 namespace ft
 {
@@ -59,15 +60,15 @@ namespace ft
 					size_type	i = 0;
 					this->_alloc = alloc;
 					this->_size = count;
-					this->_tab = this->_alloc.allocate(this->_size * 2);
 					this->_capacity = this->_size * 2;
+					this->_tab = this->_alloc.allocate(this->capacity());
 					while (i < this->_size)
 					{
-						this->_alloc.construct(this->_tab[i], value);
+						this->_alloc.construct(&this->_tab[i], value);
 						i++;
 					}
 				}
-
+// TODO This constructor
 				template<class InputIt>
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
 					{
@@ -86,38 +87,29 @@ namespace ft
 					this->clear();
 					if (this->_capacity)
 					{
-						size_type	i = 0;
-						while	(i < this->_size)
-						{
-							this->_alloc.destroy(this->_tab[i]);
-							i++;
-						}
+						for (size_type	i = 0; i < this->_size; i++)
+							this->_alloc.destroy(this->_tab + i);
 						this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 				}
-
+// TODO every overload
 				vector &	operator=(const vector & src)
 				{
 					if (this == &src)
 						return (*this);
-					if (this->tab)
+					if (this->_tab)
 					{
 						this->clear();
 						if (this->_capacity)
 							this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 					this->_alloc = src._alloc;
-					this->_tab = src._alloc.allocate(src.capacity());
+					this->_tab = this->_alloc.allocate(src.capacity());
 					this->_size = src._size;
-					this->_end = src.end;
 					this->_capacity = src._capacity;
-					iterator it = src.begin();
-					iterator it2 = src.end();
-					while (it != it2)
-					{
-						this->_tab + it = src.tab + it;
-						it++;
-					}
+					for (size_type	i = 0; i < this->size(); i++)
+						this->_tab[i] = src._tab[i];
+					return (*this);
 				}
 
 				void	assign(std::size_t count, const T & value)
@@ -127,7 +119,7 @@ namespace ft
 						for (size_type	i = 0; i < this->_size; i++)
 						{
 							this->_alloc.destruct(this->_tab[i]);
-							this->_tab[i] = this->_alloc.construct(value);
+							this->_alloc.construct(&this->_tab[i], value);
 						}
 					}
 					else
@@ -141,11 +133,11 @@ namespace ft
 						{
 							if (i < this->_size)
 							{
-								vec._tab[i] = vec._alloc.construct(this->_tab[i]);
+								vec._alloc.construct(&vec._tab[i], this->_tab[i]);
 								this->_alloc.destruct(this->_tab[i]);
 							}
 							else
-								vec._tab[i] = vec._alloc.construct(value);
+								vec._alloc.construct(&vec._tab[i], value);
 						}
 						this->_alloc.deallocate(this->_tab, this->capacity());
 						*this = vec;
@@ -212,10 +204,9 @@ namespace ft
 				const T*	data(void) const;
 				iterator	begin(void) { iterator temp = this->_tab; return (temp); }
 
+				iterator	end(void) { iterator tmp = this->_tab + this->size(); return (tmp); }
 
-				iterator	end(void) { iterator tmp = this->_tab[this->_size]; return (tmp); }
-
-				const_iterator	end(void) const { const_iterator tmp = this->_tab[this->_size]; return (tmp); }
+				const_iterator	end(void) const { const_iterator tmp = this->_tab + this->size(); return (tmp); }
 
 				reverse_iterator	rbegin(void) { reverse_iterator tmp = this->end(); return (tmp); }
 
@@ -268,14 +259,17 @@ namespace ft
 					iterator	insert(const_iterator pos, InputIt first, InputIt last);
 				iterator	erase(iterator pos)
 				{
-					if (!this->_tab)
-						return (this->_tab);
-				//	if (pos >= this->_size) TODO : check overflow
-					if (pos == this>_size)
-					{
+					if (pos == this->end())
 						return (this->end());
+					iterator	ret;
+					for (iterator pos2 = pos; pos2 != this->end() - 1 ; pos2++)
+					{
+						std::cout << *pos2 << std::endl;
+						pos2 = pos2 + 1;
 					}
-					this->_alloc.destruct(this->_tab[pos]);
+					this->_alloc.destroy(this->_tab + this->size());
+					this->_size--;
+					return (ret);
 				}
 
 				iterator	erase(iterator first, iterator last);
@@ -286,21 +280,21 @@ namespace ft
 						size_type	i = 0;
 						if (!this->_tab)
 						{
-							this->capacity++;
 							this->_tab = this->_alloc.allocate(this->capacity());
 						}
 						else
 						{
-							vector<T> newvec(size);
-							while (i < this->_size)
+							vector<T> newvec(this->size());
+							while (i < this->size())
 							{
-								newvec.tab[i] = newvec._alloc.construct(this->_tab[i]);
+								newvec._alloc.construct(&newvec._tab[i], this->_tab[i]);
 								i++;
 							}
 							*this = newvec;
 						}
+						this->_capacity++;
 					}
-					this->_tab[this->_size] = this->_alloc.construct(value);
+					this->_alloc.construct(&this->_tab[this->size()], value);
 					this->_size++;
 				}
 
