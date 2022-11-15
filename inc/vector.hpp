@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/14 17:21:43 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/15 11:55:32 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ namespace ft
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _size(copy._size), _capacity(copy._capacity)
-			{
-			}
+				{
+				}
 
 				~vector(void) 
 				{
@@ -92,7 +92,7 @@ namespace ft
 							this->_alloc.destroy(this->_tab[i]);
 							i++;
 						}
-						this->_alloc.deallocate(this->_tab, this->_capacity);
+						this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 				}
 
@@ -104,13 +104,13 @@ namespace ft
 					{
 						this->clear();
 						if (this->_capacity)
-							this->_alloc.deallocate(this->_tab, this->_capacity);
+							this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 					this->_alloc = src._alloc;
-					this->_tab = src._alloc.allocate(src._capacity);
+					this->_tab = src._alloc.allocate(src.capacity());
 					this->_size = src._size;
 					this->_end = src.end;
-					this->_capacity = src.capacity;
+					this->_capacity = src._capacity;
 					iterator it = src.begin();
 					iterator it2 = src.end();
 					while (it != it2)
@@ -122,9 +122,34 @@ namespace ft
 
 				void	assign(std::size_t count, const T & value)
 				{
-					//TODO si count plus petit, reduire en gardant capacity
-					//sinon
-					//capacity = count = size;
+					if (count <= this->_size)
+					{
+						for (size_type	i = 0; i < this->_size; i++)
+						{
+							this->_alloc.destruct(this->_tab[i]);
+							this->_tab[i] = this->_alloc.construct(value);
+						}
+					}
+					else
+					{
+						vector<T> vec(this->_alloc);
+
+						vec._capacity = count;
+						vec._size = count;
+						vec._tab = vec._alloc.allocate(vec.capacity());
+						for (size_type	i = 0; i < vec._capacity; i++)
+						{
+							if (i < this->_size)
+							{
+								vec._tab[i] = vec._alloc.construct(this->_tab[i]);
+								this->_alloc.destruct(this->_tab[i]);
+							}
+							else
+								vec._tab[i] = vec._alloc.construct(value);
+						}
+						this->_alloc.deallocate(this->_tab, this->capacity());
+						*this = vec;
+					}
 				}
 
 				template<class InputIt>
@@ -241,38 +266,28 @@ namespace ft
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
 					iterator	insert(const_iterator pos, InputIt first, InputIt last);
-				iterator	erase(iterator pos);
-				/*{
-				  T*	tmp = new T;
-				  size_type	i = 0;
-				  size_type	j = 0;
-				  delete this->_tab[pos];
-				  this->_tab[pos] = NULL;
-				  while (i < this->_size)
-				  {
-				  if (this->_tab[i] != NULL)
-				  {
-				  tmp[j] = this->_tab[i];
-				  j++;
-				  }
-				  i++;
-				  }
-				  this->_size--;
-				  delete this->_tab;
-				  this->_tab = tmp;
-				  return (this->tab[pos]);
-				  }*/
+				iterator	erase(iterator pos)
+				{
+					if (!this->_tab)
+						return (this->_tab);
+				//	if (pos >= this->_size) TODO : check overflow
+					if (pos == this>_size)
+					{
+						return (this->end());
+					}
+					this->_alloc.destruct(this->_tab[pos]);
+				}
 
 				iterator	erase(iterator first, iterator last);
 				void	push_back(const T & value)
 				{
-					if (this->_size + 1 > this->_capacity)
+					if (this->_size + 1 > this->capacity())
 					{
 						size_type	i = 0;
 						if (!this->_tab)
 						{
 							this->capacity++;
-							this->_tab = this->_alloc.allocate(this->_capacity);
+							this->_tab = this->_alloc.allocate(this->capacity());
 						}
 						else
 						{

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 12:49:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/14 16:56:25 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/15 11:40:59 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,22 @@ namespace ft
 				}
 			pair(const pair & p) = default;
 			pair &	operator=(const pair & other);
+			bool operator==(const pair<T1,T2>& other );
+			bool operator!=( const pair<T1,T2>& other );
+			bool operator<( const pair<T1,T2>& other );
+			bool operator<=( const pair<T1,T2>& other );
+			bool operator>( const pair<T1,T2>& other );
+			bool operator>=( const pair<T1,T2>& other );
 			first_type	first;
 			second_type	second;
 		};
+
+	template<class T1, class T2>
+		pair<T1, T2> make_pair(T1 t, T2 u)
+		{
+			pair<T1, T2>	ret(t, u);
+			return (ret);
+		}
 }
 
 #endif
