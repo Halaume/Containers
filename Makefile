@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/16 13:43:40 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/16 13:59:51 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ SRC_FT = main \
 		 vector_test \
 		 stack_test
 
-all: $(FT) $(STD)
+all: $(STD) $(FT) 
 
 $(OBJ) : $(INC) | $(OBJ_DIR)
 
@@ -60,7 +60,8 @@ $(STD): $(OBJ_DIRS) $(SRC) $(OBJ)
 
 clean:
 	@$(RM) $(OBJ_DIR)
-	@echo "Cleaned object"
+	@$(RM) ft_output std_output
+	@echo "Cleaned object and outputs"
 
 fclean: clean
 	@$(RM) $(FT)
