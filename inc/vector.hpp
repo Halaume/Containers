@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 12:17:34 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 13:34:30 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,15 +154,13 @@ namespace ft
 						}
 						else
 						{
-							//TODO newvec with first->last
-							vector<T> vec(this->_alloc);
-
-							vec._size = vec._distit(first, last);
-							vec._capacity = vec.size();
-							vec._tab = vec._alloc.allocate(vec.capacity());
+							this->clear();
+							this->deallocate(this->begin(), this->end());
+							this->_capacity = this->_distit(first, last);
+							this->_size = this->capacity();
+							this->_tab = this->allocate(this->capacity());
 							for (size_type	i = 0; first != last; first++, i++)
-								vec._tab[i] = first;
-							*this = vec;
+								this._tab[i] = first;
 						}
 					}
 
@@ -220,7 +218,11 @@ namespace ft
 					return (this->_tab);
 				}
 
-				const T*	data(void) const;
+				const T*	data(void) const
+				{
+					return (this->_tab);
+				}
+
 				iterator	begin(void) { iterator temp = this->_tab; return (temp); }
 
 				const_iterator begin() const { const_iterator temp = this->_tab; return (temp); }

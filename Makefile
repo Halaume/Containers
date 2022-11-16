@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/15 16:17:41 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/16 13:43:40 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,8 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 #	ls -l | awk '{print $9}' | grep -E ".cpp$"| sed "s/\.cpp/ \\\/g" | sed '$s/\\$//g'
 
 SRC_FT = main \
+		 vector_test \
+		 stack_test
 
 all: $(FT) $(STD)
 
