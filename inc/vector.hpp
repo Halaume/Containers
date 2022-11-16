@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 10:55:14 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 12:17:34 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,16 +80,14 @@ namespace ft
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _size(copy._size), _capacity(copy._capacity)
-			{
-			}
+				{
+				}
 
 				~vector(void) 
 				{
 					this->clear();
 					if (this->_capacity)
 					{
-						for (size_type	i = 0; i < this->_size; i++)
-							this->_alloc.destroy(this->_tab + i);
 						this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 				}
@@ -157,6 +155,14 @@ namespace ft
 						else
 						{
 							//TODO newvec with first->last
+							vector<T> vec(this->_alloc);
+
+							vec._size = vec._distit(first, last);
+							vec._capacity = vec.size();
+							vec._tab = vec._alloc.allocate(vec.capacity());
+							for (size_type	i = 0; first != last; first++, i++)
+								vec._tab[i] = first;
+							*this = vec;
 						}
 					}
 
