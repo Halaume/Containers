@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 10:02:13 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 10:55:14 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ namespace ft
 				typedef const T & const_reference;
 				typedef typename Allocator::pointer pointer;
 				typedef const typename Allocator::pointer const_pointer;
-				typedef Iterator<std::random_access_iterator_tag, T> iterator;
-				typedef Iterator<std::random_access_iterator_tag, const T> const_iterator;
-				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, T> > reverse_iterator;
-				typedef Reverse_iterator< Iterator<std::random_access_iterator_tag, const T> > const_reverse_iterator;
+				typedef ft::Iterator<std::random_access_iterator_tag, T> iterator;
+				typedef ft::Iterator<std::random_access_iterator_tag, const T> const_iterator;
+				typedef ft::Reverse_iterator<iterator> reverse_iterator;
+				typedef ft::Reverse_iterator<const_iterator> const_reverse_iterator;
 
 				vector(void)
 				{
@@ -93,7 +93,6 @@ namespace ft
 						this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 				}
-				// TODO every overload
 				vector &	operator=(const vector & src)
 				{
 					if (this == &src)
@@ -146,7 +145,20 @@ namespace ft
 				}
 
 				template<class InputIt>
-					void	assign(InputIt first, InputIt last);
+					void	assign(InputIt first, InputIt last)
+					{
+						if (this->_distit(first, last) <= this->capacity())
+						{
+							for (size_type i = 0; first != last; i++, first++)
+							{
+								this->_tab[i] = *first;
+							}
+						}
+						else
+						{
+							//TODO newvec with first->last
+						}
+					}
 
 				allocator_type	get_allocator() const
 				{
@@ -221,7 +233,7 @@ namespace ft
 
 				bool	empty(void) const
 				{
-					if (this->_size == 0)
+					if (this->size() == 0)
 						return (true);
 					return (false);
 				}
@@ -236,7 +248,26 @@ namespace ft
 					return (this->_alloc.max_size());
 				}
 
-				void	reserve(size_type new_cap);
+				void	reserve(size_type new_cap)
+				{
+					if (new_cap <= this->capacity())
+						return ;
+					vector<T> vec(this->_alloc);
+
+					vec._size = this->size();
+					vec._capacity = new_cap;
+					vec._tab = vec.alloc.allocate(vec.capacity());
+
+					size_type i = 0;
+
+					for (iterator it = this->begin(); it != this->end(); it++, i++)
+					{
+						vec[i] = *it;
+						this->_alloc.destroy(it);
+					}
+					this->_alloc.deallocate(this->_tab, this->capacity());
+					*this = vec;
+				}
 
 				size_type	capacity() const
 				{
@@ -281,13 +312,26 @@ namespace ft
 						return (last);
 					if (last == this->end())
 					{
-						//TODO Erase first -> last
 						for (iterator tmp = first; tmp != last; tmp++)
 						{
 							destroy(tmp);
 							this->_size--;
 						}
 						return (this->_end());
+					}
+					else
+					{
+						for (iterator tmp = first; tmp != last; tmp++)
+						{
+							destroy(tmp);
+							this->_size--;
+						}
+						size_type i = 0;
+						for (iterator tmp = last; tmp != this->end(); tmp++, i++)
+						{
+							first + i = tmp;
+						}
+						return (first);
 					}
 				}
 				void	push_back(const T & value)
@@ -347,6 +391,13 @@ namespace ft
 				T*			_tab;
 				Allocator	_alloc;
 				size_type	_size;
+				template<class InputIt>
+					size_type	_distit(InputIt first, InputIt last)
+					{
+						size_type	i = 0;
+						for (InputIt	tmp = first; tmp != last; tmp++, i++);
+						return (i);
+					}
 		};
 
 	template< class T, class Alloc >
@@ -357,7 +408,7 @@ namespace ft
 				typename vector<T, Alloc>::iterator it1 = lhs.begin();
 				typename vector<T, Alloc>::iterator it2 = rhs.begin();
 
-				while (it1 != lhs.end() && it2 != lhs.end())
+				for (;it1 != lhs.end() && it2 != lhs.end(); it1++, it2++)
 				{
 					if (*it1 != *it2)
 						return (false);
