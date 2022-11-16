@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 13:34:30 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 16:11:28 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,7 +277,7 @@ namespace ft
 					*this = vec;
 				}
 
-				size_type	capacity() const
+				size_type	capacity(void) const
 				{
 					return (this->_capacity);
 				}
@@ -344,11 +344,12 @@ namespace ft
 				}
 				void	push_back(const T & value)
 				{
-					if (this->_size + 1 > this->capacity())
+					if (this->size() == this->capacity())
 					{
 						size_type	i = 0;
 						if (!this->_tab)
 						{
+							this->_capacity++;
 							this->_tab = this->_alloc.allocate(this->capacity());
 						}
 						else
@@ -361,7 +362,6 @@ namespace ft
 							}
 							*this = newvec;
 						}
-						this->_capacity++;
 					}
 					this->_alloc.construct(&this->_tab[this->size()], value);
 					this->_size++;
@@ -369,8 +369,8 @@ namespace ft
 
 				void	pop_back(void)
 				{
+					this->_alloc.destroy(this->_tab + this->size());
 					this->_size--;
-					this->_alloc.destroy(this->_tab[this->_size]);
 				}
 
 				void	resize(size_type count, T value = T())
@@ -395,10 +395,10 @@ namespace ft
 					*this = tmp;
 				}
 			private:
-				size_type	_capacity;
-				T*			_tab;
 				Allocator	_alloc;
+				T*			_tab;
 				size_type	_size;
+				size_type	_capacity;
 				template<class InputIt>
 					size_type	_distit(InputIt first, InputIt last)
 					{
@@ -432,25 +432,25 @@ namespace ft
 	template< class T, class Alloc >
 		bool operator<( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator<=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator>( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator>=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
 		}
 }
 
