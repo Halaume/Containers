@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/15 15:57:58 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 10:02:13 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <iterator>
 #include "iterator.hpp"
 #include <iostream>
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -68,7 +69,7 @@ namespace ft
 						i++;
 					}
 				}
-// TODO This constructor
+				// TODO This constructor
 				template<class InputIt>
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
 					{
@@ -79,8 +80,8 @@ namespace ft
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _tab(copy._tab), _size(copy._size), _capacity(copy._capacity)
-				{
-				}
+			{
+			}
 
 				~vector(void) 
 				{
@@ -92,7 +93,7 @@ namespace ft
 						this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 				}
-// TODO every overload
+				// TODO every overload
 				vector &	operator=(const vector & src)
 				{
 					if (this == &src)
@@ -204,6 +205,8 @@ namespace ft
 				const T*	data(void) const;
 				iterator	begin(void) { iterator temp = this->_tab; return (temp); }
 
+				const_iterator begin() const { const_iterator temp = this->_tab; return (temp); }
+
 				iterator	end(void) { iterator tmp = this->_tab + this->size(); return (tmp); }
 
 				const_iterator	end(void) const { const_iterator tmp = this->_tab + this->size(); return (tmp); }
@@ -272,7 +275,21 @@ namespace ft
 					return (ret);
 				}
 
-				iterator	erase(iterator first, iterator last);
+				iterator	erase(iterator first, iterator last)
+				{
+					if (!first || first == last)
+						return (last);
+					if (last == this->end())
+					{
+						//TODO Erase first -> last
+						for (iterator tmp = first; tmp != last; tmp++)
+						{
+							destroy(tmp);
+							this->_size--;
+						}
+						return (this->_end());
+					}
+				}
 				void	push_back(const T & value)
 				{
 					if (this->_size + 1 > this->capacity())
@@ -331,6 +348,51 @@ namespace ft
 				Allocator	_alloc;
 				size_type	_size;
 		};
+
+	template< class T, class Alloc >
+		bool operator==( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
+		{
+			if (lhs.size() == rhs.size())
+			{
+				typename vector<T, Alloc>::iterator it1 = lhs.begin();
+				typename vector<T, Alloc>::iterator it2 = rhs.begin();
+
+				while (it1 != lhs.end() && it2 != lhs.end())
+				{
+					if (*it1 != *it2)
+						return (false);
+				}
+				
+			}
+			return (true);
+		}
+
+	template< class T, class Alloc >
+		bool operator!=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs ) { return (!(lhs == rhs)); }
+
+	template< class T, class Alloc >
+		bool operator<( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
+		{
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+
+	template< class T, class Alloc >
+		bool operator<=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
+		{
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+
+	template< class T, class Alloc >
+		bool operator>( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
+		{
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+
+	template< class T, class Alloc >
+		bool operator>=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
+		{
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
 }
 
 #endif
