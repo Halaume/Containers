@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 16:11:28 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/16 17:01:51 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -369,8 +369,11 @@ namespace ft
 
 				void	pop_back(void)
 				{
-					this->_alloc.destroy(this->_tab + this->size());
-					this->_size--;
+					if (this->size())
+					{
+						this->_alloc.destroy(&this->_tab[this->size()]);
+						this->_size--;
+					}
 				}
 
 				void	resize(size_type count, T value = T())
