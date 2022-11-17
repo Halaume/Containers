@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 15:38:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/17 16:21:25 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ template<typename T>
 void	print_vec(T	v)
 {
 	std::cout << "-----------" << std::endl;
-	for (size_t i = 0; i < v.size(); i++)
-		std::cout << v[i] << " | ";
+	for (typename T::size_type i = 0; i < v.size(); i++)
+		std::cout << v[i] << " add -> " << &v[i] << " | ";
 	std::cout << std::endl << "-----------" << std::endl;
 	std::cout << "Size : " << v.size() << std::endl;
 	std::cout << "Capacity : " << v.capacity() << std::endl;

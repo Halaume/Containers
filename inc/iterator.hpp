@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/15 16:18:56 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/17 16:37:50 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ namespace ft
 				typedef T value_type;
 				typedef Pointer pointer;
 				typedef Reference reference;
+
 				Iterator(void)
 				{
 				}

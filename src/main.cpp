@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 13:23:53 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 13:42:55 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/17 15:27:11 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	do_vector(void);
 
 int main(void)
 {
-	do_stack();
+//	do_stack();
 	do_vector();
 
 	return (0);
