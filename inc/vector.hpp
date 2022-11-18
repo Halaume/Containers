@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 14:47:04 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/18 15:58:51 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ namespace ft
 					size_type	i = 0;
 					this->_alloc = alloc;
 					this->_size = count;
-					this->_capacity = this->_size * 2;
+					this->_capacity = this->_size;
 					this->_tab = this->_alloc.allocate(this->capacity());
 					while (i < this->_size)
 					{
@@ -352,8 +352,6 @@ namespace ft
 					iterator	insert(const_iterator pos, InputIt first, InputIt last);
 				iterator	erase(iterator pos)
 				{
-//					if (pos == this->end())
-//						return (this->end());
 					iterator	ret;
 					pointer	tab;
 					size_type j = 0;
@@ -375,7 +373,6 @@ namespace ft
 					this->_size--;
 					return (ret);
 				}
-				//TODO Fix looping
 				iterator	erase(iterator first, iterator last)
 				{
 					if (first == last)
@@ -398,14 +395,17 @@ namespace ft
 					}
 					else
 					{
-						for (iterator tmp = first; tmp != last; tmp++)
+						size_type i = j;
+						for (; first != last; first++, j++)
 						{
 							this->_alloc.destroy(this->_tab + j);
 							this->_size--;
 						}
-						size_type i = 0;
-						for (iterator tmp = last; tmp != this->end(); tmp++, i++)
-							first + i = tmp;
+						while (i != j)
+						{
+							this->_tab[i] = this->_tab[j];
+							i++;
+						}
 						return (first);
 					}
 				}
