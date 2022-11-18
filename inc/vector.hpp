@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 11:52:34 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/18 12:03:40 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -350,11 +350,10 @@ namespace ft
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
 					iterator	insert(const_iterator pos, InputIt first, InputIt last);
-				//TODO Erase UNIQUEMENT pos et reattacher mon vector maybe
 				iterator	erase(iterator pos)
 				{
-					if (pos == this->end())
-						return (this->end());
+//					if (pos == this->end())
+//						return (this->end());
 					iterator	ret;
 					pointer	tab;
 					size_type size_tab = this->_distit(pos, this->end());
