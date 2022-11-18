@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/17 16:37:50 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/18 09:35:13 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,11 @@ namespace ft
 		class Iterator
 		{
 			public:
-				typedef ptrdiff_t difference_type;
-				typedef Category iterator_category;
-				typedef T value_type;
-				typedef Pointer pointer;
-				typedef Reference reference;
+				typedef typename iterator_traits<Pointer>::difference_type difference_type;
+				typedef typename iterator_traits<Pointer>::iterator_category iterator_category;
+				typedef typename iterator_traits<Pointer>::value_type value_type;
+				typedef typename iterator_traits<Pointer>::pointer pointer;
+				typedef typename iterator_traits<Pointer>::reference reference;
 
 				Iterator(void)
 				{
@@ -79,7 +79,9 @@ namespace ft
 				{
 				}
 
-				Iterator(pointer value) { this->_value = value; }
+				Iterator(pointer value): _value(value)
+				{
+				}
 
 				~Iterator(void) 
 				{

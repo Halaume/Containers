@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/16 16:08:06 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/18 10:23:12 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ STD = Containers_std
 vpath %.hpp ./inc/
 vpath %.cpp ./src/
 
-OBJ_DIR = 		obj
+OBJ_DIR = 		obj_ft
+
+OBJ_DIR_STD = 		obj_std
 
 INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair)
 
@@ -24,7 +26,11 @@ SRC =			$(SRC_FT:%=./%.cpp)
 
 OBJ =			$(SRC:./%.cpp=$(OBJ_DIR)/%.o)
 
+OBJ_STD =			$(SRC:./%.cpp=$(OBJ_DIR_STD)/%.o)
+
 OBJ_DIRS =		$(OBJ_DIR)
+
+OBJ_DIRS_STD =	$(OBJ_DIR_STD)
 
 CXX = c++ $(CXXFLAGS)
 
@@ -50,16 +56,25 @@ $(OBJ_DIRS):
 	mkdir -p $@
 
 $(OBJ_DIR)/%.o: ./%.cpp
-	$(CXX) -c $< -o $@
+	$(CXX) -DNAMESPACE=ft -c $< -o $@
 
 $(FT): $(OBJ_DIRS) $(SRC) $(OBJ)
 	$(CXX) -DNAMESPACE=ft $(OBJ) -o $@
 
-$(STD): $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=std $(OBJ) -o $@
+$(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
+
+$(OBJ_DIRS_STD):
+	mkdir -p $@
+
+$(OBJ_DIR_STD)/%.o: ./%.cpp
+	$(CXX) -DNAMESPACE=std -c $< -o $@
+
+$(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
+	$(CXX) -DNAMESPACE=std $(OBJ_STD) -o $@
 
 clean:
 	@$(RM) $(OBJ_DIR)
+	@$(RM) $(OBJ_DIR_STD)
 	@$(RM) ft_output std_output
 	@echo "Cleaned object and outputs"
 
