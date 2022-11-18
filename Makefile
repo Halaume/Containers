@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/18 10:23:12 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/18 11:37:25 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -114,5 +114,6 @@ coffee: all clean
 	@echo "\0033[1;32m\033[3C                    Take Your Coffee"
 	$(call print_aligned_coffee)
 
-.SECONDARY: $(OBJ) $(OBJ_DIR)
+.SECONDARY: $(OBJ) $(OBJ_DIR) $(OBJ_STD) $(OBJ_DIR_STD)
+
 .PHONY: all clean fclean re coffee

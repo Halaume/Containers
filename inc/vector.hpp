@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 10:13:08 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/18 11:52:34 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ namespace ft
 						i++;
 					}
 				}
-				// TODO This constructor
 				template<class InputIt>
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
 					{
@@ -342,7 +341,7 @@ namespace ft
 						for (iterator it = pos; it != this->end(); it++, i++)
 							tab[i] = *it;
 						*pos = value;
-						i = this->_distit(this->_begin, pos);
+						i = this->_distit(this->begin(), pos);
 						for (size_type it = 0; it != size_tab; it++, i++)
 							this->_tab[i] = tab[it];
 						this->_alloc.deallocate(tab, size_tab);
@@ -357,9 +356,18 @@ namespace ft
 					if (pos == this->end())
 						return (this->end());
 					iterator	ret;
-					for (iterator pos2 = pos; pos2 != this->end() - 1 ; pos2++)
-						std::cout << *pos2 << std::endl;
-					this->_alloc.destroy(this->_tab + this->size());
+					pointer	tab;
+					size_type size_tab = this->_distit(pos, this->end());
+					tab = this->_alloc.allocate(size_tab);
+					size_type i = 0;
+					for (iterator it = pos + 1; it != this->end(); it++, i++)
+						tab[i] = *it;
+					i = this->_distit(this->begin(), pos);
+					this->_alloc.destroy(this->_tab + this->_distit(this->begin(), pos));
+					for (size_type it = 0; it != size_tab; it++, i++)
+						this->_tab[i] = tab[it];
+					this->_alloc.deallocate(tab, size_tab);
+
 					this->_size--;
 					return (ret);
 				}
