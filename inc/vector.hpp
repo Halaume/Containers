@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 12:03:40 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/18 14:47:04 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,39 +356,51 @@ namespace ft
 //						return (this->end());
 					iterator	ret;
 					pointer	tab;
-					size_type size_tab = this->_distit(pos, this->end());
-					tab = this->_alloc.allocate(size_tab);
-					size_type i = 0;
-					for (iterator it = pos + 1; it != this->end(); it++, i++)
-						tab[i] = *it;
-					i = this->_distit(this->begin(), pos);
-					this->_alloc.destroy(this->_tab + this->_distit(this->begin(), pos));
-					for (size_type it = 0; it != size_tab; it++, i++)
-						this->_tab[i] = tab[it];
-					this->_alloc.deallocate(tab, size_tab);
+					size_type j = 0;
+
+					tab = this->_alloc.allocate(this->size());
+					for (size_type i = 0; i < this->size(); i++)
+						tab[i] = this->_tab[i];
+					iterator it = this->begin();
+					while (it != pos)
+					{
+						j++;
+						it++;
+					}
+					this->_alloc.destroy(this->_tab + j);
+					for (size_type i = j + 1; i != this->size(); i++)
+						this->_tab[i - 1] = tab[i];
+					this->_alloc.deallocate(tab, this->_size);
 
 					this->_size--;
 					return (ret);
 				}
-				//TODO Reattacher mon vector maye
+				//TODO Fix looping
 				iterator	erase(iterator first, iterator last)
 				{
-					if (!first || first == last)
+					if (first == last)
 						return (last);
+					size_type j = 0;
+					iterator it = this->begin();
+					while (it != first)
+					{
+						j++;
+						it++;
+					}
 					if (last == this->end())
 					{
 						for (iterator tmp = first; tmp != last; tmp++)
 						{
-							destroy(tmp);
+							this->_alloc.destroy(this->_tab + j);
 							this->_size--;
 						}
-						return (this->_end());
+						return (this->end());
 					}
 					else
 					{
 						for (iterator tmp = first; tmp != last; tmp++)
 						{
-							destroy(tmp);
+							this->_alloc.destroy(this->_tab + j);
 							this->_size--;
 						}
 						size_type i = 0;
@@ -491,25 +503,25 @@ namespace ft
 	template< class T, class Alloc >
 		bool operator<( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator<=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator>( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
+			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) && lhs != rhs);
 		}
 
 	template< class T, class Alloc >
 		bool operator>=( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
+			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) || lhs == rhs);
 		}
 }
 
