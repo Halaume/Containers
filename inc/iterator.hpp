@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 09:35:13 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/20 15:06:58 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,13 +98,6 @@ namespace ft
 				{
 					return (Iterator<Category, const T>(this->_value));
 				}
-				bool		operator>(Iterator other) const { return (other < *this); }
-				bool		operator<(Iterator other) const { return ((other - *this) < 0); }
-				bool		operator>=(Iterator other) const { return (!(*this < other)); }
-				bool		operator<=(Iterator other) const { return (!(*this > other)); }
-				bool		operator==(Iterator other) const { return (this->_value == other._value); }
-				bool		operator!=(Iterator other) const { return (this->_value != other._value); }
-
 				Iterator &	operator+=(difference_type other)
 				{
 					difference_type m = other;
@@ -149,6 +142,42 @@ namespace ft
 			private:
 				pointer	_value;
 		};
+
+	template <class Category, class T>
+		bool		operator>(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return (!(rhs < lhs) && rhs != lhs);
+		}
+
+	template <class Category, class T>
+		bool		operator<(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return ((rhs - lhs) < 0);
+		}
+
+	template <class Category, class T>
+		bool		operator>=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return (!(lhs < rhs));
+		}
+
+	template <class Category, class T>
+		bool		operator<=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return (!(lhs > rhs));
+		}
+
+	template <class Category, class T>
+		bool		operator==(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return (lhs->_value == rhs._value);
+		}
+
+	template <class Category, class T>
+		bool		operator!=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+		{
+			return (lhs->_value != rhs._value);
+		}
 
 	template <class Iter>
 		class Reverse_iterator
