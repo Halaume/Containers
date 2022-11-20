@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:01:38 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/14 11:00:26 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/20 11:18:52 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ namespace ft
 				explicit stack(const Container & cont = Container()): c(cont)
 			{
 			}
-				stack(const stack & copy) 
+				stack(const stack & copy): c(copy.c)
 				{
-					*this = copy;
 				}
 				~stack(void)
 				{
@@ -40,17 +39,16 @@ namespace ft
 				{
 					if (this == &src)
 						return (*this);
-					Container tmp = Container(src.c);
-					this->c = tmp;
+					this->c = src.c;
 					return (*this);
 				}
 				T &			top(void)
 				{
-					return (*(this->c.end() - 1));
+					return (this->c.back());
 				}
 				const T &	top(void) const
 				{
-					return (*(this->c.end() - 1));
+					return (this->c.back());
 				}
 				bool		empty(void) const
 				{
@@ -62,11 +60,11 @@ namespace ft
 				}
 				void		push(const T & elem)
 				{
-					this->c.insert(this->c.begin(), elem);
+					this->c.push_back(elem);
 				}
 				void		pop(void)
 				{
-					this->c.erase(this->c.end() - 1);
+					this->c.pop_back();
 				}
 				bool friend operator==(const stack & lhs, const stack & rhs)
 				{

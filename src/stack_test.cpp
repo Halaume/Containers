@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:38:17 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 13:53:28 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/20 11:19:43 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,16 @@ void	do_stack()
 	c1.push(5);
 	c1.push(4);
 	c1.push(3);
+	c1.pop();
 	std::cout << c1.size() << std::endl;
 	std::cout << c1.top() << std::endl;
 	std::cout << c1.empty() << std::endl;
-	c1.pop();
-	std::cout << c1.size() << std::endl;
+	NAMESPACE::stack<int, std::vector<int> > c2(c1);
 
-	NAMESPACE::stack<int, std::vector<int> > c2 = c1;
+	std::cout << c2.size() << std::endl;
+	std::cout << c2.top() << std::endl;
+	std::cout << c2.empty() << std::endl;
+
 	std::cout << "-------------------" << std::endl;
 	for (size_t i = 0; i <= c2.size(); i++)
 	{
