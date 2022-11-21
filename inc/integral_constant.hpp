@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/26 17:13:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/20 13:55:30 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:15:54 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,15 @@ namespace ft
 		};
 
 	template <bool val>
-		bool const integral_constant<bool, val>::value;
+		struct integral_constant<bool, val>
+		{
+			typedef bool value_type;
+			typedef integral_constant<bool, val> type;
+			static const bool value = val;
+		};
 
+	template <bool val>
+		bool const integral_constant<bool, val>::value;
 	template <class T, T val>
 		T const integral_constant<T, val>::value;
 

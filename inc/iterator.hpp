@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/20 15:06:58 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/20 15:22:32 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ namespace ft
 				typedef std::random_access_iterator_tag iterator_category;
 		};
 
-	template <class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
+	template <class T, class Pointer = T*>
 		class Iterator
 		{
 			public:
@@ -94,9 +94,9 @@ namespace ft
 					this->_value = src._value;
 					return (*this);
 				}
-				operator	Iterator<Category, const T>(void) const
+				operator	Iterator<iterator_category, const T>(void) const
 				{
-					return (Iterator<Category, const T>(this->_value));
+					return (Iterator<iterator_category, const T>(this->_value));
 				}
 				Iterator &	operator+=(difference_type other)
 				{
@@ -143,41 +143,79 @@ namespace ft
 				pointer	_value;
 		};
 
-	template <class Category, class T>
-		bool		operator>(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator>(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return (!(rhs < lhs) && rhs != lhs);
 		}
 
-	template <class Category, class T>
-		bool		operator<(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator<(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return ((rhs - lhs) < 0);
 		}
 
-	template <class Category, class T>
-		bool		operator>=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator>=(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return (!(lhs < rhs));
 		}
 
-	template <class Category, class T>
-		bool		operator<=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator<=(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return (!(lhs > rhs));
 		}
 
-	template <class Category, class T>
-		bool		operator==(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator==(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return (lhs->_value == rhs._value);
 		}
 
-	template <class Category, class T>
-		bool		operator!=(Iterator<Category, T> lhs, Iterator<Category, T> rhs)
+	template <class T>
+		bool		operator!=(Iterator<T> lhs, Iterator<T> rhs)
 		{
 			return (lhs->_value != rhs._value);
 		}
+
+	template <typename it1, typename it2>
+		bool		operator>(it1 lhs, it2 rhs)
+		{
+			return (!(rhs < lhs) && rhs != lhs);
+		}
+
+	template <typename it1, typename it2>
+		bool		operator<(it1 lhs, it2 rhs)
+		{
+			return ((rhs - lhs) < 0);
+		}
+
+	template <typename it1, typename it2>
+		bool		operator>=(it1 lhs, it2 rhs)
+		{
+			return (!(lhs < rhs));
+		}
+
+	template <typename it1, typename it2>
+		bool		operator<=(it1 lhs, it2 rhs)
+		{
+			return (!(lhs > rhs));
+		}
+
+	template <typename it1, typename it2>
+		bool		operator==(it1 lhs, it2 rhs)
+		{
+			return (lhs->_value == rhs._value);
+		}
+
+	template <typename it1, typename it2>
+		bool		operator!=(it1 lhs, it2 rhs)
+		{
+			return (lhs->_value != rhs._value);
+		}
+
+
 
 	template <class Iter>
 		class Reverse_iterator

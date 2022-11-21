@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/20 10:46:31 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:21:45 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "iterator.hpp"
 #include <iostream>
 #include "lexicographical_compare.hpp"
+#include "enable_if.hpp"
+#include "is_integral.hpp"
 
 namespace ft
 {
@@ -70,7 +72,7 @@ namespace ft
 					}
 				}
 				template<class InputIt>
-					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator())
+					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL)
 					{
 						this->_alloc = alloc;
 						this->_size = this->_distit(first, last);
@@ -152,7 +154,7 @@ namespace ft
 				}
 
 				template<class InputIt>
-					void	assign(InputIt first, InputIt last)
+					void	assign(InputIt first, InputIt last, typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL)
 					{
 						if (this->_distit(first, last) <= this->capacity())
 						{
@@ -291,21 +293,12 @@ namespace ft
 				{
 					if (new_cap <= this->capacity())
 						return ;
-					vector<T> vec(this->_alloc);
-
-					vec._size = this->size();
-					vec._capacity = new_cap;
-					vec._tab = vec.alloc.allocate(vec.capacity());
-
-					size_type i = 0;
-
-					for (iterator it = this->begin(); it != this->end(); it++, i++)
-					{
-						vec[i] = *it;
-						this->_alloc.destroy(it);
-					}
-					this->_alloc.deallocate(this->_tab, this->capacity());
-					*this = vec;
+					pointer newvec = this->_alloc.allocate(new_cap);
+					for (size_type i = 0; i < new_cap && i < this->size(); i++)
+						newvec[i] = this->_tab[i];
+					this->_alloc.deallocate(this->_tab, this->_capacity);
+					this->_tab = newvec;
+					this->_capacity = new_cap;
 				}
 
 				size_type	capacity(void) const
@@ -349,7 +342,7 @@ namespace ft
 				}
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
-					iterator	insert(const_iterator pos, InputIt first, InputIt last);
+					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL);
 				iterator	erase(iterator pos)
 				{
 					iterator	ret;
@@ -375,6 +368,20 @@ namespace ft
 				}
 				iterator	erase(iterator first, iterator last)
 				{
+					if (first == last)
+						return (last);
+
+					size_type i = 0;
+
+					for (;this->_tab[i] != first;i++)
+					for (;last != this->end(); i++, last++)
+						this->_tab[i] = last;
+					size_type newsize = i;
+					for (;i < this->size(); i++)
+						this->_alloc.destroy(this->_tab + i);
+					this->_size = newsize;
+					return (first);
+					/*
 					if (first == last)
 						return (last);
 					size_type j = 0;
@@ -407,7 +414,7 @@ namespace ft
 							i++;
 						}
 						return (first);
-					}
+					}*/
 				}
 				void	push_back(const T & value)
 				{
