@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/21 15:21:45 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:35:14 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ namespace ft
 					}
 				}
 				template<class InputIt>
-					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL)
+					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL)
 					{
 						this->_alloc = alloc;
 						this->_size = this->_distit(first, last);
@@ -154,7 +154,7 @@ namespace ft
 				}
 
 				template<class InputIt>
-					void	assign(InputIt first, InputIt last, typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL)
+					void	assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL)
 					{
 						if (this->_distit(first, last) <= this->capacity())
 						{
@@ -342,7 +342,7 @@ namespace ft
 				}
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
-					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!is_integral<InputIt>::value>::type* = NULL);
+					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL);
 				iterator	erase(iterator pos)
 				{
 					iterator	ret;
@@ -366,7 +366,7 @@ namespace ft
 					this->_size--;
 					return (ret);
 				}
-				iterator	erase(iterator first, iterator last)
+				iterator	erase(iterator first, iterator last, typename ft::enable_if<!ft::is_integral<iterator>::value>::type* = NULL)
 				{
 					if (first == last)
 						return (last);

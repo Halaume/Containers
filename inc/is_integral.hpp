@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/26 17:12:55 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/21 15:35:21 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/21 17:31:40 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ namespace ft
 		struct is_integral_base<bool>: ft::true_type {};
 	template<>
 		struct is_integral_base<char>: ft::true_type {};
-	template<>
-		struct is_integral_base<char16_t>: ft::true_type {};
-	template<>
-		struct is_integral_base<char32_t>: ft::true_type {};
+//	template<>
+//		struct is_integral_base<char16_t>: ft::true_type {};
+//	template<>
+//		struct is_integral_base<char32_t>: ft::true_type {};
 	template<>
 		struct is_integral_base<wchar_t>: ft::true_type {};
 	template<>

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/20 15:22:32 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/21 15:47:07 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include "Iterator_traits.hpp"
 
 /*template <class Category, class T, class Distance = ptrdiff_t,
   class Pointer = T*, class Reference = T&>
@@ -28,39 +29,6 @@
 
 namespace ft
 {
-	template <class Iterator> 
-		class iterator_traits
-		{
-			public:
-				typedef typename Iterator::difference_type difference_type;
-				typedef typename Iterator::value_type value_type;
-				typedef typename Iterator::pointer pointer;
-				typedef typename Iterator::reference reference;
-				typedef typename Iterator::iterator_category iterator_category;
-		};
-
-	template <class T> 
-		class iterator_traits<T*>
-		{
-			public:
-				typedef ptrdiff_t difference_type;
-				typedef T value_type;
-				typedef T * pointer;
-				typedef T & reference;
-				typedef std::random_access_iterator_tag iterator_category;
-		};
-
-	template <class T> 
-		class iterator_traits<const T*>
-		{
-			public:
-				typedef ptrdiff_t difference_type;
-				typedef T value_type;
-				typedef T * pointer;
-				typedef T & reference;
-				typedef std::random_access_iterator_tag iterator_category;
-		};
-
 	template <class T, class Pointer = T*>
 		class Iterator
 		{
@@ -76,12 +44,12 @@ namespace ft
 				}
 
 				Iterator(const Iterator & copy): _value(copy._value)
-				{
-				}
+			{
+			}
 
 				Iterator(pointer value): _value(value)
-				{
-				}
+			{
+			}
 
 				~Iterator(void) 
 				{
