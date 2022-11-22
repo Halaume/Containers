@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/21 17:35:14 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:36:40 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,18 @@ namespace ft
 		class vector
 		{
 			public:
-				typedef T value_type;
-				typedef Allocator allocator_type;
-				typedef std::size_t size_type;
-				typedef std::ptrdiff_t difference_type;
-				typedef typename Allocator::reference reference;
-				typedef typename Allocator::const_reference const_reference;
-				typedef typename Allocator::pointer pointer;
-				typedef const typename Allocator::pointer const_pointer;
-				typedef ft::Iterator<std::random_access_iterator_tag, T> iterator;
-				typedef ft::Iterator<std::random_access_iterator_tag, const T> const_iterator;
-				typedef ft::Reverse_iterator<iterator> reverse_iterator;
-				typedef ft::Reverse_iterator<const_iterator> const_reverse_iterator;
+				typedef T										value_type;
+				typedef Allocator								allocator_type;
+				typedef std::size_t								size_type;
+				typedef std::ptrdiff_t							difference_type;
+				typedef typename Allocator::reference			reference;
+				typedef typename Allocator::const_reference		const_reference;
+				typedef typename Allocator::pointer				pointer;
+				typedef const typename Allocator::pointer		const_pointer;
+				typedef ft::Iterator<T>							iterator;
+				typedef ft::Iterator<const T>					const_iterator;
+				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
+				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
 				vector(void)
 				{
@@ -72,7 +72,7 @@ namespace ft
 					}
 				}
 				template<class InputIt>
-					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL)
+					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!(ft::is_integral<InputIt>::value)>::type* = NULL)
 					{
 						this->_alloc = alloc;
 						this->_size = this->_distit(first, last);
@@ -154,7 +154,7 @@ namespace ft
 				}
 
 				template<class InputIt>
-					void	assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL)
+					void	assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
 						if (this->_distit(first, last) <= this->capacity())
 						{
@@ -214,12 +214,16 @@ namespace ft
 
 				reference	back(void)
 				{
-					return (*this->end() - 1);
+					if (this->size() > 0)
+						return (*this->end() - 1);
+					return (NULL);
 				}
 
 				const_reference	back(void) const
 				{
-					return (*this->end() - 1);
+					if (this->size() > 0)
+						return (*this->end() - 1);
+					return (NULL);
 				}
 
 				T*	data(void)
@@ -342,7 +346,7 @@ namespace ft
 				}
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
-					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value>::type* = NULL);
+					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL);
 				iterator	erase(iterator pos)
 				{
 					iterator	ret;
@@ -366,16 +370,17 @@ namespace ft
 					this->_size--;
 					return (ret);
 				}
-				iterator	erase(iterator first, iterator last, typename ft::enable_if<!ft::is_integral<iterator>::value>::type* = NULL)
+				iterator	erase(iterator first, iterator last)
 				{
 					if (first == last)
 						return (last);
 
 					size_type i = 0;
+					//TODO destroy into construct
 
-					for (;this->_tab[i] != first;i++)
+					for (;this->_tab + i != &(*first);i++)
 					for (;last != this->end(); i++, last++)
-						this->_tab[i] = last;
+						this->_tab + i = *last;
 					size_type newsize = i;
 					for (;i < this->size(); i++)
 						this->_alloc.destroy(this->_tab + i);

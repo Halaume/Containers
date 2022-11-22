@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/21 15:47:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 11:32:28 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,15 @@
 
 namespace ft
 {
-	template <class T, class Pointer = T*>
+	template <typename T>
 		class Iterator
 		{
 			public:
-				typedef typename iterator_traits<Pointer>::difference_type difference_type;
-				typedef typename iterator_traits<Pointer>::iterator_category iterator_category;
-				typedef typename iterator_traits<Pointer>::value_type value_type;
-				typedef typename iterator_traits<Pointer>::pointer pointer;
-				typedef typename iterator_traits<Pointer>::reference reference;
+				typedef ptrdiff_t difference_type;
+				typedef T value_type;
+				typedef T * pointer;
+				typedef T & reference;
+				typedef std::random_access_iterator_tag iterator_category;
 
 				Iterator(void)
 				{
@@ -62,9 +62,9 @@ namespace ft
 					this->_value = src._value;
 					return (*this);
 				}
-				operator	Iterator<iterator_category, const T>(void) const
+				operator	Iterator<iterator_category>(void) const
 				{
-					return (Iterator<iterator_category, const T>(this->_value));
+					return (Iterator<iterator_category>(this->_value));
 				}
 				Iterator &	operator+=(difference_type other)
 				{
@@ -138,13 +138,13 @@ namespace ft
 	template <class T>
 		bool		operator==(Iterator<T> lhs, Iterator<T> rhs)
 		{
-			return (lhs->_value == rhs._value);
+			return (&(*lhs) == &(*rhs));
 		}
 
 	template <class T>
 		bool		operator!=(Iterator<T> lhs, Iterator<T> rhs)
 		{
-			return (lhs->_value != rhs._value);
+			return (!(lhs == rhs));
 		}
 
 	template <typename it1, typename it2>
@@ -174,13 +174,13 @@ namespace ft
 	template <typename it1, typename it2>
 		bool		operator==(it1 lhs, it2 rhs)
 		{
-			return (lhs->_value == rhs._value);
+			return (&(*lhs) == &(*rhs));
 		}
 
 	template <typename it1, typename it2>
 		bool		operator!=(it1 lhs, it2 rhs)
 		{
-			return (lhs->_value != rhs._value);
+			return (&(*lhs) != &(*rhs));
 		}
 
 
