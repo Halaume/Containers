@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/18 14:41:46 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 17:30:00 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,22 @@ void	print_comp_vec(T	v1, T	v2)
 void	do_vector()
 {
 	std::cout << std::endl << "---VECTOR---" << std::endl << std::endl;
+	std::cout << std::endl << "---Constructor---" << std::endl << std::endl;
+
 	NAMESPACE::vector<int> v1;
 	NAMESPACE::vector<int> v2;
+	NAMESPACE::vector<int> v3;
 
-//	print_comp_vec(v1, v2);
+	v3.push_back(5);
+	v3.push_back(10);
+	v3.push_back(15);
+
+	NAMESPACE::vector<int> v4(v3.begin(), v3.end());
+	NAMESPACE::vector<int> v5(10, 5);
+	print_vec(v4);
+	print_vec(v5);
+
+	print_comp_vec(v1, v2);
 
 	std::cout << std::endl << "---Push_back---" << std::endl << std::endl;
 	std::cout << "BEFORE" << std::endl;

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/22 11:32:28 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 17:32:27 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,20 @@ namespace ft
 				}
 
 				Iterator(const Iterator & copy): _value(copy._value)
-			{
-			}
+				{
+				}
 
 				Iterator(pointer value): _value(value)
-			{
-			}
+				{
+				}
 
 				~Iterator(void) 
 				{
+				}
+
+				operator Iterator<const T>()
+				{
+					return (Iterator<const T>(this->_value));
 				}
 
 				Iterator &	operator=(const Iterator & src)
@@ -211,12 +216,11 @@ namespace ft
 					this->_current = src._current;
 					return (*this);
 				}
-				bool		operator>(Reverse_iterator other) const { return (other._current > this->_current); }
-				bool		operator<(Reverse_iterator other) const { return (other._current < this->_current); }
-				bool		operator>=(Reverse_iterator other) const { return (this->_current >= other._current); }
-				bool		operator<=(Reverse_iterator other) const { return (this->_current <= other._current); }
-				bool		operator==(Reverse_iterator other) const { return (this->_current == other._current); }
-				bool		operator!=(Reverse_iterator other) const { return (this->_current != other._current); }
+
+				operator Reverse_iterator<const Iter>()
+				{
+					return (Reverse_iterator<const Iter>(this->_current));
+				}
 
 				Reverse_iterator &	operator+=(difference_type other) 
 				{
@@ -236,9 +240,9 @@ namespace ft
 				Reverse_iterator		operator+(difference_type nb) { Reverse_iterator temp = *this; return (temp += nb); }
 				Reverse_iterator &		operator-=(difference_type nb) { return (*this += -nb); }
 				Reverse_iterator		operator-(difference_type nb) const { Reverse_iterator temp = *this; return (temp -= nb); }
-				difference_type	operator-(Reverse_iterator other) const { return ((this->_current - other._current)); }
-				Reverse_iterator &	operator++(void) { --_current; return (*this); }
-				Reverse_iterator	operator++(int)
+				difference_type			operator-(Reverse_iterator other) const { return ((this->_current - other._current)); }
+				Reverse_iterator &		operator++(void) { --_current; return (*this); }
+				Reverse_iterator		operator++(int)
 				{
 					Reverse_iterator tmp = *this;
 					++*this;
@@ -257,6 +261,41 @@ namespace ft
 			private:
 				Iter	_current;
 		};
+	template <class T>
+		bool		operator>(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return (!(rhs < lhs) && rhs != lhs);
+		}
+
+	template <class T>
+		bool		operator<(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return ((rhs - lhs) < 0);
+		}
+
+	template <class T>
+		bool		operator>=(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return (!(lhs < rhs));
+		}
+
+	template <class T>
+		bool		operator<=(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return (!(lhs > rhs));
+		}
+
+	template <class T>
+		bool		operator==(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return (&(*lhs) == &(*rhs));
+		}
+
+	template <class T>
+		bool		operator!=(Reverse_iterator<T> lhs, Reverse_iterator<T> rhs)
+		{
+			return (!(lhs == rhs));
+		}
 }
 
 #endif

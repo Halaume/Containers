@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/21 15:48:02 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/22 17:50:26 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,7 +75,7 @@ $(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
 clean:
 	@$(RM) $(OBJ_DIR)
 	@$(RM) $(OBJ_DIR_STD)
-	@$(RM) ft_output std_output
+	@$(RM) ft_output std_output ft_output_val std_output_val diff diff_val
 	@echo "Cleaned object and outputs"
 
 fclean: clean

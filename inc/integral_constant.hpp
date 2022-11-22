@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/26 17:13:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/21 14:15:54 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 17:18:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ namespace ft
 			typedef T value_type;
 			typedef integral_constant<T, val> type;
 			static const T value = val;
+			operator	T() const { return (value); }
 		};
 
 	template <bool val>
@@ -26,6 +27,7 @@ namespace ft
 			typedef bool value_type;
 			typedef integral_constant<bool, val> type;
 			static const bool value = val;
+			operator	bool() const { return (value); }
 		};
 
 	template <bool val>

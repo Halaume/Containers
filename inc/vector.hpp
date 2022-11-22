@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/22 11:36:40 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/22 17:49:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,20 @@ namespace ft
 					this->_tab = this->_alloc.allocate(this->capacity());
 					while (i < this->_size)
 					{
-						this->_alloc.construct(&this->_tab[i], value);
+						this->_alloc.construct(this->_tab + i, value);
 						i++;
 					}
 				}
 				template<class InputIt>
-					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!(ft::is_integral<InputIt>::value)>::type* = NULL)
+					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
+						std::cout << "AAAAH " << ft::is_integral<InputIt>::value << std::endl;
 						this->_alloc = alloc;
-						this->_size = this->_distit(first, last);
+						this->_size = this->_distit(first, last);	//C'est de la merde a changer
 						this->_tab = this->_alloc.allocate(this->size());
 						this->_capacity = this->size();
 						for (size_type i = 0; i < this->size(); i++, first++)
-							this->_tab[i] = *first;
+							this->_alloc.construct(this->_tab + i, *first);
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _size(copy._size), _capacity(copy._capacity)
@@ -164,7 +165,7 @@ namespace ft
 						else
 						{
 							this->clear();
-							this->_alloc.deallocate(this->begin(), this->end());
+							this->_alloc.deallocate(this->_tab, this->size());
 							this->_capacity = this->_distit(first, last);
 							this->_size = this->capacity();
 							this->_tab = this->_alloc.allocate(this->capacity());
@@ -215,15 +216,15 @@ namespace ft
 				reference	back(void)
 				{
 					if (this->size() > 0)
-						return (*this->end() - 1);
-					return (NULL);
+						return (*(this->end() - 1));
+					return (*(this->_tab));
 				}
 
 				const_reference	back(void) const
 				{
 					if (this->size() > 0)
-						return (*this->end() - 1);
-					return (NULL);
+						return (*(this->end() - 1));
+					return (*(this->_tab));
 				}
 
 				T*	data(void)
@@ -325,13 +326,35 @@ namespace ft
 
 				iterator	insert(const_iterator pos, const T & value)
 				{
+					iterator it = this->end();
 					if (this->size() + 1 > this->capacity())
 					{
-						//TODO new _tab and alloc
+						pointer	tab;
+						this->_alloc.allocate(tab, this->capacity() * 2);
+						this->_capacity *= 2;
+						for (;it != pos; it--)
+						{
+							if (it != this->end())
+								this->_alloc.destroy(*it);
+							this->_alloc.construct(*it, *it - 1);
+						}
+						this->_alloc.destroy(*it);
+						this->_alloc.construct(*it, value);
+						this->_alloc.deallocate(this->_tab, this->size());
+						this->_size++;
+						this->_tab = tab;
 					}
 					else
 					{
-						pointer	tab;
+						for (;it != pos; it--)
+						{
+							this->_alloc.destroy(*it);
+							this->_alloc.construct(*it, *it - 1);
+						}
+						this->_alloc.destroy(*it);
+						this->_alloc.construct(*it, value);
+
+					/*	pointer	tab;
 						size_type size_tab = this->_distit(pos, this->end());
 						tab = this->_alloc.allocate(size_tab);
 						size_type i = 0;
@@ -341,7 +364,7 @@ namespace ft
 						i = this->_distit(this->begin(), pos);
 						for (size_type it = 0; it != size_tab; it++, i++)
 							this->_tab[i] = tab[it];
-						this->_alloc.deallocate(tab, size_tab);
+						this->_alloc.deallocate(tab, size_tab);*/
 					}
 				}
 				iterator	insert(const_iterator pos, size_type count, const T & value);
@@ -376,11 +399,13 @@ namespace ft
 						return (last);
 
 					size_type i = 0;
-					//TODO destroy into construct
 
 					for (;this->_tab + i != &(*first);i++)
 					for (;last != this->end(); i++, last++)
-						this->_tab + i = *last;
+					{
+						this->_alloc.destroy(this->_tab + i);
+						this->_alloc.construct(this->_tab + i, *last);
+					}
 					size_type newsize = i;
 					for (;i < this->size(); i++)
 						this->_alloc.destroy(this->_tab + i);
@@ -494,10 +519,13 @@ namespace ft
 	template< class T, class Alloc >
 		bool operator==( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
+			//TODO Figure out why begin are const iterator<int> and it iterator<const int>
 			if (lhs.size() == rhs.size())
 			{
-				typename vector<T, Alloc>::iterator it1 = lhs.begin();
-				typename vector<T, Alloc>::iterator it2 = rhs.begin();
+				typename vector<T, Alloc>::iterator it1;
+				it1 = lhs.begin();
+				typename vector<T, Alloc>::iterator it2;
+				it2 = rhs.begin();
 
 				for (;it1 != lhs.end() && it2 != lhs.end(); it1++, it2++)
 				{
