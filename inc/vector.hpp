@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/22 17:49:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/23 11:50:37 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ namespace ft
 					}
 				}
 				template<class InputIt>
+					//TODO Fix this operator
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
 						std::cout << "AAAAH " << ft::is_integral<InputIt>::value << std::endl;
@@ -367,6 +368,7 @@ namespace ft
 						this->_alloc.deallocate(tab, size_tab);*/
 					}
 				}
+				//TODO Here
 				iterator	insert(const_iterator pos, size_type count, const T & value);
 				template<class InputIt>
 					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL);
@@ -400,7 +402,7 @@ namespace ft
 
 					size_type i = 0;
 
-					for (;this->_tab + i != &(*first);i++)
+					for (;this->_tab + i != &(*first);i++);
 					for (;last != this->end(); i++, last++)
 					{
 						this->_alloc.destroy(this->_tab + i);
@@ -507,6 +509,7 @@ namespace ft
 				T*			_tab;
 				size_type	_size;
 				size_type	_capacity;
+				//TODO spec for any iterator type, impossible with inputit
 				template<class InputIt>
 					size_type	_distit(InputIt first, InputIt last)
 					{
@@ -519,12 +522,11 @@ namespace ft
 	template< class T, class Alloc >
 		bool operator==( const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs )
 		{
-			//TODO Figure out why begin are const iterator<int> and it iterator<const int>
 			if (lhs.size() == rhs.size())
 			{
-				typename vector<T, Alloc>::iterator it1;
+				typename vector<T, Alloc>::const_iterator it1;
 				it1 = lhs.begin();
-				typename vector<T, Alloc>::iterator it2;
+				typename vector<T, Alloc>::const_iterator it2;
 				it2 = rhs.begin();
 
 				for (;it1 != lhs.end() && it2 != lhs.end(); it1++, it2++)

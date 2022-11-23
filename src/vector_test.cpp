@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/22 17:30:00 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/23 11:43:42 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,12 @@ void	print_vec(T &	v)
 template<typename T>
 void	print_comp_vec(T	v1, T	v2)
 {
-	std::cout << "v1 == v2" << (v1 == v2 ? "true" : "false") << std::endl;
-	std::cout << "v1 != v2" << (v1 != v2 ? "true" : "false") << std::endl;
-	std::cout << "v1 < v2" << (v1 < v2 ? "true" : "false") << std::endl;
-	std::cout << "v1 <= v2" << (v1 <= v2 ? "true" : "false") << std::endl;
-	std::cout << "v1 > v2" << (v1 > v2 ? "true" : "false") << std::endl;
-	std::cout << "v1 >= v2" << (v1 >= v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 == v2 : " << (v1 == v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 != v2 : " << (v1 != v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 < v2 : " << (v1 < v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 <= v2 : " << (v1 <= v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 > v2 : " << (v1 > v2 ? "true" : "false") << std::endl;
+	std::cout << "v1 >= v2 : " << (v1 >= v2 ? "true" : "false") << std::endl;
 }
 
 void	do_vector()
