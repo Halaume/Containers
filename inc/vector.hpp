@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/23 15:34:24 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/24 17:31:02 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@
 #include <cstddef>
 #include <iterator>
 #include "iterator.hpp"
+#include "reverse_iterator.hpp"
 #include <iostream>
 #include "lexicographical_compare.hpp"
 #include "enable_if.hpp"
 #include "is_integral.hpp"
+#include "is_same.hpp"
 
 namespace ft
 {
@@ -75,13 +77,21 @@ namespace ft
 					//TODO Fix this operator
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
-						std::cout << "AAAAH " << ft::is_integral<InputIt>::value << std::endl;
 						this->_alloc = alloc;
-						this->_size = this->_distit(first, last);	//C'est de la merde a changer
-						this->_tab = this->_alloc.allocate(this->size());
-						this->_capacity = this->size();
-						for (size_type i = 0; i < this->size(); i++, first++)
-							this->_alloc.construct(this->_tab + i, *first);
+						if (this->_distit(first, last) != - 1)
+						{
+							this->_size = static_cast<size_type>(this->_distit(first, last));
+							this->_tab = this->_alloc.allocate(this->size());
+							this->_capacity = this->size();
+							for (size_type i = 0; i < this->size(); i++, first++)
+								this->_alloc.construct(this->_tab + i, *first);
+						}
+						else
+						{
+							this->_size = 0;
+							for (;first != last; first++)
+								this->push_back(*first);
+						}
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _size(copy._size), _capacity(copy._capacity)
@@ -123,34 +133,18 @@ namespace ft
 					return (*this);
 				}
 
-				void	assign(std::size_t count, const T & value)
+				void	assign(size_type count, const T & value)
 				{
 					if (count <= this->_size)
 					{
-						for (size_type	i = 0; i < this->_size; i++)
-						{
-							this->_alloc.destroy(this->_tab + i);
-							this->_alloc.construct(&this->_tab[i], value);
-						}
+						this->clear();
+						for (size_type	i = 0; i < count; i++)
+							this->push_back(value);
 					}
 					else
 					{
-						vector<T> vec(this->_alloc);
+						vector<T> vec(count, value, this->_alloc);
 
-						vec._capacity = count;
-						vec._size = count;
-						vec._tab = vec._alloc.allocate(vec.capacity());
-						for (size_type	i = 0; i < vec.capacity(); i++)
-						{
-							if (i < this->_size)
-							{
-								vec._alloc.construct(&vec._tab[i], this->_tab[i]);
-								this->_alloc.destroy(this->_tab + i);
-							}
-							else
-								vec._alloc.construct(&vec._tab[i], value);
-						}
-						this->_alloc.deallocate(this->_tab, this->capacity());
 						*this = vec;
 					}
 				}
@@ -158,20 +152,32 @@ namespace ft
 				template<class InputIt>
 					void	assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
-						if (this->_distit(first, last) <= this->capacity())
+						if (this->_distit(first, last) != -1 && static_cast<size_type>(this->_distit(first, last)) <= this->capacity())
 						{
+							this->clear();
 							for (size_type i = 0; first != last; i++, first++)
-								this->_tab[i] = *first;
+								this->push_back(*first);
 						}
 						else
 						{
-							this->clear();
-							this->_alloc.deallocate(this->_tab, this->size());
-							this->_capacity = this->_distit(first, last);
-							this->_size = this->capacity();
-							this->_tab = this->_alloc.allocate(this->capacity());
-							for (size_type	i = 0; first != last; first++, i++)
-								this->_tab[i] = *first;
+							vector<T>	vec(first, last);
+							*this = vec;
+/*							this->clear();
+							this->_alloc.deallocate(this->_tab, this->capacity());
+							this->_capacity = this->_distit(first, last); //Marche pas avec des Input pure
+																		  //Push_back only with inputIt;
+							if (this->capacity() != -1)
+							{
+								this->_size = this->capacity();
+								this->_tab = this->_alloc.allocate(this->capacity());
+								for (size_type	i = 0; first != last; first++, i++)
+									this->_tab[i] = *first;
+							}
+							else
+							{
+								this->_capacity = 0;
+								PUSH_BAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK();
+							}*/
 						}
 					}
 
@@ -374,26 +380,15 @@ namespace ft
 					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL);
 				iterator	erase(iterator pos)
 				{
-					iterator	ret;
-					pointer	tab;
-					size_type j = 0;
-
-					tab = this->_alloc.allocate(this->size());
-					for (size_type i = 0; i < this->size(); i++)
-						tab[i] = this->_tab[i];
-					iterator it = this->begin();
-					while (it != pos)
+					this->_alloc.destroy(&(*pos));
+					for (iterator start = pos; (start + 1) != this->end(); start++)
 					{
-						j++;
-						it++;
+						this->_alloc.construct(&(*start), *(start + 1));
+						this->_alloc.destroy(&(*(start + 1)));
 					}
-					this->_alloc.destroy(this->_tab + j);
-					for (size_type i = j + 1; i != this->size(); i++)
-						this->_tab[i - 1] = tab[i];
-					this->_alloc.deallocate(tab, this->_size);
 
 					this->_size--;
-					return (ret);
+					return (pos);
 				}
 				iterator	erase(iterator first, iterator last)
 				{
@@ -498,22 +493,31 @@ namespace ft
 				}
 				void	swap(vector & other)
 				{
-					vector<T> tmp;
+					Allocator	alloc = this->_alloc;
+					pointer		tab = this->_tab;
+					size_type	size = this->_size;
+					size_type	capacity = this->_capacity;
 
-					tmp = other;
-					other = *this;
-					*this = tmp;
+					this->_alloc = other._alloc;
+					this->_tab = other._tab;
+					this->_size = other._size;
+					this->_capacity = other._capacity;
+					other._alloc = alloc;
+					other._tab = tab;
+					other._size = size;
+					other._capacity = capacity;
 				}
 			private:
 				Allocator	_alloc;
-				T*			_tab;
+				pointer		_tab;
 				size_type	_size;
 				size_type	_capacity;
-				//TODO spec for any iterator type, impossible with inputit
 				template<class InputIt>
-					size_type	_distit(InputIt first, InputIt last)
+					difference_type	_distit(InputIt first, InputIt last)
 					{
-						size_type	i = 0;
+						if (ft::is_same<InputIt, std::input_iterator_tag>::value)
+							return (-1);
+						difference_type	i = 0;
 						for (InputIt	tmp = first; tmp != last; tmp++, i++);
 						return (i);
 					}
@@ -534,9 +538,9 @@ namespace ft
 					if (*it1 != *it2)
 						return (false);
 				}
-				
+				return (true);
 			}
-			return (true);
+			return (false);
 		}
 
 	template< class T, class Alloc >

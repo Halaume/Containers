@@ -1,30 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   enable_if.hpp                                      :+:      :+:    :+:   */
+/*   is_same.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/26 17:13:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/24 11:14:54 by ghanquer         ###   ########.fr       */
+/*   Created: 2022/11/24 10:59:08 by ghanquer          #+#    #+#             */
+/*   Updated: 2022/11/24 11:14:12 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef IS_SAME_HPP
+#define IS_SAME_HPP
 
-#ifndef ENABLE_IF_HPP
-#define ENABLE_IF_HPP
+#include "integral_constant.hpp"
 
 namespace ft
 {
-	template<bool type, class T = void>
-		struct enable_if
-		{
-		};
-	template <class T>
-		struct enable_if<true, T>
-		{
-			typedef T type;
-		};
+	template<class T, class U>
+		struct is_same : ft::false_type {};
+
+	template<class T>
+		struct is_same<T, T> : ft::true_type {};
 }
 
 #endif

@@ -6,9 +6,12 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/26 17:13:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/22 17:18:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/24 11:13:10 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef INTEGRAL_CONSTANT_HPP
+#define INTEGRAL_CONSTANT_HPP
 
 namespace ft
 {
@@ -38,3 +41,5 @@ namespace ft
 	typedef integral_constant<bool, true> true_type;
 	typedef integral_constant<bool, false> false_type;
 }
+
+#endif

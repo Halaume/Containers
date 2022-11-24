@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   enable_if.hpp                                      :+:      :+:    :+:   */
+/*   remove_cv.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/26 17:13:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/24 11:14:54 by ghanquer         ###   ########.fr       */
+/*   Created: 2022/11/24 11:00:52 by ghanquer          #+#    #+#             */
+/*   Updated: 2022/11/24 11:15:23 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#ifndef ENABLE_IF_HPP
-#define ENABLE_IF_HPP
+#ifndef REMOVE_CV_HPP
+#define REMOVE_CV_HPP
 
 namespace ft
 {
-	template<bool type, class T = void>
-		struct enable_if
-		{
-		};
 	template <class T>
-		struct enable_if<true, T>
-		{
-			typedef T type;
-		};
+		struct remove_cv{ typedef T type; };
+	template <class T>
+		struct remove_cv<T const>{ typedef T type;  };
+	template <class T>
+		struct remove_cv<T volatile>{ typedef T type; };
+	template <class T>
+		struct remove_cv<T const volatile>{ typedef T type; };
 }
 
 #endif

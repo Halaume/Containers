@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/23 11:43:42 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/24 11:46:20 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,15 @@ void	do_vector()
 	v2.erase(v2.end() - 1);
 	v2.erase(v2.end() - 5);
 	v2.erase(v2.begin() + 1, v2.end() - 3);
+	std::cout << "AFTER" << std::endl;
+	print_vec(v2);
+
+
+	std::cout << std::endl << "---Assign---" << std::endl << std::endl;
+	std::cout << "BEFORE" << std::endl;
+	print_vec(v2);
+	v2.assign(v2.begin() + 2, v2.end() - 1);
+	v2.assign(20, 4);
 	std::cout << "AFTER" << std::endl;
 	print_vec(v2);
 }

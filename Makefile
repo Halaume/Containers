@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/22 17:50:26 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/24 11:03:03 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ OBJ_DIR = 		obj_ft
 
 OBJ_DIR_STD = 		obj_std
 
-INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair Iterator_traits)
+INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair Iterator_traits reverse_iterator remove_cv is_same)
 
 SRC =			$(SRC_FT:%=./%.cpp)
 
