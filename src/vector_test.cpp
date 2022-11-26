@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/24 11:46:20 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/26 14:40:54 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define NAMESPACE ft
 #endif
 
-template<typename T>
+	template<typename T>
 void	print_vec(T &	v)
 {
 	std::cout << "-----------" << std::endl;
@@ -32,7 +32,7 @@ void	print_vec(T &	v)
 	std::cout << "Capacity : " << v.capacity() << std::endl << std::endl;
 }
 
-template<typename T>
+	template<typename T>
 void	print_comp_vec(T	v1, T	v2)
 {
 	std::cout << "v1 == v2 : " << (v1 == v2 ? "true" : "false") << std::endl;
@@ -79,7 +79,7 @@ void	do_vector()
 	std::cout << "AFTER" << std::endl;
 	print_vec(v2);
 
-	
+
 	v2.push_back(15);
 	v2.push_back(15);
 	v2.push_back(15);
@@ -105,6 +105,22 @@ void	do_vector()
 	print_vec(v2);
 	v2.assign(v2.begin() + 2, v2.end() - 1);
 	v2.assign(20, 4);
+	std::cout << "AFTER" << std::endl;
+	print_vec(v2);
+
+	v2.assign(10, 4);
+	std::cout << std::endl << "---Insert---" << std::endl << std::endl;
+	std::cout << "BEFORE" << std::endl;
+	print_vec(v2);
+	v2.insert(v2.begin() + 4, 6);
+	print_vec(v2);
+	v2.insert(v2.begin() + 4, 2, 5);
+	print_vec(v2);
+	v2.insert(v2.begin() + 4, 10, 9);
+	print_vec(v2);
+	v2.insert(v2.begin(), v2.begin(), v2.begin() + 3);
+	print_vec(v2);
+	v2.insert(v2.begin(), v2.begin(), v2.end());
 	std::cout << "AFTER" << std::endl;
 	print_vec(v2);
 }

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/24 17:31:02 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/26 17:34:59 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,12 @@ namespace ft
 					this->_alloc = alloc;
 					this->_size = count;
 					this->_capacity = this->_size;
-					this->_tab = this->_alloc.allocate(this->capacity());
+					if (count > this->max_size())
+						throw (std::length_error("ft::vector"));
+					if (count == 0)
+						this->_tab = NULL;
+					else
+						this->_tab = this->_alloc.allocate(this->capacity());
 					while (i < this->_size)
 					{
 						this->_alloc.construct(this->_tab + i, value);
@@ -74,12 +79,13 @@ namespace ft
 					}
 				}
 				template<class InputIt>
-					//TODO Fix this operator
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
 						this->_alloc = alloc;
 						if (this->_distit(first, last) != - 1)
 						{
+							if (static_cast<size_type>(this->_distit(first,last)) > this->max_size())
+								throw (std::length_error("ft::vector"));
 							this->_size = static_cast<size_type>(this->_distit(first, last));
 							this->_tab = this->_alloc.allocate(this->size());
 							this->_capacity = this->size();
@@ -95,16 +101,16 @@ namespace ft
 					}
 
 				vector(const vector & copy): _alloc(copy._alloc), _size(copy._size), _capacity(copy._capacity)
+			{
+				if (copy.capacity() == 0)
+					this->_tab = NULL;
+				else
 				{
-					if (copy.capacity() == 0)
-						this->_tab = NULL;
-					else
-					{
-						this->_tab = this->_alloc.allocate(this->capacity());
-						for (size_type i = 0; i < copy.size(); i++)
-							this->_alloc.construct(this->_tab + i, copy._tab[i]);
-					}
+					this->_tab = this->_alloc.allocate(this->capacity());
+					for (size_type i = 0; i < copy.size(); i++)
+						this->_alloc.construct(this->_tab + i, copy._tab[i]);
 				}
+			}
 
 				~vector(void) 
 				{
@@ -121,21 +127,26 @@ namespace ft
 					if (this->_tab)
 					{
 						this->clear();
-						if (this->_capacity)
+						if (this->capacity() != 0)
 							this->_alloc.deallocate(this->_tab, this->capacity());
 					}
 					this->_alloc = src._alloc;
-					this->_tab = this->_alloc.allocate(src.capacity());
+					if (src.capacity() == 0)
+						this->_tab = NULL;
+					else
+						this->_tab = this->_alloc.allocate(src.capacity());
 					this->_size = src._size;
 					this->_capacity = src._capacity;
 					for (size_type	i = 0; i < this->size(); i++)
-						this->_tab[i] = src._tab[i];
+						this->_alloc.construct(this->_tab + i, *(src._tab + i));
 					return (*this);
 				}
 
 				void	assign(size_type count, const T & value)
 				{
-					if (count <= this->_size)
+					if (count > this->max_size())
+						throw (std::length_error("ft::vector"));
+					if (count <= this->size())
 					{
 						this->clear();
 						for (size_type	i = 0; i < count; i++)
@@ -143,60 +154,79 @@ namespace ft
 					}
 					else
 					{
-						vector<T> vec(count, value, this->_alloc);
-
-						*this = vec;
+						pointer	tab;
+						if (count == 0)
+							tab = NULL;
+						else
+							tab = this->_alloc.allocate(count);
+						for (size_type	i = 0; i < count; i++)
+							this->_alloc.construct(tab + i, value);
+						this->clear();
+						if (this->capacity() != 0)
+							this->_alloc.deallocate(this->_tab, this->capacity());
+						this->_tab = tab;
+						this->_size = count;
+						this->_capacity = count;
 					}
 				}
 
 				template<class InputIt>
 					void	assign(InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
-						if (this->_distit(first, last) != -1 && static_cast<size_type>(this->_distit(first, last)) <= this->capacity())
+						difference_type dist = this->_distit(first, last);
+						if (dist != -1 && static_cast<size_type>(this->_distit(first, last)) <= this->capacity())
 						{
+							if (static_cast<size_type>(dist) > this->max_size())
+								throw (std::length_error("ft::vector"));
 							this->clear();
 							for (size_type i = 0; first != last; i++, first++)
 								this->push_back(*first);
 						}
+						else if (dist != -1)
+						{
+							if (static_cast<size_type>(dist) > this->max_size())
+								throw (std::length_error("ft::vector"));
+							pointer	tab;
+							if (dist == 0)
+								tab = NULL;
+							else
+								tab = this->_alloc.allocate(dist);
+							for (difference_type	i = 0; i < dist; i++, first++)
+								this->_alloc.construct(tab + i, *first);
+							this->clear();
+							if (this->capacity() != 0)
+								this->_alloc.deallocate(this->_tab, this->capacity());
+							this->_tab = tab;
+							this->_size = dist;
+							this->_capacity = dist;
+						}
 						else
 						{
-							vector<T>	vec(first, last);
-							*this = vec;
-/*							this->clear();
-							this->_alloc.deallocate(this->_tab, this->capacity());
-							this->_capacity = this->_distit(first, last); //Marche pas avec des Input pure
-																		  //Push_back only with inputIt;
-							if (this->capacity() != -1)
+							this->clear();
+							while (first != last)
 							{
-								this->_size = this->capacity();
-								this->_tab = this->_alloc.allocate(this->capacity());
-								for (size_type	i = 0; first != last; first++, i++)
-									this->_tab[i] = *first;
+								this->push_back(*first);
+								first++;
 							}
-							else
-							{
-								this->_capacity = 0;
-								PUSH_BAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK();
-							}*/
 						}
 					}
 
 				allocator_type	get_allocator() const
 				{
-					return  (this->Allocator);
+					return  (this->_alloc);
 				}
 
 				reference at(std::size_t pos)
 				{
-					if (pos < 0 || pos > this->_size)
-						throw std::out_of_range("Invalid size");
+					if (pos < 0 || pos >= this->_size)
+						throw std::out_of_range("ft::vector");
 					return (this->_tab[pos]);
 				}
 
 				const_reference at(std::size_t pos) const
 				{
-					if (pos < 0 || pos > this->_size)
-						throw std::out_of_range("Invalid size");
+					if (pos < 0 || pos >= this->_size)
+						throw std::out_of_range("ft::vector");
 					return (this->_tab[pos]);
 				}
 
@@ -303,6 +333,8 @@ namespace ft
 
 				void	reserve(size_type new_cap)
 				{
+					if (new_cap > this->max_size())
+						throw (std::length_error("ft::vector"));
 					if (new_cap <= this->capacity())
 						return ;
 					pointer newvec = this->_alloc.allocate(new_cap);
@@ -333,51 +365,147 @@ namespace ft
 
 				iterator	insert(const_iterator pos, const T & value)
 				{
-					iterator it = this->end();
+					iterator it;
+					if (this->size() + 1 > this->max_size())
+						throw (std::length_error("ft::vector"));
 					if (this->size() + 1 > this->capacity())
 					{
+						it = this->begin();
 						pointer	tab;
-						this->_alloc.allocate(tab, this->capacity() * 2);
+						tab = this->_alloc.allocate(this->capacity() * 2);
 						this->_capacity *= 2;
-						for (;it != pos; it--)
-						{
-							if (it != this->end())
-								this->_alloc.destroy(*it);
-							this->_alloc.construct(*it, *it - 1);
-						}
-						this->_alloc.destroy(*it);
-						this->_alloc.construct(*it, value);
-						this->_alloc.deallocate(this->_tab, this->size());
-						this->_size++;
+						size_type i;
+						for (i = 0;it != pos; it++, i++)
+							this->_alloc.construct(tab + i, *(it));
+						this->_alloc.construct(tab + i, value);
+						for (i = i + 1;it != this->end(); it++, i++)
+							this->_alloc.construct(tab + i, *(it));
+						this->_alloc.deallocate(this->_tab, this->capacity());
+						size_type tmp = this->size();
+						this->clear();
+						this->_size = tmp;
 						this->_tab = tab;
 					}
 					else
 					{
+						it = this->end();
 						for (;it != pos; it--)
 						{
-							this->_alloc.destroy(*it);
-							this->_alloc.construct(*it, *it - 1);
+							if (it != this->end())
+								this->_alloc.destroy(&(*it));
+							this->_alloc.construct(&(*it), *(it - 1));
 						}
-						this->_alloc.destroy(*it);
-						this->_alloc.construct(*it, value);
-
-					/*	pointer	tab;
-						size_type size_tab = this->_distit(pos, this->end());
-						tab = this->_alloc.allocate(size_tab);
-						size_type i = 0;
-						for (iterator it = pos; it != this->end(); it++, i++)
-							tab[i] = *it;
-						*pos = value;
-						i = this->_distit(this->begin(), pos);
-						for (size_type it = 0; it != size_tab; it++, i++)
-							this->_tab[i] = tab[it];
-						this->_alloc.deallocate(tab, size_tab);*/
+						this->_alloc.destroy(&(*it));
+						this->_alloc.construct(&(*it), value);
 					}
+					this->_size++;
+					return (it);
 				}
-				//TODO Here
-				iterator	insert(const_iterator pos, size_type count, const T & value);
+				iterator	insert(iterator pos, size_type count, const T & value)
+				{
+					if (count == 0)
+						return (pos);
+					if (this->size() + count > this->max_size())
+						throw (std::length_error("ft::vector"));
+					difference_type	start = this->_distit(this->begin(), pos);
+					if (this->size() + count > this->capacity() && start != -1)
+					{
+						size_type capacity = this->capacity() * 2 >= this->size() + count ? this->capacity() * 2 : this->size() + count;
+						pointer tab;
+						tab = this->_alloc.allocate(capacity);
+						difference_type j = 0;
+						while (j < start)
+						{
+							this->_alloc.construct(tab + j, *(this->begin() + j));
+							j++;
+						}
+						for (size_type i = 0; i < count; i++)
+							this->_alloc.construct(tab + start + i, value);
+						iterator it = pos;
+						j = start + count;
+						size_type i = 0;
+						while (it != this->end())
+						{
+							this->_alloc.construct(tab + j, this->_tab[start + i]);
+							it++;
+							i++;
+							j++;
+						}
+						for (size_type i = 0; i < this->size(); i++)
+							this->_alloc.destroy(this->_tab + i);
+						this->_alloc.deallocate(this->_tab, this->capacity());
+						this->_size += count;
+						this->_capacity = capacity;
+						this->_tab = tab;
+					}
+					else
+					{
+						while (count != 0)
+						{
+							this->insert(pos, value);
+							count--;
+						}
+					}
+					return (pos + 1);
+				}
 				template<class InputIt>
-					iterator	insert(const_iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL);
+					iterator	insert(iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
+					{
+						if (first == last)
+							return (pos);
+						iterator it = this->begin();
+						difference_type size = this->_distit(first, last);
+						difference_type dist_pos = this->_distit(this->begin(), pos);
+						if (size != -1 && this->size() + size > this->max_size())
+							throw (std::length_error("ft::vector"));
+						if (size != -1 && dist_pos != -1 && this->size() + size > this->capacity())
+						{
+							size_type capacity = this->capacity() * 2 >= this->size() + size ? this->capacity() * 2 : this->size() + size;
+							pointer tab;
+							tab = this->_alloc.allocate(capacity);
+							difference_type j = 0;
+							while (j < dist_pos)
+							{
+								this->_alloc.construct(tab + j, *(this->begin() + j));
+								j++;
+							}
+							for (size_type i = 0; first != last; first++, i++)
+								this->_alloc.construct(tab + dist_pos + i, *first);
+							iterator it = pos;
+							j = dist_pos + size;
+							size_type i = 0;
+							while (it != this->end())
+							{
+								this->_alloc.construct(tab + j, this->_tab[dist_pos + i]);
+								it++;
+								i++;
+								j++;
+							}
+							for (size_type i = 0; i < this->size(); i++)
+								this->_alloc.destroy(this->_tab + i);
+							this->_alloc.deallocate(this->_tab, this->capacity());
+							this->_size += size;
+							this->_capacity = capacity;
+							this->_tab = tab;
+						}
+						else
+						{
+							vector<T>	tmp = vector(pos + 1, this->end());
+							while (pos + 1 != this->end())
+								this->pop_back();
+							while (first != last)
+							{
+								this->push_back(*first);
+								first++;
+							}
+							while (tmp.size() != 0)
+							{
+								this->push_back(*(tmp.begin()));
+								tmp.erase(tmp.begin());
+							}
+						}
+						return (pos + 1);
+					}
 				iterator	erase(iterator pos)
 				{
 					this->_alloc.destroy(&(*pos));
@@ -408,45 +536,11 @@ namespace ft
 						this->_alloc.destroy(this->_tab + i);
 					this->_size = newsize;
 					return (first);
-					/*
-					if (first == last)
-						return (last);
-					size_type j = 0;
-					iterator it = this->begin();
-					while (it != first)
-					{
-						j++;
-						it++;
-					}
-					if (last == this->end())
-					{
-						for (iterator tmp = first; tmp != last; tmp++)
-						{
-							this->_alloc.destroy(this->_tab + j);
-							this->_size--;
-						}
-						return (this->end());
-					}
-					else
-					{
-						size_type i = j;
-						for (; first != last; first++, j++)
-						{
-							this->_alloc.destroy(this->_tab + j);
-							this->_size--;
-						}
-						while (i != j)
-						{
-							this->_tab[i] = this->_tab[j];
-							i++;
-						}
-						return (first);
-					}*/
 				}
 				void	push_back(const T & value)
 				{
 					if (this->size() + 1 > this->max_size())
-						throw (std::length_error("Max size exceeded"));
+						throw (std::length_error("ft::vector"));
 					if (this->capacity() == 0)
 					{
 						this->_capacity = 1;
@@ -473,7 +567,7 @@ namespace ft
 				{
 					if (this->size())
 					{
-						this->_alloc.destroy(&this->_tab[this->size()]);
+						this->_alloc.destroy(&this->_tab[this->size()] - 1);
 						this->_size--;
 					}
 				}
@@ -482,11 +576,13 @@ namespace ft
 				{
 					if (this->_size > count)
 					{
-						while (this->_size != count)
+						while (this->size() != count)
 							this->pop_back();
 					}
 					else
 					{
+						if (count > this->max_size())
+							throw (std::length_error("ft::vector"));
 						while (this->_size != count)
 							this->push_back(value);
 					}
@@ -541,6 +637,12 @@ namespace ft
 				return (true);
 			}
 			return (false);
+		}
+
+	template<class T, class Alloc>
+		void	swap(ft::vector<T, Alloc>&lhs, ft::vector<T, Alloc>& rhs)
+		{
+			lhs.swap(rhs);
 		}
 
 	template< class T, class Alloc >
