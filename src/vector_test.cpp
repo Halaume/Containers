@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/26 14:40:54 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/28 14:12:50 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ void	do_vector()
 	v2.insert(v2.begin(), v2.begin(), v2.begin() + 3);
 	print_vec(v2);
 	v2.insert(v2.begin(), v2.begin(), v2.end());
+	print_vec(v2);
 	std::cout << "AFTER" << std::endl;
 	print_vec(v2);
 }

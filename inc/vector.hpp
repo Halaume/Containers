@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/26 17:34:59 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/28 14:36:21 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,8 +339,12 @@ namespace ft
 						return ;
 					pointer newvec = this->_alloc.allocate(new_cap);
 					for (size_type i = 0; i < new_cap && i < this->size(); i++)
-						newvec[i] = this->_tab[i];
-					this->_alloc.deallocate(this->_tab, this->_capacity);
+						this->_alloc.construct(newvec + i, this->_tab[i]);
+					size_type tmp = this->size();
+					this->clear();
+					if (this->capacity() != 0)
+						this->_alloc.deallocate(this->_tab, this->_capacity);
+					this->_size = tmp;
 					this->_tab = newvec;
 					this->_capacity = new_cap;
 				}
@@ -353,9 +357,9 @@ namespace ft
 				void	clear(void)
 				{
 					size_type	i = 0;
-					if (!this->_size)
+					if (!this->size())
 						return ;
-					while (i < this->_size)
+					while (i < this->size())
 					{
 						this->_alloc.destroy(this->_tab + i);
 						i++;
@@ -368,23 +372,30 @@ namespace ft
 					iterator it;
 					if (this->size() + 1 > this->max_size())
 						throw (std::length_error("ft::vector"));
+					if (!this->capacity())
+					{
+						this->push_back(value);
+						return (this->begin());
+					}
 					if (this->size() + 1 > this->capacity())
 					{
 						it = this->begin();
 						pointer	tab;
 						tab = this->_alloc.allocate(this->capacity() * 2);
-						this->_capacity *= 2;
 						size_type i;
 						for (i = 0;it != pos; it++, i++)
 							this->_alloc.construct(tab + i, *(it));
 						this->_alloc.construct(tab + i, value);
+						iterator	ret = iterator(tab + i);
 						for (i = i + 1;it != this->end(); it++, i++)
 							this->_alloc.construct(tab + i, *(it));
-						this->_alloc.deallocate(this->_tab, this->capacity());
 						size_type tmp = this->size();
 						this->clear();
-						this->_size = tmp;
+						this->_alloc.deallocate(this->_tab, this->capacity());
+						this->_capacity *= 2;
+						this->_size = tmp + 1;
 						this->_tab = tab;
+						return (ret);
 					}
 					else
 					{
@@ -395,7 +406,8 @@ namespace ft
 								this->_alloc.destroy(&(*it));
 							this->_alloc.construct(&(*it), *(it - 1));
 						}
-						this->_alloc.destroy(&(*it));
+						if (it != this->end())
+							this->_alloc.destroy(&(*it));
 						this->_alloc.construct(&(*it), value);
 					}
 					this->_size++;
@@ -407,10 +419,17 @@ namespace ft
 						return (pos);
 					if (this->size() + count > this->max_size())
 						throw (std::length_error("ft::vector"));
+					if (!this->size())
+					{
+						assign(count, value);
+						return (this->begin());
+					}
 					difference_type	start = this->_distit(this->begin(), pos);
-					if (this->size() + count > this->capacity() && start != -1)
+					if (start != -1 && this->size() + count > this->capacity())
 					{
 						size_type capacity = this->capacity() * 2 >= this->size() + count ? this->capacity() * 2 : this->size() + count;
+						if (capacity > this->max_size())
+							throw (std::length_error("ft::vector"));
 						pointer tab;
 						tab = this->_alloc.allocate(capacity);
 						difference_type j = 0;
@@ -431,10 +450,10 @@ namespace ft
 							i++;
 							j++;
 						}
-						for (size_type i = 0; i < this->size(); i++)
-							this->_alloc.destroy(this->_tab + i);
+						size_type tmp = this->size();
+						this->clear();
 						this->_alloc.deallocate(this->_tab, this->capacity());
-						this->_size += count;
+						this->_size = tmp + count;
 						this->_capacity = capacity;
 						this->_tab = tab;
 					}
@@ -458,9 +477,16 @@ namespace ft
 						difference_type dist_pos = this->_distit(this->begin(), pos);
 						if (size != -1 && this->size() + size > this->max_size())
 							throw (std::length_error("ft::vector"));
+						if (!this->capacity())
+						{
+							assign(first, last);
+							return (this->begin());
+						}
 						if (size != -1 && dist_pos != -1 && this->size() + size > this->capacity())
 						{
 							size_type capacity = this->capacity() * 2 >= this->size() + size ? this->capacity() * 2 : this->size() + size;
+							if (capacity > this->max_size())
+								throw (std::length_error("ft::vector"));
 							pointer tab;
 							tab = this->_alloc.allocate(capacity);
 							difference_type j = 0;
@@ -481,28 +507,52 @@ namespace ft
 								i++;
 								j++;
 							}
-							for (size_type i = 0; i < this->size(); i++)
-								this->_alloc.destroy(this->_tab + i);
+							size_type	tmp = this->size();
+							this->clear();
 							this->_alloc.deallocate(this->_tab, this->capacity());
-							this->_size += size;
+							this->_size = tmp + size;
 							this->_capacity = capacity;
 							this->_tab = tab;
 						}
 						else
 						{
-							vector<T>	tmp = vector(pos + 1, this->end());
-							while (pos + 1 != this->end())
-								this->pop_back();
+							pointer	tab;
+							size_type	istart = 0;
+							iterator	it = this->begin();
+							while (it != pos)
+							{
+								it++;
+								istart++;
+							}
+							tab = this->_alloc.allocate(this->size() - istart);
+							size_type	i = 0;
+							while (it != this->end())
+							{
+								this->_alloc.construct(tab + i, *(this->_tab + istart));
+								i++;
+								istart++;
+								it++;
+							}
+							if (pos != this->end())
+							{
+								while (pos + 1 != this->end())
+								{
+									this->pop_back();
+								}
+							}
 							while (first != last)
 							{
 								this->push_back(*first);
 								first++;
 							}
-							while (tmp.size() != 0)
+							size_type	j = 0;
+							while (j != i)
 							{
-								this->push_back(*(tmp.begin()));
-								tmp.erase(tmp.begin());
+								this->push_back(tab[j]);
+								this->_alloc.destroy(tab + j);
+								j++;
 							}
+							this->_alloc.deallocate(tab, i);
 						}
 						return (pos + 1);
 					}
@@ -555,11 +605,12 @@ namespace ft
 							this->_alloc.construct(tab + i, this->_tab[i]);
 							this->_alloc.destroy(this->_tab + i);
 						}
-						this->_alloc.deallocate(this->_tab, this->capacity());
+						if (this->capacity() != 0)
+							this->_alloc.deallocate(this->_tab, this->capacity());
 						this->_capacity *= 2;
 						this->_tab = tab;
 					}
-					this->_alloc.construct(&this->_tab[this->size()], value);
+					this->_alloc.construct(this->_tab + this->size(), value);
 					this->_size++;
 				}
 
@@ -611,7 +662,7 @@ namespace ft
 				template<class InputIt>
 					difference_type	_distit(InputIt first, InputIt last)
 					{
-						if (ft::is_same<InputIt, std::input_iterator_tag>::value)
+						if (ft::is_same<typename iterator_traits<InputIt>::iterator_category, std::input_iterator_tag>::value)
 							return (-1);
 						difference_type	i = 0;
 						for (InputIt	tmp = first; tmp != last; tmp++, i++);
