@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/24 11:03:03 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/28 18:36:46 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,9 +34,11 @@ OBJ_DIRS_STD =	$(OBJ_DIR_STD)
 
 CXX = c++ $(CXXFLAGS)
 
+PREC = 1
+
 RM = rm -fr
 
-CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
 
 .cpp.o:
 	$(CXX) -c $< -o $(<:.cpp=.o)
@@ -44,9 +46,9 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -g -std=c++98
 #HOW TO LIST .cpp
 #	ls -l | awk '{print $9}' | grep -E ".cpp$"| sed "s/\.cpp/ \\\/g" | sed '$s/\\$//g'
 
-SRC_FT = main \
-		 vector_test \
-		 stack_test
+SRC_FT = main 
+#		 vector_test \
+#		 stack_test
 
 all: $(STD) $(FT) 
 
@@ -56,10 +58,10 @@ $(OBJ_DIRS):
 	mkdir -p $@
 
 $(OBJ_DIR)/%.o: ./%.cpp
-	$(CXX) -DNAMESPACE=ft -c $< -o $@
+	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) -c $< -o $@
 
 $(FT): $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=ft $(OBJ) -o $@
+	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) $(OBJ) -o $@
 
 $(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
 
@@ -67,10 +69,13 @@ $(OBJ_DIRS_STD):
 	mkdir -p $@
 
 $(OBJ_DIR_STD)/%.o: ./%.cpp
-	$(CXX) -DNAMESPACE=std -c $< -o $@
+	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) -c $< -o $@
 
 $(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
-	$(CXX) -DNAMESPACE=std $(OBJ_STD) -o $@
+	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) $(OBJ_STD) -o $@
+
+test: $(FT) $(STD)
+	sh test.sh
 
 clean:
 	@$(RM) $(OBJ_DIR)
@@ -81,6 +86,8 @@ clean:
 fclean: clean
 	@$(RM) $(FT)
 	@$(RM) $(STD)
+	@$(RM) ft.log
+	@$(RM) std.log
 	@echo "Cleaned program"
 
 re: fclean all

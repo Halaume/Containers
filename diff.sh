@@ -1,10 +1,3 @@
 #!/bin/bash
-make
-./Containers_ft &> ft_output
-./Containers_std &> std_output
-diff ft_output std_output &> diff
-echo "Diff done"
-valgrind ./Containers_ft &> ft_output_val
-valgrind ./Containers_std &> std_output_val
-diff ft_output_val std_output_val &> diff_val
-echo "Diff valgrind done"
+
+awk 'FNR==NR { a[FNR""] = $0; next } { print a[FNR""], $0 }' std.log ft.log | awk -e '/^[0-9]*\.[0-9]*s\s.*[0-9]*\.[0-9]*s.*$/ {print $1 " " $5 " " $2 " " $3 " " $4}' | awk -e '{printf("% 7.2f%% %-6s %-9s %-10s\n", (($2/($1+0.1))*100), ($3), ($4), ($5))}'
