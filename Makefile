@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/28 18:36:46 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/11/29 11:20:21 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,8 +60,9 @@ $(OBJ_DIRS):
 $(OBJ_DIR)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) -c $< -o $@
 
-$(FT): $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) $(OBJ) -o $@
+$(FT): $(SRC) # $(OBJ_DIRS) $(SRC) $(OBJ)
+	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) src/$(SRC) -o $@
+	# $(OBJ) -o $@
 
 $(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
 
@@ -71,8 +72,9 @@ $(OBJ_DIRS_STD):
 $(OBJ_DIR_STD)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) -c $< -o $@
 
-$(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
-	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) $(OBJ_STD) -o $@
+$(STD): $(SRC)#$(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
+	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) src/$(SRC) -o $@
+	# $(OBJ_STD) -o $@
 
 test: $(FT) $(STD)
 	sh test.sh

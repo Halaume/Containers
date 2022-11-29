@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/28 14:36:21 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/29 15:29:36 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,10 @@ namespace ft
 				{
 					size_type	i = 0;
 					this->_alloc = alloc;
-					this->_size = count;
-					this->_capacity = this->_size;
 					if (count > this->max_size())
 						throw (std::length_error("ft::vector"));
+					this->_size = count;
+					this->_capacity = this->size();
 					if (count == 0)
 						this->_tab = NULL;
 					else
@@ -400,10 +400,14 @@ namespace ft
 					else
 					{
 						it = this->end();
+						if (it != pos)
+						{
+							this->_alloc.construct(&(*it), *(it - 1));
+							it--;
+						}
 						for (;it != pos; it--)
 						{
-							if (it != this->end())
-								this->_alloc.destroy(&(*it));
+							this->_alloc.destroy(&(*it));
 							this->_alloc.construct(&(*it), *(it - 1));
 						}
 						if (it != this->end())
@@ -659,7 +663,7 @@ namespace ft
 				pointer		_tab;
 				size_type	_size;
 				size_type	_capacity;
-				template<class InputIt>
+			/*	template<class InputIt>
 					difference_type	_distit(InputIt first, InputIt last)
 					{
 						if (ft::is_same<typename iterator_traits<InputIt>::iterator_category, std::input_iterator_tag>::value)
@@ -667,7 +671,45 @@ namespace ft
 						difference_type	i = 0;
 						for (InputIt	tmp = first; tmp != last; tmp++, i++);
 						return (i);
+					}*/
+				template<class It>
+					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::input_iterator_tag>::value, It>::type* = NULL)
+					{
+						(void)first;
+						(void)last;
+						return (-1);
 					}
+
+				template<class It>
+					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::output_iterator_tag>::value, It>::type* = NULL)
+					{
+						(void)first;
+						(void)last;
+						return (-1);
+					}
+
+				template<class It>
+					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::forward_iterator_tag>::value, It>::type* = NULL)
+					{
+						difference_type	i = 0;
+						for (It	tmp = first; tmp != last; tmp++, i++);
+						return (i);
+					}
+
+				template<class It>
+					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::bidirectional_iterator_tag>::value, It>::type* = NULL)
+					{
+						difference_type	i = 0;
+						for (It	tmp = first; tmp != last; tmp++, i++);
+						return (i);
+					}
+
+				template<class It>
+					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::random_access_iterator_tag>::value, It>::type* = NULL)
+					{
+						return (last - first);
+					}
+
 		};
 
 	template< class T, class Alloc >
