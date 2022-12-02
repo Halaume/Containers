@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/29 15:29:36 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/11/30 15:45:28 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ namespace ft
 				typedef typename Allocator::reference			reference;
 				typedef typename Allocator::const_reference		const_reference;
 				typedef typename Allocator::pointer				pointer;
-				typedef const typename Allocator::pointer		const_pointer;
+				typedef typename Allocator::const_pointer		const_pointer;
 				typedef ft::Iterator<T>							iterator;
 				typedef ft::Iterator<const T>					const_iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;

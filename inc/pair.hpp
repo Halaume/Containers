@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 12:49:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/16 10:11:05 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/02 11:25:48 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ namespace ft
 				pair(const pair<U1, U2> & p): first(p.first), second(p.second)
 				{
 				}
-			pair(const pair & p) = default;
 			pair &	operator=(const pair & other)
 			{
 				if (this == &other)

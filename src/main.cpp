@@ -6,12 +6,13 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 13:23:53 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/28 18:11:18 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/02 17:18:23 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/stack.hpp"
 #include "../inc/vector.hpp"
+#include "../inc/map.hpp"
 
 #include <vector>
 #include <iostream>
@@ -28,15 +29,18 @@
 
 void	do_stack(void);
 void	do_vector(void);
+void	do_map(void);
 
-/*int main(void)
+int main(void)
 {
-	do_stack();
-	do_vector();
+//	do_stack();
+//	do_vector();
+	do_map();
 
 	return (0);
-}*/
+}
 
+/*
 #ifndef PREC
 # define PREC 1
 #endif
@@ -379,3 +383,4 @@ int main () {
 		}
 	}
 }
+*/

@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/11/29 11:20:21 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/12/02 17:17:49 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,8 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
 #HOW TO LIST .cpp
 #	ls -l | awk '{print $9}' | grep -E ".cpp$"| sed "s/\.cpp/ \\\/g" | sed '$s/\\$//g'
 
-SRC_FT = main 
+SRC_FT = main \
+		 map_test
 #		 vector_test \
 #		 stack_test
 
@@ -61,7 +62,7 @@ $(OBJ_DIR)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) -c $< -o $@
 
 $(FT): $(SRC) # $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) src/$(SRC) -o $@
+	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) src/$(SRC)
 	# $(OBJ) -o $@
 
 $(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
@@ -73,7 +74,7 @@ $(OBJ_DIR_STD)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) -c $< -o $@
 
 $(STD): $(SRC)#$(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
-	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) src/$(SRC) -o $@
+	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) src/$(SRC)
 	# $(OBJ_STD) -o $@
 
 test: $(FT) $(STD)
