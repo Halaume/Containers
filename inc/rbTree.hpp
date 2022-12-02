@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 17:25:00 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/02 18:45:49 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "pair.hpp"
 #include "iterator.hpp"
 #include "reverse_iterator.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -51,23 +52,17 @@ namespace ft
 
 				struct node
 				{
-					node(void): color(BLACK), value()
+					node(void): color(BLACK), value(), parent(NULL), rchild(NULL), lchild(NULL)
 					{
-						parent = NULL;
-						lchild = NULL;
-						rchild = NULL;
 					}
 					node(const node & copy): parent(copy.parent), lchild(copy.lchild), rchild(copy.rchild), color(copy.color), value(copy.value)
 					{
 					}
-					node(pointer val, const Allocator & alloc = Allocator())
+					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), rchild(NULL), lchild(NULL), color(RED)
 					{
 						this->_alloc = alloc;
 						value = this->_alloc.allocate(1);
-						this->_alloc.construct(value, *val);
-						lchild = NULL;
-						rchild = NULL;
-						color = RED;
+						this->_alloc.construct(value, val);
 					}
 					~node(void)
 					{
@@ -177,6 +172,39 @@ namespace ft
 				{
 				}
 		};
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs );
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator!=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return (!(lhs == rhs));
+		}
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator<( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
+		}
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator<=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
+		}
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator>( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) && lhs != rhs);
+		}
+	template< class Key, class T, class Compare, class Alloc >
+		bool operator>=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) || lhs == rhs);
+		}
+
+	template< class Key, class T, class Compare, class Alloc >
+		void swap( RbTree<Key,T,Compare,Alloc>& lhs, RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			lhs.swap(rhs);
+		}
 }
 
 #endif
