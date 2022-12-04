@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 17:23:35 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/04 11:17:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ void    do_map( void )
 		v.push_back(i);
 	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
+	{
+//		std::cout << v[i] << std::endl;
 		tree.insert(ft::make_pair(v[i], v[i]));
+	}
 	printHelper(tree._start, "", true);
 }

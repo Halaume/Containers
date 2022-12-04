@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 18:45:49 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/04 13:23:50 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ namespace ft
 					node(const node & copy): parent(copy.parent), lchild(copy.lchild), rchild(copy.rchild), color(copy.color), value(copy.value)
 					{
 					}
-					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), rchild(NULL), lchild(NULL), color(RED)
+					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), lchild(NULL), rchild(NULL), color(RED)
 					{
 						this->_alloc = alloc;
 						value = this->_alloc.allocate(1);
@@ -66,8 +66,8 @@ namespace ft
 					}
 					~node(void)
 					{
-						this->_alloc.destroy(value);
-						this->_alloc.deallocate(value, 1);
+//						this->_alloc.destroy(value);
+//						this->_alloc.deallocate(value, 1);
 					}
 					node &	operator=(const node & src);
 					node*		parent;
@@ -92,7 +92,7 @@ namespace ft
 					this->_alloc = alloc;
 					this->_comp = comp;
 				}
-				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp)
+				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc)
 				{
 				}
 				RbTree(Key & key, T & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
@@ -104,7 +104,7 @@ namespace ft
 				}
 				~RbTree(void)
 				{
-					this->clear();
+//					this->clear();
 				}
 				void clear(void)
 				{
@@ -119,9 +119,18 @@ namespace ft
 						{
 							tmp2 = tmp;
 							if (tmp->parent)
+							{
 								tmp = tmp->parent;
-							this->_nodealloc.destroy(tmp2);
-							this->_nodealloc.deallocate(tmp2, 1);
+								this->_nodealloc.destroy(tmp2);
+								this->_nodealloc.deallocate(tmp2, 1);
+								tmp2 = NULL;
+							}
+							else
+							{
+								this->_nodealloc.destroy(tmp2);
+								this->_nodealloc.deallocate(tmp2, 1);
+								this->_start = NULL;
+							}
 						}
 						else
 							tmp = tmp->rchild;
@@ -134,19 +143,36 @@ namespace ft
 				value_type	insert(const value_type & value)
 				{
 					node* tmp = this->_start;
-					node* tmpp;
+					node* tmpp = NULL;
+//					std::cout << value.first << std::endl;
+					if (!tmp)
+					{
+						this->_start = this->_nodealloc.allocate(1);
+						this->_nodealloc.construct(this->_start, value);
+						return (*this->_start->value);
+					}
 					while (tmp)
 					{
 						tmpp = tmp;
 						if (value.first > tmp->value->first)
-							tmp = tmp->lchild;
-						else
+						{
+							std::cout << "Going left" << std::endl;
 							tmp = tmp->rchild;
+						}
+						else
+						{
+							std::cout << "Going right" << std::endl;
+							tmp = tmp->lchild;
+						}
 					}
 					tmp = this->_nodealloc.allocate(1);
-					pointer const tmp2 = &value;
-					this->_nodealloc.construct(tmp, tmp2);
+					this->_nodealloc.construct(tmp, value);
+					std::cout << tmp->value->first << std::endl;
 					tmp->parent = tmpp;
+					if (value.first > tmpp->value->first)
+						tmp->parent->rchild = tmp;
+					else
+						tmp->parent->lchild = tmp;
 					return (*tmp->value);
 				}
 /*				iterator insert( iterator pos, const value_type& value )
