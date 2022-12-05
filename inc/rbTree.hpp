@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/04 13:23:50 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/05 17:54:35 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 
 #define RED true
 #define BLACK false
+#define LEFT 0
+#define RIGHT 1
 
+#include <cassert>
 #include <cstddef>
 #include <functional>
 #include <memory>
@@ -52,31 +55,53 @@ namespace ft
 
 				struct node
 				{
-					node(void): color(BLACK), value(), parent(NULL), rchild(NULL), lchild(NULL)
+					node(void): color(BLACK), value(), parent(NULL)
 					{
+						child[LEFT] = NULL;
+						child[RIGHT] = NULL;
 					}
-					node(const node & copy): parent(copy.parent), lchild(copy.lchild), rchild(copy.rchild), color(copy.color), value(copy.value)
+					node(const node & copy): parent(copy.parent), color(copy.color), value(copy.value)
 					{
+						child[LEFT] = NULL;
+						child[RIGHT] = NULL;
 					}
-					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), lchild(NULL), rchild(NULL), color(RED)
+					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
+						child[LEFT] = NULL;
+						child[RIGHT] = NULL;
 						this->_alloc = alloc;
 						value = this->_alloc.allocate(1);
 						this->_alloc.construct(value, val);
 					}
 					~node(void)
 					{
-//						this->_alloc.destroy(value);
-//						this->_alloc.deallocate(value, 1);
+						//						this->_alloc.destroy(value);
+						//						this->_alloc.deallocate(value, 1);
 					}
-					node &	operator=(const node & src);
+					/*					node &	operator=(const node & src)
+										{
+					//TODO C dla merde
+					//
+					//
+					if (this == &src)
+					return (*this);
+					this->parent = src.parent;
+					this->child = src.child;
+					this->color = src.color;
+					this->value = src.value;
+					this->dir = src.dir;
+					}*/
+					//					bool operator==(const node & rhs)
+					//					{
+					//						return (this->value->first == rhs.value->first);
+					//					}
 					node*		parent;
-					node*		lchild;
-					node*		rchild;
+					node*		child[2];
 					bool		color;
 					pointer		value;
+					int			dir;
 					private:
-						Allocator	_alloc;
+					Allocator	_alloc;
 				};
 				RbTree(void)
 				{
@@ -93,8 +118,8 @@ namespace ft
 					this->_comp = comp;
 				}
 				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc)
-				{
-				}
+			{
+			}
 				RbTree(Key & key, T & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
 				{
 					this->_nodealloc = std::allocator<node>();
@@ -104,7 +129,7 @@ namespace ft
 				}
 				~RbTree(void)
 				{
-//					this->clear();
+					//					this->clear();
 				}
 				void clear(void)
 				{
@@ -113,9 +138,9 @@ namespace ft
 
 					while (this->_start)
 					{
-						if (tmp->lchild)
-							tmp = tmp->lchild;
-						else if (!tmp->rchild)
+						if (tmp->child[LEFT])
+							tmp = tmp->child[LEFT];
+						else if (!tmp->child[RIGHT])
 						{
 							tmp2 = tmp;
 							if (tmp->parent)
@@ -133,7 +158,7 @@ namespace ft
 							}
 						}
 						else
-							tmp = tmp->rchild;
+							tmp = tmp->child[RIGHT];
 					}
 				}
 				bool empty() const
@@ -144,58 +169,150 @@ namespace ft
 				{
 					node* tmp = this->_start;
 					node* tmpp = NULL;
-//					std::cout << value.first << std::endl;
 					if (!tmp)
 					{
 						this->_start = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_start, value);
+						this->_start->color = BLACK;
 						return (*this->_start->value);
 					}
 					while (tmp)
 					{
 						tmpp = tmp;
 						if (value.first > tmp->value->first)
-						{
-							std::cout << "Going left" << std::endl;
-							tmp = tmp->rchild;
-						}
+							tmp = tmp->child[RIGHT];
 						else
-						{
-							std::cout << "Going right" << std::endl;
-							tmp = tmp->lchild;
-						}
+							tmp = tmp->child[LEFT];
 					}
 					tmp = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(tmp, value);
-					std::cout << tmp->value->first << std::endl;
 					tmp->parent = tmpp;
-					if (value.first > tmpp->value->first)
-						tmp->parent->rchild = tmp;
+					if (tmp->value->first > tmpp->value->first)
+					{
+						tmp->parent->child[RIGHT] = tmp;
+						tmp->dir = RIGHT;
+					}
 					else
-						tmp->parent->lchild = tmp;
+					{
+						tmp->parent->child[LEFT] = tmp;
+						tmp->dir = LEFT;
+					}
+					//					std::cout << tmp->value->first << std::endl;
+					this->_balance(tmp, tmp->parent);
 					return (*tmp->value);
 				}
-/*				iterator insert( iterator pos, const value_type& value )
-				{
-					this->insert(value);
-					return (iterator(pos));
-				}
-				template< class InputIt >
-					void insert( InputIt first, InputIt last )
-				{
-					while (first != last)
-					{
-						this->insert(*first);
-						first++;
-					}
-				}*/
+				/*				iterator insert( iterator pos, const value_type& value )
+								{
+								this->insert(value);
+								return (iterator(pos));
+								}
+								template< class InputIt >
+								void insert( InputIt first, InputIt last )
+								{
+								while (first != last)
+								{
+								this->insert(*first);
+								first++;
+								}
+								}*/
 				node*					_start;
 			private:
 				Allocator				_alloc;
 				Compare					_comp;
 				std::allocator<node>	_nodealloc;
-				void	_balance(void)
+				/*				void	_swapDatAss(node * n1, node * n2)
+								{
+								node * tmp(n1);
+								n1->color = n2->color;
+								n1->parent = n2->parent;
+								n1->dir = n2->dir;
+								n1->child[0] = n2->child[0];
+								n1->child[1] = n2->child[1];
+								n1->value = n2->value;
+								n2->color = tmp->color;
+								n2->parent = tmp->parent;
+								n2->dir = tmp->dir;
+								n2->child[0] = tmp->child[0];
+								n2->child[1] = tmp->child[1];
+								n2->value = tmp->value;
+								}
+								*/				node * _rotateDirRoot(node * P, int dir)
 				{
+					node * G = P->parent;
+					node * S = P->child[1 - dir];
+					node * C;
+					assert(S != NULL);
+					C = S->child[dir];
+
+					P->child[1 - dir] = C;
+					if (C != NULL)
+						C->parent = P;
+					S->child[dir] = P;
+					P->parent = S;
+					S->parent = G;
+					if (G != NULL)
+						G->child[ P == G->child[RIGHT] ? RIGHT : LEFT ] = S;
+					else
+						this->_start = S;
+					return (S);
+				}
+				void	_do_case_56(node * my_node, node * parent, node * gparent, int dir)
+				{
+					std::cout << "OUI" << std::endl;
+					if (my_node == parent->child[1 - dir])
+					{
+						this->_rotateDirRoot(parent, dir);
+						my_node = parent;
+						parent = gparent->child[dir];
+					}
+					this->_rotateDirRoot(gparent, 1 - dir);
+					parent->color = BLACK;
+					gparent->color = RED;
+				}
+				void	_balance(node * my_node, node * parent)
+				{
+					int dir = my_node->parent->dir;
+					node * uncle = NULL;
+					node * gparent = NULL;
+					do 
+					{
+						if (parent)
+							gparent = parent->parent;
+						if (parent->color == BLACK)
+						{
+							return ;
+						}
+						if (gparent == NULL)
+						{
+							parent->color = BLACK;
+							std::cout << "COLOR" << parent->color << std::endl;
+							return ;
+						}
+						dir = parent == gparent->child[RIGHT] ? RIGHT : LEFT;
+//						dir = my_node->parent->dir;
+						uncle = gparent->child[1 - dir];
+						if (parent)
+							std::cout << "parent = " << parent->value->first << std::endl;
+						if (gparent)
+							std::cout << "gparent = " << gparent->value->first << std::endl;
+						if (gparent && gparent->parent)
+							std::cout << "ggparent = " << gparent->parent->value->first << std::endl;
+						if (uncle)
+							std::cout << "Uncle color = " << uncle->color << "uncle value: " << uncle->value->first << std::endl;
+						if (uncle == NULL || uncle->color == BLACK)
+						{
+							_do_case_56(my_node, parent, gparent, dir);
+							return ;
+						}
+						parent->color = BLACK;
+						uncle->color = BLACK;
+						if (gparent != _start)
+							gparent->color = RED;
+						my_node = parent;
+					}
+					while ((parent = my_node->parent) != NULL);
+					//					if (parent->parent == NULL && parent->color == RED)
+					//						parent->color = BLACK;
 				}
 		};
 	template< class Key, class T, class Compare, class Alloc >
