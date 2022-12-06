@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 16:32:57 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/06 17:03:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ namespace ft
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
 				//TODO Make bidirectionnal iterator for this bad boy
-				typedef ft::bIterator<T>						iterator;
-				typedef ft::bIterator<const T>					const_iterator;
+				typedef ft::bIterator<T, RbTree>				iterator;
+				typedef ft::bIterator<const T, RbTree>			const_iterator;
 				typedef ft::rbIterator<iterator>				reverse_iterator;
 				typedef ft::rbIterator<const_iterator>			const_reverse_iterator;
 

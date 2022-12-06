@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 16:07:21 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/06 18:57:37 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,12 @@
 #include "enable_if.hpp"
 #include "is_same.hpp"
 
+#define LEFT 0
+#define RIGHT 1
+
 namespace ft
 {
-	template<typename T>
+	template<typename T, typename RbTree>
 		class bIterator
 		{
 		public:
@@ -47,9 +50,9 @@ namespace ft
 				{
 				}
 
-				operator bIterator<const T>()
+				operator bIterator<const T, RbTree>()
 				{
-					return (bIterator<const T>(this->_value));
+					return (bIterator<const T, RbTree>(this->_value));
 				}
 
 				bIterator &	operator=(const bIterator & src)
@@ -59,12 +62,43 @@ namespace ft
 					this->_value = src._value;
 					return (*this);
 				}
-				operator	bIterator<iterator_category>(void) const
+				operator	bIterator<iterator_category, RbTree>(void) const
 				{
-					return (bIterator<iterator_category>(this->_value));
+					return (bIterator<iterator_category, RbTree>(this->_value));
 				}
+				bIterator & operator++(void)
+				{
+					if (!this->_value->child[RIGHT] && this->_value->parent->value > this->_value->value)
+					{
+						this->_value = this->_value->parent;
+						return (*this);
+					}
+					else if (!this->_value->child[RIGHT] && this->_value->parent->value < this->_value->value && this->_value->parent->parent && this->_value->parent->parent->value > )
+					{
+					}
+					while (this->_value->child[RIGHT])
+						this->_value = this->_value->parent;
+					return (*this);
+				}
+				bIterator operator++(int)
+				{
+					bIterator tmp = *this;
+					++*this;
+					return (tmp);
+				}
+				bIterator & operator--(void)
+				{
+				}
+				bIterator operator--(int)
+				{
+					bIterator tmp = *this;
+					--*this;
+					return (tmp);
+				}
+				reference	operator*(void) const { return (*(this->_value->value)); }
 			private:
-				pointer _value;
+				T		_value;
+				RbTree	_tree;
 		};
 }
 
