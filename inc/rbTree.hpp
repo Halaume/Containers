@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/05 17:54:35 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/06 16:32:57 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 #include <functional>
 #include <memory>
 #include "pair.hpp"
-#include "iterator.hpp"
+#include "bidirectional_iterator.hpp"
+#include "reverse_bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
 #include "lexicographical_compare.hpp"
 
@@ -46,10 +47,10 @@ namespace ft
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
 				//TODO Make bidirectionnal iterator for this bad boy
-				typedef ft::Iterator<T>							iterator;
-				typedef ft::Iterator<const T>					const_iterator;
-				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
-				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
+				typedef ft::bIterator<T>						iterator;
+				typedef ft::bIterator<const T>					const_iterator;
+				typedef ft::rbIterator<iterator>				reverse_iterator;
+				typedef ft::rbIterator<const_iterator>			const_reverse_iterator;
 
 
 
@@ -101,14 +102,19 @@ namespace ft
 					pointer		value;
 					int			dir;
 					private:
-					Allocator	_alloc;
+						Allocator	_alloc;
 				};
+
+				typedef node *		nodePTR;
+
+
 				RbTree(void)
 				{
 					this->_nodealloc = std::allocator<node>();
 					this->_start = NULL;
 					this->_alloc = Allocator();
 					this->_comp = Compare();
+					this->_size = 0;
 				}
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator())
 				{
@@ -116,8 +122,9 @@ namespace ft
 					this->_start = NULL;
 					this->_alloc = alloc;
 					this->_comp = comp;
+					this->_size = 0;
 				}
-				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc)
+				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size)
 			{
 			}
 				RbTree(Key & key, T & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
@@ -130,6 +137,69 @@ namespace ft
 				~RbTree(void)
 				{
 					//					this->clear();
+				}
+				RbTree& operator=(const RbTree & other)
+				{
+					if (this == &other)
+						return (*this);
+//					if (this->_start)
+//						this->clear();
+					this->_start = other._start;
+					this->_size = other._size;
+				}
+				allocator_type get_allocator() const
+				{
+					return (this->_alloc);
+				}
+				T& at( const Key& key );
+				T& operator[]( const Key& key );
+				iterator begin()
+				{
+					node * tmp = this->_start;
+					while (tmp && tmp->child[LEFT])
+						tmp = tmp->child[LEFT];
+					return (iterator(tmp));
+				}
+				const_iterator begin() const
+				{
+					node * tmp = this->_start;
+					while (tmp && tmp->child[LEFT])
+						tmp = tmp->child[LEFT];
+					return (const_iterator(tmp));
+				}
+				iterator end()
+				{
+					node * tmp = this->_start;
+					while (tmp && tmp->child[RIGHT])
+						tmp = tmp->child[RIGHT];
+					return (iterator(tmp));
+				}
+				const_iterator end() const
+				{
+					node * tmp = this->_start;
+					while (tmp && tmp->child[RIGHT])
+						tmp = tmp->child[RIGHT];
+					return (const_iterator(tmp));
+				}
+				reverse_iterator rbegin()
+				{
+					return (reverse_iterator(this->end()));
+				}
+				const_reverse_iterator rbegin() const
+				{
+					return (const_reverse_iterator(this->end()));
+				}
+				reverse_iterator rend()
+				{
+					return (reverse_iterator(this->begin()));
+				}
+				const_reverse_iterator rend() const
+				{
+					return (const_reverse_iterator(this->begin()));
+				}
+				bool empty() const
+				{
+					return (!this->_start);
 				}
 				void clear(void)
 				{
@@ -160,10 +230,6 @@ namespace ft
 						else
 							tmp = tmp->child[RIGHT];
 					}
-				}
-				bool empty() const
-				{
-					return (!this->_start);
 				}
 				value_type	insert(const value_type & value)
 				{
@@ -199,12 +265,12 @@ namespace ft
 					}
 					//					std::cout << tmp->value->first << std::endl;
 					this->_balance(tmp, tmp->parent);
+					this->_size++;
 					return (*tmp->value);
 				}
 				/*				iterator insert( iterator pos, const value_type& value )
 								{
-								this->insert(value);
-								return (iterator(pos));
+								return (iterator(this->insert(value)));
 								}
 								template< class InputIt >
 								void insert( InputIt first, InputIt last )
@@ -215,11 +281,23 @@ namespace ft
 								first++;
 								}
 								}*/
+				iterator erase(iterator pos)
+				{
+					return (pos);
+				}
+				iterator erase(iterator first, iterator last)
+				{
+				}
+				size_type erase(const Key & key)
+				{
+					return (this->_size);
+				}
 				node*					_start;
 			private:
 				Allocator				_alloc;
 				Compare					_comp;
 				std::allocator<node>	_nodealloc;
+				size_type				_size;
 				/*				void	_swapDatAss(node * n1, node * n2)
 								{
 								node * tmp(n1);
@@ -258,7 +336,6 @@ namespace ft
 				}
 				void	_do_case_56(node * my_node, node * parent, node * gparent, int dir)
 				{
-					std::cout << "OUI" << std::endl;
 					if (my_node == parent->child[1 - dir])
 					{
 						this->_rotateDirRoot(parent, dir);
@@ -291,15 +368,16 @@ namespace ft
 						dir = parent == gparent->child[RIGHT] ? RIGHT : LEFT;
 //						dir = my_node->parent->dir;
 						uncle = gparent->child[1 - dir];
-						if (parent)
-							std::cout << "parent = " << parent->value->first << std::endl;
+/*						if (parent)
+							std::cout << "parent = " << parent->value->first << " color = " << parent->color << std::endl;
 						if (gparent)
-							std::cout << "gparent = " << gparent->value->first << std::endl;
+							std::cout << "gparent = " << gparent->value->first << " color = " << gparent->color << std::endl;
 						if (gparent && gparent->parent)
-							std::cout << "ggparent = " << gparent->parent->value->first << std::endl;
+							std::cout << "ggparent = " << gparent->parent->value->first << " color = " << gparent->parent->color << std::endl;
 						if (uncle)
-							std::cout << "Uncle color = " << uncle->color << "uncle value: " << uncle->value->first << std::endl;
-						if (uncle == NULL || uncle->color == BLACK)
+							std::cout << "uncle value = " << uncle->value->first << " color = " << uncle->color << std::endl;
+						std::cout << "-----------------------------" << std::endl;
+*/						if (uncle == NULL || uncle->color == BLACK)
 						{
 							_do_case_56(my_node, parent, gparent, dir);
 							return ;
@@ -308,11 +386,11 @@ namespace ft
 						uncle->color = BLACK;
 						if (gparent != _start)
 							gparent->color = RED;
-						my_node = parent;
+						my_node = gparent;
 					}
 					while ((parent = my_node->parent) != NULL);
-					//					if (parent->parent == NULL && parent->color == RED)
-					//						parent->color = BLACK;
+//					if (parent->parent == NULL && parent->color == RED)
+//						parent->color = BLACK;
 				}
 		};
 	template< class Key, class T, class Compare, class Alloc >

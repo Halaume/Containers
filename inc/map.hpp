@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 18:34:49 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/06 16:24:07 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,21 +81,51 @@ namespace ft
 				~map(void)
 				{
 				}
-				map& operator=( const map& other );
+				map& operator=( const map& other )
+				{
+					if (this == &other)
+						return (*this);
+					this->_tree = other->_tree;
+					return (*this);
+				}
 				allocator_type get_allocator() const
 				{
-					return (this->_alloc);
+					return (this->_tree->get_allocator());
 				}
 				T& at( const Key& key );
 				T& operator[]( const Key& key );
-				iterator begin();
-				const_iterator begin() const;
-				iterator end();
-				const_iterator end() const;
-				reverse_iterator rbegin();
-				const_reverse_iterator rbegin() const;
-				reverse_iterator rend();
-				const_reverse_iterator rend() const;
+				iterator begin()
+				{
+					return (this->_tree.begin());
+				}
+				const_iterator begin() const
+				{
+					return (this->_tree.begin());
+				}
+				iterator end()
+				{
+					return (this->_tree.end());
+				}
+				const_iterator end() const
+				{
+					return (this->_tree.end());
+				}
+				reverse_iterator rbegin()
+				{
+					return (this->_tree.rbegin());
+				}
+				const_reverse_iterator rbegin() const
+				{
+					return (this->_tree.rbegin());
+				}
+				reverse_iterator rend()
+				{
+					return (this->_tree.rend());
+				}
+				const_reverse_iterator rend() const
+				{
+					return (this->_tree.rend());
+				}
 				bool empty() const
 				{
 					return (this->_tree.empty());
@@ -127,9 +157,18 @@ namespace ft
 					{
 						this->_tree.insert(first, last);
 					}
-				iterator erase( iterator pos );
-				iterator erase( iterator first, iterator last );
-				size_type erase( const Key& key );
+				iterator erase( iterator pos )
+				{
+					return (this->_tree.erase(pos));
+				}
+				iterator erase( iterator first, iterator last )
+				{
+					return (this->_tree.erase(first, last));
+				}
+				size_type erase( const Key& key )
+				{
+					return (this->_tree.erase(key));
+				}
 				void swap( map& other );
 				size_type count( const Key& key ) const;
 				iterator find( const Key& key );
