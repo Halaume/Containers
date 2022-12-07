@@ -1,0 +1,35 @@
+==152663== Memcheck, a memory error detector
+==152663== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==152663== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==152663== Command: ./Containers_std
+==152663== 
+==152663== 
+==152663== Process terminating with default action of signal 2 (SIGINT)
+==152663==    at 0x4CBAA35: write (write.c:26)
+==152663==    by 0x4C30F6C: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1180)
+==152663==    by 0x4C32A60: new_do_write (fileops.c:448)
+==152663==    by 0x4C32A60: _IO_new_do_write (fileops.c:425)
+==152663==    by 0x4C32A60: _IO_do_write@@GLIBC_2.2.5 (fileops.c:422)
+==152663==    by 0x4C32F42: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:783)
+==152663==    by 0x49B1239: std::ostream::put(char) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30)
+==152663==    by 0x4020BE: endl<char, std::char_traits<char> > (ostream:689)
+==152663==    by 0x4020BE: operator<< (ostream:113)
+==152663==    by 0x4020BE: ft::RbTree<int, int, std::less<int>, std::allocator<ft::pair<int const, int> > >::clear() (rbTree.hpp:219)
+==152663==    by 0x401E4A: ~RbTree (rbTree.hpp:139)
+==152663==    by 0x401E4A: do_map() (map_test.cpp:161)
+==152663==    by 0x401385: main (main.cpp:38)
+==152663== 
+==152663== HEAP SUMMARY:
+==152663==     in use at exit: 74,848 bytes in 42 blocks
+==152663==   total heap usage: 468 allocs, 426 frees, 90,010 bytes allocated
+==152663== 
+==152663== LEAK SUMMARY:
+==152663==    definitely lost: 192 bytes in 4 blocks
+==152663==    indirectly lost: 200 bytes in 10 blocks
+==152663==      possibly lost: 0 bytes in 0 blocks
+==152663==    still reachable: 74,456 bytes in 28 blocks
+==152663==         suppressed: 0 bytes in 0 blocks
+==152663== Rerun with --leak-check=full to see details of leaked memory
+==152663== 
+==152663== For lists of detected and suppressed errors, rerun with: -s
+==152663== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

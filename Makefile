@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/12/02 17:17:49 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/12/07 12:54:12 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ PREC = 1
 
 RM = rm -fr
 
-CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wshadow -Wpedantic -O3 -g -std=c++98
 
 .cpp.o:
 	$(CXX) -c $< -o $(<:.cpp=.o)
@@ -47,9 +47,9 @@ CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -O3 -g -std=c++98
 #	ls -l | awk '{print $9}' | grep -E ".cpp$"| sed "s/\.cpp/ \\\/g" | sed '$s/\\$//g'
 
 SRC_FT = main \
-		 map_test
-#		 vector_test \
-#		 stack_test
+		 map_test \
+		 vector_test \
+		 stack_test
 
 all: $(STD) $(FT) 
 
@@ -61,9 +61,8 @@ $(OBJ_DIRS):
 $(OBJ_DIR)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) -c $< -o $@
 
-$(FT): $(SRC) # $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) src/$(SRC)
-	# $(OBJ) -o $@
+$(FT): $(SRC) $(OBJ_DIRS) $(SRC) $(OBJ)
+	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) $(OBJ) -o $@
 
 $(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
 
@@ -73,9 +72,8 @@ $(OBJ_DIRS_STD):
 $(OBJ_DIR_STD)/%.o: ./%.cpp
 	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) -c $< -o $@
 
-$(STD): $(SRC)#$(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
-	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) src/$(SRC)
-	# $(OBJ_STD) -o $@
+$(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
+	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) $(OBJ_STD) -o $@
 
 test: $(FT) $(STD)
 	sh test.sh

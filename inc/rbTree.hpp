@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 17:03:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/07 14:50:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,12 @@ namespace ft
 						child[LEFT] = NULL;
 						child[RIGHT] = NULL;
 					}
-					node(const node & copy): parent(copy.parent), color(copy.color), value(copy.value)
+					node(const node & copy): parent(copy.parent), color(copy.color)
 					{
 						child[LEFT] = NULL;
 						child[RIGHT] = NULL;
+						value = this->_alloc.allocate(1);
+						this->_alloc.construct(value, *copy.value);
 					}
 					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
@@ -76,8 +78,8 @@ namespace ft
 					}
 					~node(void)
 					{
-						//						this->_alloc.destroy(value);
-						//						this->_alloc.deallocate(value, 1);
+						this->_alloc.destroy(value);
+						this->_alloc.deallocate(value, 1);
 					}
 					/*					node &	operator=(const node & src)
 										{
@@ -100,7 +102,6 @@ namespace ft
 					node*		child[2];
 					bool		color;
 					pointer		value;
-					int			dir;
 					private:
 						Allocator	_alloc;
 				};
@@ -136,14 +137,14 @@ namespace ft
 				}
 				~RbTree(void)
 				{
-					//					this->clear();
+					this->clear();
 				}
 				RbTree& operator=(const RbTree & other)
 				{
 					if (this == &other)
 						return (*this);
-//					if (this->_start)
-//						this->clear();
+					if (this->_start)
+						this->clear();
 					this->_start = other._start;
 					this->_size = other._size;
 				}
@@ -204,31 +205,37 @@ namespace ft
 				void clear(void)
 				{
 					node*	tmp = this->_start;
-					node*	tmp2;
+					node*	to_del;
 
-					while (this->_start)
+					while (tmp)
 					{
 						if (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
-						else if (!tmp->child[RIGHT])
+						else if (tmp->child[RIGHT])
+							tmp = tmp->child[RIGHT];
+						else
 						{
-							tmp2 = tmp;
+
 							if (tmp->parent)
 							{
+
+								to_del = tmp;
 								tmp = tmp->parent;
-								this->_nodealloc.destroy(tmp2);
-								this->_nodealloc.deallocate(tmp2, 1);
-								tmp2 = NULL;
+								if (to_del == tmp->child[LEFT])
+									tmp->child[LEFT] = NULL;
+								else
+									tmp->child[RIGHT] = NULL;
+								this->_nodealloc.destroy(to_del);
+								this->_nodealloc.deallocate(to_del, 1);
 							}
 							else
 							{
-								this->_nodealloc.destroy(tmp2);
-								this->_nodealloc.deallocate(tmp2, 1);
-								this->_start = NULL;
+								to_del = tmp;
+								tmp = NULL;
+								this->_nodealloc.destroy(to_del);
+								this->_nodealloc.deallocate(to_del, 1);
 							}
 						}
-						else
-							tmp = tmp->child[RIGHT];
 					}
 				}
 				value_type	insert(const value_type & value)
@@ -256,40 +263,45 @@ namespace ft
 					if (tmp->value->first > tmpp->value->first)
 					{
 						tmp->parent->child[RIGHT] = tmp;
-						tmp->dir = RIGHT;
 					}
 					else
 					{
 						tmp->parent->child[LEFT] = tmp;
-						tmp->dir = LEFT;
 					}
 					//					std::cout << tmp->value->first << std::endl;
 					this->_balance(tmp, tmp->parent);
 					this->_size++;
 					return (*tmp->value);
 				}
-				/*				iterator insert( iterator pos, const value_type& value )
-								{
-								return (iterator(this->insert(value)));
-								}
-								template< class InputIt >
-								void insert( InputIt first, InputIt last )
-								{
-								while (first != last)
-								{
-								this->insert(*first);
-								first++;
-								}
-								}*/
+				iterator insert( iterator pos, const value_type& value )
+				{
+					(void)pos;
+					return (iterator(this->insert(value)));
+				}
+				template< class InputIt >
+					void insert( InputIt first, InputIt last )
+					{
+						while (first != last)
+						{
+							this->insert(*first);
+							first++;
+						}
+					}
 				iterator erase(iterator pos)
 				{
 					return (pos);
 				}
 				iterator erase(iterator first, iterator last)
 				{
+					while (first != last)
+					{
+						this->erase(*first);
+						first++;
+					}
 				}
 				size_type erase(const Key & key)
 				{
+					erase(iterator(key));
 					return (this->_size);
 				}
 				node*					_start;
@@ -348,7 +360,7 @@ namespace ft
 				}
 				void	_balance(node * my_node, node * parent)
 				{
-					int dir = my_node->parent->dir;
+					int dir = 0;
 					node * uncle = NULL;
 					node * gparent = NULL;
 					do 

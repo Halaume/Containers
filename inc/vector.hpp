@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/30 15:45:28 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/07 12:55:07 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -501,7 +501,7 @@ namespace ft
 							}
 							for (size_type i = 0; first != last; first++, i++)
 								this->_alloc.construct(tab + dist_pos + i, *first);
-							iterator it = pos;
+							it = pos;
 							j = dist_pos + size;
 							size_type i = 0;
 							while (it != this->end())
@@ -522,7 +522,7 @@ namespace ft
 						{
 							pointer	tab;
 							size_type	istart = 0;
-							iterator	it = this->begin();
+							it = this->begin();
 							while (it != pos)
 							{
 								it++;

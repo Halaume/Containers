@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 18:57:37 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/07 12:39:57 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,15 @@ namespace ft
 
 				bIterator(void)
 				{
+					this->_value();
+					this->_tree();
 				}
 
 				bIterator(const bIterator & copy): _value(copy._value)
 				{
 				}
 
-				bIterator(pointer value): _value(value)
+				bIterator(T value, RbTree tree): _value(value), _tree(tree)
 				{
 				}
 
@@ -68,16 +70,26 @@ namespace ft
 				}
 				bIterator & operator++(void)
 				{
-					if (!this->_value->child[RIGHT] && this->_value->parent->value > this->_value->value)
+					if (this->_value == NULL)
 					{
-						this->_value = this->_value->parent;
+						*this = this->_tree.start;
 						return (*this);
 					}
-					else if (!this->_value->child[RIGHT] && this->_value->parent->value < this->_value->value && this->_value->parent->parent && this->_value->parent->parent->value > )
+					T	tmp(this->_value);
+					if (tmp->child[RIGHT])
 					{
+						tmp = tmp->child[RIGHT];
+						while (tmp->child[LEFT])
+							tmp = tmp->child[LEFT];
 					}
-					while (this->_value->child[RIGHT])
-						this->_value = this->_value->parent;
+					else
+					{
+						while (tmp && !(tmp->value > this->value))
+						{
+							tmp = tmp->parent;
+						}
+					}
+					*this = tmp;
 					return (*this);
 				}
 				bIterator operator++(int)
@@ -88,6 +100,30 @@ namespace ft
 				}
 				bIterator & operator--(void)
 				{
+					if (this->_value == NULL)
+					{
+						this->_value = this->_tree.start;
+						while (this->_value->child[RIGHT])
+							this->_value = this->_value->child[RIGHT];
+						return (*this);
+					}
+					T	tmp(this->_value);
+					if (tmp->child[LEFT])
+					{
+						tmp = tmp->child[LEFT];
+						while (tmp->child[RIGHT])
+							tmp = tmp->child[RIGHT];
+					}
+					else
+					{
+						while (tmp && !(tmp->value < this->value))
+						{
+							tmp = tmp->parent;
+						}
+					}
+					this->_value = tmp;
+					return (*this);
+
 				}
 				bIterator operator--(int)
 				{
