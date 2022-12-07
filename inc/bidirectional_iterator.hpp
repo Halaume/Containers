@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/07 12:39:57 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/07 15:12:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,13 @@ namespace ft
 					}
 					else
 					{
-						while (tmp && !(tmp->value > this->value))
+						while (tmp->parent && tmp->parent->child[RIGHT] != tmp)
 						{
 							tmp = tmp->parent;
 						}
+						tmp = tmp->parent;
 					}
-					*this = tmp;
+					this->_value = tmp;
 					return (*this);
 				}
 				bIterator operator++(int)
@@ -116,10 +117,11 @@ namespace ft
 					}
 					else
 					{
-						while (tmp && !(tmp->value < this->value))
+						while (tmp->parent && tmp->parent->child[LEFT] != tmp)
 						{
 							tmp = tmp->parent;
 						}
+						tmp = tmp->parent;
 					}
 					this->_value = tmp;
 					return (*this);

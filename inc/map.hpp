@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 16:24:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/07 16:33:28 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,25 +61,38 @@ namespace ft
 					}
 					Compare	comp;
 			};
+				typedef ft::RbTree<Key, T, value_compare, Allocator>	Tree;
 				map(void)
 				{
-					this->_tree = RbTree<Key, T>();
+					std::allocator<Tree> rballoc;
+					this->_size = 0;
+					this->_alloc = Allocator();
+					this->_comp = Compare();
+					this->_tree = rballoc.allocate(1);
+					rballoc.construct(this->_tree, this->_comp, this->alloc);
 				}
-				explicit map(const Compare & comp, const Allocator & alloc = Allocator())
+				explicit map(const Compare & comp, const Allocator & alloc = Allocator()): _alloc(alloc), _size(0), _comp(comp)
 				{
-					this->_tree = RbTree<Key, T>(comp, alloc);
+					std::allocator<Tree> rballoc;
+					this->_tree = rballoc.allocate(1);
+					rballoc.construct(this->_tree, this->_comp, this->_alloc);
 				}
 				/*				template<class InputIt>
 								map(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
 								{
 								}
 								*/
-				map(const map & copy)
+				map(const map & copy): _alloc(copy._alloc), _size(copy.size), _comp(copy._comp)
 				{
-					this->_tree = copy._tree;
+					std::allocator<Tree> rballoc;
+					this->_tree = rballoc.allocate(1);
+					rballoc.construct(this->_tree, copy._tree);
 				}
 				~map(void)
 				{
+					std::allocator<Tree> rballoc;
+					rballoc.destroy(this->_tree);
+					rballoc.deallocate(this->_tree, 1);
 				}
 				map& operator=( const map& other )
 				{
@@ -96,39 +109,39 @@ namespace ft
 				T& operator[]( const Key& key );
 				iterator begin()
 				{
-					return (this->_tree.begin());
+					return (this->_tree->begin());
 				}
 				const_iterator begin() const
 				{
-					return (this->_tree.begin());
+					return (this->_tree->begin());
 				}
 				iterator end()
 				{
-					return (this->_tree.end());
+					return (this->_tree->end());
 				}
 				const_iterator end() const
 				{
-					return (this->_tree.end());
+					return (this->_tree->end());
 				}
 				reverse_iterator rbegin()
 				{
-					return (this->_tree.rbegin());
+					return (this->_tree->rbegin());
 				}
 				const_reverse_iterator rbegin() const
 				{
-					return (this->_tree.rbegin());
+					return (this->_tree->rbegin());
 				}
 				reverse_iterator rend()
 				{
-					return (this->_tree.rend());
+					return (this->_tree->rend());
 				}
 				const_reverse_iterator rend() const
 				{
-					return (this->_tree.rend());
+					return (this->_tree->rend());
 				}
 				bool empty() const
 				{
-					return (this->_tree.empty());
+					return (this->_tree->empty());
 				}
 				size_type size() const
 				{
@@ -140,36 +153,41 @@ namespace ft
 				}
 				void clear()
 				{
-					this->_tree.clear();
+					this->_tree->clear();
 				}
 
 
 				value_type	insert(const value_type & value)
 				{
-					return (this->_tree.insert(value));
+					return (this->_tree->insert(value));
 				}
 				iterator	insert(iterator pos, const value_type & value)
 				{
-					return (this->_tree.insert(pos, value));
+					return (this->_tree->insert(pos, value));
 				}
 				template<class InputIt>
 					void insert(InputIt first, InputIt last)
 					{
-						this->_tree.insert(first, last);
+						this->_tree->insert(first, last);
 					}
 				iterator erase( iterator pos )
 				{
-					return (this->_tree.erase(pos));
+					return (this->_tree->erase(pos));
 				}
 				iterator erase( iterator first, iterator last )
 				{
-					return (this->_tree.erase(first, last));
+					return (this->_tree->erase(first, last));
 				}
 				size_type erase( const Key& key )
 				{
-					return (this->_tree.erase(key));
+					return (this->_tree->erase(key));
 				}
-				void swap( map& other );
+				void swap( map& other )
+				{
+					map<Key, T, Compare, Allocator>	tmp;
+					tmp._tree = this->_tree;
+					this->_tree = other._tree;
+				}
 				size_type count( const Key& key ) const;
 				iterator find( const Key& key );
 				const_iterator find( const Key& key ) const;
@@ -185,9 +203,10 @@ namespace ft
 
 
 			private:
-				RbTree<Key, T>	_tree;
-				Allocator		_alloc;
-				size_type		_size;
+				Tree *	_tree;
+				Allocator			_alloc;
+				size_type			_size;
+				Compare				_comp;
 		};
 
 	template< class Key, class T, class Compare, class Alloc >
