@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/07 14:50:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:40:56 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,12 @@
 namespace ft
 {
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
+	template <class Key, class T, class value_type, class Compare = std::less<Key>, class Allocator = std::allocator<value_type> >
 		class RbTree
 		{
 			public:
 				typedef Key										key_type;
 				typedef T										mapped_type;
-				typedef ft::pair<const Key, T>					value_type;
 				typedef Allocator								allocator_type;
 				typedef std::size_t								size_type;
 				typedef Compare									key_compare;
@@ -47,8 +46,8 @@ namespace ft
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
 				//TODO Make bidirectionnal iterator for this bad boy
-				typedef ft::bIterator<T, RbTree>				iterator;
-				typedef ft::bIterator<const T, RbTree>			const_iterator;
+				typedef ft::bIterator<value_type>				iterator;
+				typedef ft::bIterator<const value_type>			const_iterator;
 				typedef ft::rbIterator<iterator>				reverse_iterator;
 				typedef ft::rbIterator<const_iterator>			const_reverse_iterator;
 
@@ -128,12 +127,19 @@ namespace ft
 				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size)
 			{
 			}
-				RbTree(Key & key, T & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
+				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
 				{
 					this->_nodealloc = std::allocator<node>();
 					this->_comp = comp;
 					this->_alloc = alloc;
-					this->_start = node(make_pair(key, value), NULL, comp, alloc);
+					this->_start = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_start, value);
+					this->_start->parent = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_start->parent, value);
+					this->_alloc.destroy(this->_start->parent->value);
+					this->_alloc.deallocate(this->_start->parent->value, 1);
+					this->_start->parent->value = NULL;
+					this->_start->parent->parent = this->_start;
 				}
 				~RbTree(void)
 				{
@@ -170,17 +176,17 @@ namespace ft
 				}
 				iterator end()
 				{
-					node * tmp = this->_start;
-					while (tmp && tmp->child[RIGHT])
-						tmp = tmp->child[RIGHT];
-					return (iterator(tmp));
+//					node * tmp = this->_start;
+//					while (tmp && tmp->child[RIGHT])
+//						tmp = tmp->child[RIGHT];
+					return (iterator(this->_start->parent));
 				}
 				const_iterator end() const
 				{
-					node * tmp = this->_start;
-					while (tmp && tmp->child[RIGHT])
-						tmp = tmp->child[RIGHT];
-					return (const_iterator(tmp));
+//					node * tmp = this->_start;
+//					while (tmp && tmp->child[RIGHT])
+//						tmp = tmp->child[RIGHT];
+					return (const_iterator(this->_start->parent));
 				}
 				reverse_iterator rbegin()
 				{
@@ -247,6 +253,12 @@ namespace ft
 						this->_start = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_start, value);
 						this->_start->color = BLACK;
+						this->_start->parent = this->_nodealloc.allocate(1);
+						this->_nodealloc.construct(this->_start->parent, value);
+						this->_alloc.destroy(this->_start->parent->value);
+						this->_alloc.deallocate(this->_start->parent->value, 1);
+						this->_start->parent->value = NULL;
+						this->_start->parent->parent = this->_start;
 						return (*this->_start->value);
 					}
 					while (tmp)

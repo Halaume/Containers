@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/05 17:41:41 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:29:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void showTrunks(Trunk *p)
 	std::cout << p->str;
 }
 
-void printnode(ft::RbTree<int, int>::node * & tmp) {
+void printnode(ft::RbTree<int, int, ft::pair<int, int> >::node * & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -60,7 +60,7 @@ void printnode(ft::RbTree<int, int>::node * & tmp) {
 	std::cout << "Key : " << tmp->value->first << " | Val : " << tmp->value->second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
+void printTree(ft::RbTree<int, int, ft::pair<int, int> >::node * root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
 	//    std::cout << "root : " << root->val.first << std::endl;
@@ -100,7 +100,7 @@ void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
 
 /* END */
 
-void printHelper(ft::RbTree<int, int>::node* root, std::string indent, bool last)
+void printHelper(ft::RbTree<int, int, ft::pair<int, int> >::node* root, std::string indent, bool last)
 {
 	if (root)
 	{
@@ -124,7 +124,7 @@ void printHelper(ft::RbTree<int, int>::node* root, std::string indent, bool last
 
 void    do_map( void )
 {
-	ft::RbTree<int, int>    tree;
+	ft::RbTree<int, int, ft::pair<int, int> >    tree;
 	NAMESPACE::vector<int>    v;
 /*	std::cout << 10 << std::endl << "-------------------------" << std::endl;
 		tree.insert(ft::make_pair(10, 10));

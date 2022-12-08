@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/07 16:33:28 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:25:11 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ namespace ft
 					}
 					Compare	comp;
 			};
-				typedef ft::RbTree<Key, T, value_compare, Allocator>	Tree;
+				typedef ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>	Tree;
 				map(void)
 				{
 					std::allocator<Tree> rballoc;

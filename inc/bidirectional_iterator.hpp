@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/07 15:12:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 12:40:38 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 namespace ft
 {
-	template<typename T, typename RbTree>
+	template<typename T>
 		class bIterator
 		{
 		public:
@@ -44,7 +44,7 @@ namespace ft
 				{
 				}
 
-				bIterator(T value, RbTree tree): _value(value), _tree(tree)
+				bIterator(T value): _value(value)
 				{
 				}
 
@@ -52,9 +52,9 @@ namespace ft
 				{
 				}
 
-				operator bIterator<const T, RbTree>()
+				operator bIterator<const T>()
 				{
-					return (bIterator<const T, RbTree>(this->_value));
+					return (bIterator<const T>(this->_value));
 				}
 
 				bIterator &	operator=(const bIterator & src)
@@ -64,15 +64,15 @@ namespace ft
 					this->_value = src._value;
 					return (*this);
 				}
-				operator	bIterator<iterator_category, RbTree>(void) const
+				operator	bIterator<iterator_category>(void) const
 				{
-					return (bIterator<iterator_category, RbTree>(this->_value));
+					return (bIterator<iterator_category>(this->_value));
 				}
 				bIterator & operator++(void)
 				{
-					if (this->_value == NULL)
+					if (this->_value->value == NULL)
 					{
-						*this = this->_tree.start;
+						this->_value = this->_value->parent;
 						return (*this);
 					}
 					T	tmp(this->_value);
@@ -101,9 +101,9 @@ namespace ft
 				}
 				bIterator & operator--(void)
 				{
-					if (this->_value == NULL)
+					if (this->_value->value == NULL)
 					{
-						this->_value = this->_tree.start;
+						this->_value = this->_value->parent;
 						while (this->_value->child[RIGHT])
 							this->_value = this->_value->child[RIGHT];
 						return (*this);
@@ -136,7 +136,6 @@ namespace ft
 				reference	operator*(void) const { return (*(this->_value->value)); }
 			private:
 				T		_value;
-				RbTree	_tree;
 		};
 }
 
