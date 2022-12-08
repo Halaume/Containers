@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 12:29:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 16:33:02 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void printnode(ft::RbTree<int, int, ft::pair<int, int> >::node * & tmp) {
 	std::cout << "Key : " << tmp->value->first << " | Val : " << tmp->value->second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::RbTree<int, int, ft::pair<int, int> >::node * root, Trunk *prev, bool isLeft) {
+void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
 	if (root == NULL)
 		return ;
 	//    std::cout << "root : " << root->val.first << std::endl;
@@ -100,7 +100,7 @@ void printTree(ft::RbTree<int, int, ft::pair<int, int> >::node * root, Trunk *pr
 
 /* END */
 
-void printHelper(ft::RbTree<int, int, ft::pair<int, int> >::node* root, std::string indent, bool last)
+void printHelper(ft::RbTree<int, int>::node* root, std::string indent, bool last)
 {
 	if (root)
 	{
@@ -124,7 +124,7 @@ void printHelper(ft::RbTree<int, int, ft::pair<int, int> >::node* root, std::str
 
 void    do_map( void )
 {
-	ft::RbTree<int, int, ft::pair<int, int> >    tree;
+	ft::RbTree<int, int>    tree;
 	NAMESPACE::vector<int>    v;
 /*	std::cout << 10 << std::endl << "-------------------------" << std::endl;
 		tree.insert(ft::make_pair(10, 10));
@@ -155,6 +155,11 @@ void    do_map( void )
 		tree.insert(ft::make_pair(v[i], v[i]));
 		printTree(tree._start, NULL, false);
 		std::cout << "-------------------------" << std::endl;
+	}
+	for (ft::RbTree<int, int>::iterator it = tree.end(); it != tree.begin(); it--)
+	{
+		if (it != tree.end())
+			std::cout << (*it).first << std::endl;
 	}
 //	printHelper(tree._start, "", true);
 //	printTree(tree._start, NULL, false);

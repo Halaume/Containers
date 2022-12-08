@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 12:40:56 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 16:57:24 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 namespace ft
 {
 
-	template <class Key, class T, class value_type, class Compare = std::less<Key>, class Allocator = std::allocator<value_type> >
+	template <class Key, class T, class value_type = ft::pair<const Key, T>, class Compare = std::less<Key>, class Allocator = std::allocator<value_type> >
 		class RbTree
 		{
 			public:
@@ -45,13 +45,6 @@ namespace ft
 				typedef const value_type &						const_reference;
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
-				//TODO Make bidirectionnal iterator for this bad boy
-				typedef ft::bIterator<value_type>				iterator;
-				typedef ft::bIterator<const value_type>			const_iterator;
-				typedef ft::rbIterator<iterator>				reverse_iterator;
-				typedef ft::rbIterator<const_iterator>			const_reverse_iterator;
-
-
 
 				struct node
 				{
@@ -105,8 +98,11 @@ namespace ft
 						Allocator	_alloc;
 				};
 
-				typedef node *		nodePTR;
-
+				typedef node *							nodePTR;
+				typedef ft::bIterator<nodePTR, value_type>			iterator;
+				typedef ft::bIterator<const nodePTR, value_type>	const_iterator;
+				typedef ft::rbIterator<iterator>					reverse_iterator;
+				typedef ft::rbIterator<const_iterator>				const_reverse_iterator;
 
 				RbTree(void)
 				{
@@ -160,51 +156,51 @@ namespace ft
 				}
 				T& at( const Key& key );
 				T& operator[]( const Key& key );
-				iterator begin()
+				iterator begin(void)
 				{
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
 						tmp = tmp->child[LEFT];
 					return (iterator(tmp));
 				}
-				const_iterator begin() const
+				const_iterator begin(void) const
 				{
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
 						tmp = tmp->child[LEFT];
 					return (const_iterator(tmp));
 				}
-				iterator end()
+				iterator end(void)
 				{
 //					node * tmp = this->_start;
 //					while (tmp && tmp->child[RIGHT])
 //						tmp = tmp->child[RIGHT];
 					return (iterator(this->_start->parent));
 				}
-				const_iterator end() const
+				const_iterator end(void) const
 				{
 //					node * tmp = this->_start;
 //					while (tmp && tmp->child[RIGHT])
 //						tmp = tmp->child[RIGHT];
 					return (const_iterator(this->_start->parent));
 				}
-				reverse_iterator rbegin()
+				reverse_iterator rbegin(void)
 				{
 					return (reverse_iterator(this->end()));
 				}
-				const_reverse_iterator rbegin() const
+				const_reverse_iterator rbegin(void) const
 				{
 					return (const_reverse_iterator(this->end()));
 				}
-				reverse_iterator rend()
+				reverse_iterator rend(void)
 				{
 					return (reverse_iterator(this->begin()));
 				}
-				const_reverse_iterator rend() const
+				const_reverse_iterator rend(void) const
 				{
 					return (const_reverse_iterator(this->begin()));
 				}
-				bool empty() const
+				bool empty(void) const
 				{
 					return (!this->_start);
 				}
@@ -213,7 +209,7 @@ namespace ft
 					node*	tmp = this->_start;
 					node*	to_del;
 
-					while (tmp)
+					while (tmp->value)
 					{
 						if (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
@@ -222,7 +218,7 @@ namespace ft
 						else
 						{
 
-							if (tmp->parent)
+							if (tmp->parent->value)
 							{
 
 								to_del = tmp;
@@ -237,12 +233,16 @@ namespace ft
 							else
 							{
 								to_del = tmp;
-								tmp = NULL;
+								tmp = tmp->parent;
 								this->_nodealloc.destroy(to_del);
 								this->_nodealloc.deallocate(to_del, 1);
 							}
 						}
 					}
+					to_del = tmp;
+					tmp = NULL;
+					this->_nodealloc.destroy(to_del);
+					this->_nodealloc.deallocate(to_del, 1);
 				}
 				value_type	insert(const value_type & value)
 				{
@@ -338,7 +338,8 @@ namespace ft
 								n2->child[1] = tmp->child[1];
 								n2->value = tmp->value;
 								}
-								*/				node * _rotateDirRoot(node * P, int dir)
+								*/
+				node * _rotateDirRoot(node * P, int dir)
 				{
 					node * G = P->parent;
 					node * S = P->child[1 - dir];
@@ -347,15 +348,18 @@ namespace ft
 					C = S->child[dir];
 
 					P->child[1 - dir] = C;
-					if (C != NULL)
+					if (C != NULL && C->value != NULL)
 						C->parent = P;
 					S->child[dir] = P;
 					P->parent = S;
 					S->parent = G;
-					if (G != NULL)
+					if (G != NULL && G->value != NULL)
 						G->child[ P == G->child[RIGHT] ? RIGHT : LEFT ] = S;
 					else
+					{
 						this->_start = S;
+						this->_start->parent->parent = S;
+					}
 					return (S);
 				}
 				void	_do_case_56(node * my_node, node * parent, node * gparent, int dir)
@@ -377,16 +381,15 @@ namespace ft
 					node * gparent = NULL;
 					do 
 					{
-						if (parent)
+						if (parent->value)
 							gparent = parent->parent;
 						if (parent->color == BLACK)
 						{
 							return ;
 						}
-						if (gparent == NULL)
+						if (gparent->value == NULL)
 						{
 							parent->color = BLACK;
-							std::cout << "COLOR" << parent->color << std::endl;
 							return ;
 						}
 						dir = parent == gparent->child[RIGHT] ? RIGHT : LEFT;
@@ -408,11 +411,12 @@ namespace ft
 						}
 						parent->color = BLACK;
 						uncle->color = BLACK;
-						if (gparent != _start)
+						if (gparent != this->_start)
 							gparent->color = RED;
 						my_node = gparent;
+						parent = my_node->parent;
 					}
-					while ((parent = my_node->parent) != NULL);
+					while (parent->value != NULL);
 //					if (parent->parent == NULL && parent->color == RED)
 //						parent->color = BLACK;
 				}

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 12:40:38 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 16:57:48 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,21 @@
 #include "Iterator_traits.hpp"
 #include "enable_if.hpp"
 #include "is_same.hpp"
+#include "pair.hpp"
+#include <iostream>
 
 #define LEFT 0
 #define RIGHT 1
 
 namespace ft
 {
-	template<typename T>
+	template<typename T, class value_type>
 		class bIterator
 		{
-		public:
+			public:
 				typedef std::ptrdiff_t difference_type;
-				typedef T value_type;
 				typedef T * pointer;
-				typedef T & reference;
+				typedef value_type & reference;
 				typedef std::bidirectional_iterator_tag iterator_category;
 
 				bIterator(void)
@@ -41,20 +42,20 @@ namespace ft
 				}
 
 				bIterator(const bIterator & copy): _value(copy._value)
-				{
-				}
+			{
+			}
 
 				bIterator(T value): _value(value)
-				{
-				}
+			{
+			}
 
 				~bIterator(void) 
 				{
 				}
 
-				operator bIterator<const T>()
+				operator bIterator<const T, const value_type>()
 				{
-					return (bIterator<const T>(this->_value));
+					return (bIterator<const T, const value_type>(this->_value));
 				}
 
 				bIterator &	operator=(const bIterator & src)
@@ -64,33 +65,31 @@ namespace ft
 					this->_value = src._value;
 					return (*this);
 				}
-				operator	bIterator<iterator_category>(void) const
+				operator	bIterator<iterator_category, value_type>(void) const
 				{
-					return (bIterator<iterator_category>(this->_value));
+					return (bIterator<iterator_category, value_type>(this->_value));
 				}
 				bIterator & operator++(void)
 				{
 					if (this->_value->value == NULL)
 					{
 						this->_value = this->_value->parent;
+						while (this->_value->child[LEFT])
+							this->_value = this->_value->child[LEFT];
 						return (*this);
 					}
-					T	tmp(this->_value);
-					if (tmp->child[RIGHT])
+					if (this->_value->child[RIGHT])
 					{
-						tmp = tmp->child[RIGHT];
-						while (tmp->child[LEFT])
-							tmp = tmp->child[LEFT];
+						this->_value = this->_value->child[RIGHT];
+						while (this->_value->child[LEFT])
+							this->_value = this->_value->child[LEFT];
 					}
 					else
 					{
-						while (tmp->parent && tmp->parent->child[RIGHT] != tmp)
-						{
-							tmp = tmp->parent;
-						}
-						tmp = tmp->parent;
+						while (this->_value->parent->value && this->_value->parent->child[RIGHT] == this->_value)
+							this->_value = this->_value->parent;
+						this->_value = this->_value->parent;
 					}
-					this->_value = tmp;
 					return (*this);
 				}
 				bIterator operator++(int)
@@ -108,24 +107,19 @@ namespace ft
 							this->_value = this->_value->child[RIGHT];
 						return (*this);
 					}
-					T	tmp(this->_value);
-					if (tmp->child[LEFT])
+					if (this->_value->child[LEFT])
 					{
-						tmp = tmp->child[LEFT];
-						while (tmp->child[RIGHT])
-							tmp = tmp->child[RIGHT];
+						this->_value = this->_value->child[LEFT];
+						while (this->_value->child[RIGHT])
+							this->_value = this->_value->child[RIGHT];
 					}
 					else
 					{
-						while (tmp->parent && tmp->parent->child[LEFT] != tmp)
-						{
-							tmp = tmp->parent;
-						}
-						tmp = tmp->parent;
+						while (this->_value->parent->value && this->_value->parent->child[LEFT] == this->_value)
+							this->_value = this->_value->parent;
+						this->_value = this->_value->parent;
 					}
-					this->_value = tmp;
 					return (*this);
-
 				}
 				bIterator operator--(int)
 				{
@@ -137,6 +131,28 @@ namespace ft
 			private:
 				T		_value;
 		};
+	template <class T, class value_type>
+		bool		operator==(bIterator<T, value_type> lhs, bIterator<T, value_type> rhs)
+		{
+			return (&(*lhs) == &(*rhs));
+		}
+
+	template <class T, class value_type>
+		bool		operator!=(bIterator<T, value_type> lhs, bIterator<T, value_type> rhs)
+		{
+			return (!(lhs == rhs));
+		}
+//	template <typename it1, typename it2>
+//		bool		operator==(it1 lhs, it2 rhs)
+//		{
+//			return (&(*lhs) == &(*rhs));
+//		}
+//
+//	template <typename it1, typename it2>
+//		bool		operator!=(it1 lhs, it2 rhs)
+//		{
+//			return (!(lhs == rhs));
+//		}
 }
 
 #endif
