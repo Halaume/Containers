@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 16:57:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 17:07:23 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,17 +142,6 @@ namespace ft
 		{
 			return (!(lhs == rhs));
 		}
-//	template <typename it1, typename it2>
-//		bool		operator==(it1 lhs, it2 rhs)
-//		{
-//			return (&(*lhs) == &(*rhs));
-//		}
-//
-//	template <typename it1, typename it2>
-//		bool		operator!=(it1 lhs, it2 rhs)
-//		{
-//			return (!(lhs == rhs));
-//		}
 }
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 16:57:24 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 17:07:19 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,16 +172,10 @@ namespace ft
 				}
 				iterator end(void)
 				{
-//					node * tmp = this->_start;
-//					while (tmp && tmp->child[RIGHT])
-//						tmp = tmp->child[RIGHT];
 					return (iterator(this->_start->parent));
 				}
 				const_iterator end(void) const
 				{
-//					node * tmp = this->_start;
-//					while (tmp && tmp->child[RIGHT])
-//						tmp = tmp->child[RIGHT];
 					return (const_iterator(this->_start->parent));
 				}
 				reverse_iterator rbegin(void)
@@ -322,23 +316,6 @@ namespace ft
 				Compare					_comp;
 				std::allocator<node>	_nodealloc;
 				size_type				_size;
-				/*				void	_swapDatAss(node * n1, node * n2)
-								{
-								node * tmp(n1);
-								n1->color = n2->color;
-								n1->parent = n2->parent;
-								n1->dir = n2->dir;
-								n1->child[0] = n2->child[0];
-								n1->child[1] = n2->child[1];
-								n1->value = n2->value;
-								n2->color = tmp->color;
-								n2->parent = tmp->parent;
-								n2->dir = tmp->dir;
-								n2->child[0] = tmp->child[0];
-								n2->child[1] = tmp->child[1];
-								n2->value = tmp->value;
-								}
-								*/
 				node * _rotateDirRoot(node * P, int dir)
 				{
 					node * G = P->parent;
@@ -393,18 +370,8 @@ namespace ft
 							return ;
 						}
 						dir = parent == gparent->child[RIGHT] ? RIGHT : LEFT;
-//						dir = my_node->parent->dir;
 						uncle = gparent->child[1 - dir];
-/*						if (parent)
-							std::cout << "parent = " << parent->value->first << " color = " << parent->color << std::endl;
-						if (gparent)
-							std::cout << "gparent = " << gparent->value->first << " color = " << gparent->color << std::endl;
-						if (gparent && gparent->parent)
-							std::cout << "ggparent = " << gparent->parent->value->first << " color = " << gparent->parent->color << std::endl;
-						if (uncle)
-							std::cout << "uncle value = " << uncle->value->first << " color = " << uncle->color << std::endl;
-						std::cout << "-----------------------------" << std::endl;
-*/						if (uncle == NULL || uncle->color == BLACK)
+						if (uncle == NULL || uncle->color == BLACK)
 						{
 							_do_case_56(my_node, parent, gparent, dir);
 							return ;
@@ -417,8 +384,6 @@ namespace ft
 						parent = my_node->parent;
 					}
 					while (parent->value != NULL);
-//					if (parent->parent == NULL && parent->color == RED)
-//						parent->color = BLACK;
 				}
 		};
 	template< class Key, class T, class Compare, class Alloc >

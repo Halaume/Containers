@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 16:33:02 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 17:07:20 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,31 +126,12 @@ void    do_map( void )
 {
 	ft::RbTree<int, int>    tree;
 	NAMESPACE::vector<int>    v;
-/*	std::cout << 10 << std::endl << "-------------------------" << std::endl;
-		tree.insert(ft::make_pair(10, 10));
-		printTree(tree._start, NULL, false);
-		std::cout << "-------------------------" << std::endl;
-	std::cout << 11 << std::endl << "-------------------------" << std::endl;
-		tree.insert(ft::make_pair(11, 11));
-		printTree(tree._start, NULL, false);
-		std::cout << "-------------------------" << std::endl;
-	std::cout << 12 << std::endl << "-------------------------" << std::endl;
-		tree.insert(ft::make_pair(12, 12));
-		printTree(tree._start, NULL, false);
-		std::cout << "-------------------------" << std::endl;
-	std::cout << 13 << std::endl << "-------------------------" << std::endl;
-		tree.insert(ft::make_pair(13, 13));
-		printTree(tree._start, NULL, false);
-		std::cout << "-------------------------" << std::endl;
-*/
-
 
 	for (size_t i = 0; i < 20; i++)
 		v.push_back(i);
 	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
 	{
-		//		std::cout << v[i] << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
 		tree.insert(ft::make_pair(v[i], v[i]));
 		printTree(tree._start, NULL, false);
@@ -161,6 +142,4 @@ void    do_map( void )
 		if (it != tree.end())
 			std::cout << (*it).first << std::endl;
 	}
-//	printHelper(tree._start, "", true);
-//	printTree(tree._start, NULL, false);
 }
