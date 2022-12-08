@@ -1,0 +1,54 @@
+*******   Testing int vector   *******
+*******   Testing int vector   *******
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5
+5 - 5
+5 & -1
+23
+false true false
+*******   Testing std::string vector   *******
+false true true
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Hello
+Bye
+Bye
+Bye
+Oups

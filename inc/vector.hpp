@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/07 12:55:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/08 18:14:26 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,12 @@ namespace ft
 					vector(InputIt first, InputIt last, const Allocator & alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
 						this->_alloc = alloc;
-						if (this->_distit(first, last) != - 1)
+						difference_type	dist = this->_distit(first, last);
+						if (dist != - 1)
 						{
 							if (static_cast<size_type>(this->_distit(first,last)) > this->max_size())
 								throw (std::length_error("ft::vector"));
-							this->_size = static_cast<size_type>(this->_distit(first, last));
+							this->_size = static_cast<size_type>(dist);
 							this->_tab = this->_alloc.allocate(this->size());
 							this->_capacity = this->size();
 							for (size_type i = 0; i < this->size(); i++, first++)
@@ -95,6 +96,7 @@ namespace ft
 						else
 						{
 							this->_size = 0;
+							this->_capacity = 0;
 							for (;first != last; first++)
 								this->push_back(*first);
 						}
