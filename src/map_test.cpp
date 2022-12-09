@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 17:07:20 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/09 19:33:06 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,4 +142,13 @@ void    do_map( void )
 		if (it != tree.end())
 			std::cout << (*it).first << std::endl;
 	}
+/*	std::random_shuffle(v.begin(), v.end());
+	for (size_t i = 0; i < 20; i++)
+	{
+		ft::RbTree<int, int>::iterator it(ft::make_pair(v[i], v[i]));
+		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
+		tree.erase(it);
+		printTree(tree._start, NULL, false);
+		std::cout << "-------------------------" << std::endl;
+	}*/
 }

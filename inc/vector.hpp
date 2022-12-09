@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 18:14:26 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/09 17:30:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ namespace ft
 				{
 					if (count > this->max_size())
 						throw (std::length_error("ft::vector"));
-					if (count <= this->size())
+					if (count <= this->capacity())
 					{
 						this->clear();
 						for (size_type	i = 0; i < count; i++)

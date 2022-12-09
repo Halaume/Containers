@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 17:07:19 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/09 19:33:05 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,10 @@ namespace ft
 				{
 					return (this->_tree->get_allocator());
 				}
-				T& at( const Key& key );
+				T& at( const Key& key )
+				{
+					return (this->_tree.at(key).second);
+				}
 				T& operator[]( const Key& key );
 				iterator begin()
 				{
@@ -170,11 +173,11 @@ namespace ft
 					{
 						this->_tree->insert(first, last);
 					}
-				iterator erase( iterator pos )
+				void erase( iterator pos )
 				{
 					return (this->_tree->erase(pos));
 				}
-				iterator erase( iterator first, iterator last )
+				void erase( iterator first, iterator last )
 				{
 					return (this->_tree->erase(first, last));
 				}

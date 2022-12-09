@@ -6,7 +6,7 @@
 #    By: bdetune <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/25 19:47:28 by bdetune           #+#    #+#              #
-#    Updated: 2022/12/08 18:08:50 by ghanquer         ###   ########.fr        #
+#    Updated: 2022/12/09 16:03:41 by bdetune          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ NAME = 01.constructor
 SRC = 01.constructor.cpp 
 
 DEP = $(VECTOR_LOCATION)/vector.hpp
-INC = ConstClass.hpp
+INC =  $(INC_DIR)/itPrint.hpp $(INC_DIR)/ConstClass.hpp
 SRC_DIR = srcs
 INC_DIR = includes
 OBJ_DIR = objs
@@ -34,10 +34,10 @@ OBJS := $(SRC:%.cpp=$(OBJ_DIR)/%_$(NAMESPACE).o)
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -Wshadow -g -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -Wpedantic -Wshadow -std=c++98 -g
 
 
-$(BIN_DIR)/$(NAME)_$(NAMESPACE): $(OBJS) $(INC_DIR)/$(INC) $(DEP)
+$(BIN_DIR)/$(NAME)_$(NAMESPACE): $(OBJS) $(INC) $(DEP)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $@
 
 all: $(BIN_DIR)/$(NAME)_$(NAMESPACE)
@@ -46,7 +46,7 @@ all: $(BIN_DIR)/$(NAME)_$(NAMESPACE)
 $(OBJ_DIR)/%_$(NAMESPACE).o: $(SRC_DIR)/%.cpp
 				$(CXX) $(CXXFLAGS)  -I$(VECTOR_LOCATION) -I$(INC_DIR) -D ISFT=$(ISFT) -c -o $@ $<
 
-$(OBJS):	$(INC_DIR)/$(INC) $(DEP)
+$(OBJS):	$(INC) $(DEP)
 
 clean:
 	rm -rf $(OBJS)

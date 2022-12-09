@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/08 17:07:19 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/09 19:33:05 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@
 #include <memory>
 #include "pair.hpp"
 #include "bidirectional_iterator.hpp"
-#include "reverse_bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
 #include "lexicographical_compare.hpp"
+#include "is_same.hpp"
 
 namespace ft
 {
@@ -57,8 +57,20 @@ namespace ft
 					{
 						child[LEFT] = NULL;
 						child[RIGHT] = NULL;
-						value = this->_alloc.allocate(1);
-						this->_alloc.construct(value, *copy.value);
+						if (copy.value)
+						{
+							value = this->_alloc.allocate(1);
+							this->_alloc.construct(value, *copy.value);
+						}
+						else
+							this->value = NULL;
+					}
+					node(pointer val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
+					{
+						child[LEFT] = NULL;
+						child[RIGHT] = NULL;
+						this->_alloc = alloc;
+						this->value = val;
 					}
 					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
@@ -70,8 +82,11 @@ namespace ft
 					}
 					~node(void)
 					{
-						this->_alloc.destroy(value);
-						this->_alloc.deallocate(value, 1);
+						if (value)
+						{
+							this->_alloc.destroy(value);
+							this->_alloc.deallocate(value, 1);
+						}
 					}
 					/*					node &	operator=(const node & src)
 										{
@@ -101,8 +116,8 @@ namespace ft
 				typedef node *							nodePTR;
 				typedef ft::bIterator<nodePTR, value_type>			iterator;
 				typedef ft::bIterator<const nodePTR, value_type>	const_iterator;
-				typedef ft::rbIterator<iterator>					reverse_iterator;
-				typedef ft::rbIterator<const_iterator>				const_reverse_iterator;
+				typedef ft::Reverse_iterator<iterator>				reverse_iterator;
+				typedef ft::Reverse_iterator<const_iterator>		const_reverse_iterator;
 
 				RbTree(void)
 				{
@@ -111,6 +126,8 @@ namespace ft
 					this->_alloc = Allocator();
 					this->_comp = Compare();
 					this->_size = 0;
+					this->_Nil = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_Nil, NULL);
 				}
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator())
 				{
@@ -119,8 +136,10 @@ namespace ft
 					this->_alloc = alloc;
 					this->_comp = comp;
 					this->_size = 0;
+					this->_Nil = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_Nil, NULL);
 				}
-				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size)
+				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size), _Nil(copy._Nil)
 			{
 			}
 				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
@@ -130,16 +149,18 @@ namespace ft
 					this->_alloc = alloc;
 					this->_start = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_start, value);
-					this->_start->parent = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_start->parent, value);
-					this->_alloc.destroy(this->_start->parent->value);
-					this->_alloc.deallocate(this->_start->parent->value, 1);
-					this->_start->parent->value = NULL;
-					this->_start->parent->parent = this->_start;
+					this->_Nil = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_Nil, NULL);
+					this->_Nil = this->_start;
 				}
 				~RbTree(void)
 				{
 					this->clear();
+					node * to_del;
+					to_del = this->_Nil;
+					this->_Nil = NULL;
+					this->_nodealloc.destroy(to_del);
+					this->_nodealloc.deallocate(to_del, 1);
 				}
 				RbTree& operator=(const RbTree & other)
 				{
@@ -158,6 +179,8 @@ namespace ft
 				T& operator[]( const Key& key );
 				iterator begin(void)
 				{
+					if (!this->_start)
+						return (iterator(this->_Nil));
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
 						tmp = tmp->child[LEFT];
@@ -165,6 +188,8 @@ namespace ft
 				}
 				const_iterator begin(void) const
 				{
+					if (!this->_start)
+						return (const_iterator(this->_Nil));
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
 						tmp = tmp->child[LEFT];
@@ -172,11 +197,11 @@ namespace ft
 				}
 				iterator end(void)
 				{
-					return (iterator(this->_start->parent));
+					return (iterator(this->_Nil));
 				}
 				const_iterator end(void) const
 				{
-					return (const_iterator(this->_start->parent));
+					return (const_iterator(this->_Nil));
 				}
 				reverse_iterator rbegin(void)
 				{
@@ -247,12 +272,10 @@ namespace ft
 						this->_start = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_start, value);
 						this->_start->color = BLACK;
-						this->_start->parent = this->_nodealloc.allocate(1);
-						this->_nodealloc.construct(this->_start->parent, value);
-						this->_alloc.destroy(this->_start->parent->value);
-						this->_alloc.deallocate(this->_start->parent->value, 1);
-						this->_start->parent->value = NULL;
-						this->_start->parent->parent = this->_start;
+						this->_start->parent = this->_Nil;
+						this->_Nil = this->_nodealloc.allocate(1);
+						this->_nodealloc.construct(this->_Nil, NULL);
+						this->_Nil->parent = this->_start;
 						return (*this->_start->value);
 					}
 					while (tmp)
@@ -274,7 +297,6 @@ namespace ft
 					{
 						tmp->parent->child[LEFT] = tmp;
 					}
-					//					std::cout << tmp->value->first << std::endl;
 					this->_balance(tmp, tmp->parent);
 					this->_size++;
 					return (*tmp->value);
@@ -293,29 +315,7 @@ namespace ft
 							first++;
 						}
 					}
-				iterator erase(iterator pos)
-				{
-					return (pos);
-				}
-				iterator erase(iterator first, iterator last)
-				{
-					while (first != last)
-					{
-						this->erase(*first);
-						first++;
-					}
-				}
-				size_type erase(const Key & key)
-				{
-					erase(iterator(key));
-					return (this->_size);
-				}
-				node*					_start;
 			private:
-				Allocator				_alloc;
-				Compare					_comp;
-				std::allocator<node>	_nodealloc;
-				size_type				_size;
 				node * _rotateDirRoot(node * P, int dir)
 				{
 					node * G = P->parent;
@@ -385,6 +385,219 @@ namespace ft
 					}
 					while (parent->value != NULL);
 				}
+			public:
+				void erase(iterator pos)
+				{
+					node * to_del = *pos;
+					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
+					{
+						this->_Nil->parent = this->_Nil;
+						this->_delnode(this->_start);
+						return ;
+					}
+					else if (to_del->child[LEFT] && to_del->child[RIGHT])
+					{
+						node * tmp = to_del->child[RIGHT];
+						while (tmp->child[LEFT])
+							tmp = tmp->child[LEFT];
+						this->_swaaaaaap(to_del, tmp);
+					}
+					if (to_del->child[LEFT] || to_del->child[RIGHT])
+					{
+						if (to_del->child[LEFT])
+						{
+							to_del->child[LEFT];
+							this->_swaaaaaap(to_del, to_del->child[LEFT]);
+						}
+						else
+						{
+							to_del->child[RIGHT];
+							this->_swaaaaaap(to_del, to_del->child[RIGHT]);
+						}
+					}
+					else if (to_del->color == BLACK)
+					{
+						//TODO Delete cringe code wikipedia
+						int	dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
+						int did = 0;
+						node * parent = to_del->parent;
+						node * sib;
+						node * D;
+						node * C;
+						parent->child[dir] = NULL;
+						do
+						{
+							if (did == 1)
+								dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
+							did = 1;
+							sib = parent->child[1-dir];
+							D = sib->child[1-dir];
+							C = sib->child[dir];
+							if (sib->color == RED)
+							{
+								this->_case_3(to_del, parent, sib, D, C, dir);
+								this->_delnode(to_del);
+								return ;
+							}
+							if (D && D->color == RED)
+							{
+								this->_case_6(to_del, parent, sib, D, C, dir);
+								this->_delnode(to_del);
+								return ;
+							}
+							if (C && C->color == RED)
+							{
+								this->_case_5(to_del, parent, sib, D, C, dir);
+								this->_delnode(to_del);
+								return ;
+							}
+							if (parent->color == RED)
+							{
+								this->case_4(to_del, parent, sib, D, C);
+								this->_delnode(to_del);
+								return ;
+							}
+							sib->color = RED;
+							to_del = parent;
+						}
+						while ((parent = to_del->parent) != NULL);
+						this->_delnode(to_del);
+						return ;
+					}
+					else
+						this->_delnode(to_del);
+				}
+				void erase(iterator first, iterator last)
+				{
+					while (first != last)
+					{
+						this->erase(*first);
+						first++;
+					}
+				}
+				size_type erase(const Key & key)
+				{
+					if (this->find(key) != this->end())
+						return (erase(iterator(key)), 1);
+					return (0);
+				}
+			private:
+				void	_swaaaaaap(node * node1, node * node2)
+				{
+					node * tmp;
+
+					tmp->child = node1->child;
+					tmp->parent = node1->parent;
+					tmp->value = node1->value;
+					tmp->color = node1->color;
+
+
+					node1->child = node2->child;
+					node1->parent = node2->parent;
+					node1->value = node2->value;
+					node1->color = node2->color;
+
+
+					node2->child = node1->child;
+					node2->parent = node1->parent;
+					node2->value = node1->value;
+					node2->color = node1->color;
+
+				}
+				void	_delnode(node * to_del)
+				{
+					this->_nodealloc.destroy(to_del);
+					this->_nodealloc.deallocate(to_del, 1);
+				}
+				void	_case_3(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				{
+					this->_rotateDirRoot(parent, dir);
+					parent->color = RED;
+					sib->color = BLACK;
+					sib = C;
+					D = sib->child[1 - dir];
+					if (D && D->color == RED)
+					{
+						this->_case_6(to_del, parent, sib, D, C, dir);
+						return ;
+					}
+					C = sib->child[dir];
+					if (C && C->color == RED)
+					{
+						this->_case_5(to_del, parent, sib, D, C, dir);
+						return ;
+					}
+					sib->color = RED;
+					parent->color = BLACK;
+				}
+				void	_case_5(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				{
+					this->_rotateDirRoot*(sib, 1 - dir);
+					sib->color = RED;
+					C->color = BLACK;
+					D = sib;
+					sib = C;
+					this->_case_6(to_del, parent, sib, D, C, dir);
+				}
+				void	_case_6(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				{
+					this->_rotateDirRoot(parent, dir);
+					sib->color = parent->color;
+					parent->color = BLACK;
+					D->color = BLACK;
+				}
+/*				void	_shift_node(node * U, node * C)
+				{
+					if (U->parent == this->_Nil)
+						this->_start = C;
+					else if (U == U->parent->child[LEFT])
+						U->parent->child[LEFT] = C;
+					else
+						U->parent->child[RIGHT] = C;
+					if (C != NULL)
+						C->parent = U->parent;
+				}
+				void	_basic_delete(iterator pos)
+				{
+					if (pos->child[LEFT] == NULL)
+						this->_shift_node(*pos, pos->child[RIGHT]);
+					else if (pos->child[RIGHT] == NULL)
+						this->_shift_node(*pos, pos->child[LEFT]);
+					else
+					{
+						node * U;
+						if (pos->child[RIGHT])
+						{
+							U = pos->child[RIGHT];
+							while (U->child[LEFT])
+								U = U->child[LEFT];
+						}
+						else
+						{
+							U = pos->child[LEFT];
+							while (U->child[RIGHT])
+								U = U->child[RIGHT];
+						}
+						if (U->parent != *pos)
+						{
+							this->_shift_node(U, U->child[RIGHT]);
+							U->child[RIGHT] = pos->child[RIGHT];
+							U->child[RIGHT]->parent = U;
+						}
+						this->_shift_node(*pos, U);
+						U->child[LEFT] = pos->child[LEFT];
+						U->chilf[LEFT]->parent = U;
+					}
+				}*/
+			public:
+				node*					_start;
+			private:
+				Allocator				_alloc;
+				Compare					_comp;
+				std::allocator<node>	_nodealloc;
+				size_type				_size;
+				node *					_Nil;
+				
 		};
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs );
