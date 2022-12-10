@@ -6,13 +6,14 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/09 19:33:06 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/10 17:15:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/stack.hpp"
 #include "../inc/vector.hpp"
 #include "../inc/rbTree.hpp"
+#include "../inc/map.hpp"
 #include "../inc/pair.hpp"
 
 #include <stack>
@@ -137,11 +138,22 @@ void    do_map( void )
 		printTree(tree._start, NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
-	for (ft::RbTree<int, int>::iterator it = tree.end(); it != tree.begin(); it--)
+	ft::RbTree<int, int>::iterator it = tree.end();
+	for (; it != tree.begin(); it--)
 	{
 		if (it != tree.end())
 			std::cout << (*it).first << std::endl;
+
 	}
+	it++;
+	it++;
+	it++;
+	it++;
+	it++;
+	tree.erase(it);
+
+	printTree(tree._start, NULL, false);
+//	ft::map<int, int>	map;
 /*	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
 	{

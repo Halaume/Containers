@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/09 19:33:05 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/10 17:15:15 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,14 @@
 
 namespace ft
 {
+template<typename ptr>
+void swap(ptr & lhs, ptr & rhs)
+{
+	ptr tmp;
+	tmp = rhs;
+	rhs = lhs;
+	lhs = tmp;
+}
 
 	template <class Key, class T, class value_type = ft::pair<const Key, T>, class Compare = std::less<Key>, class Allocator = std::allocator<value_type> >
 		class RbTree
@@ -64,13 +72,6 @@ namespace ft
 						}
 						else
 							this->value = NULL;
-					}
-					node(pointer val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
-					{
-						child[LEFT] = NULL;
-						child[RIGHT] = NULL;
-						this->_alloc = alloc;
-						this->value = val;
 					}
 					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
@@ -109,8 +110,80 @@ namespace ft
 					node*		child[2];
 					bool		color;
 					pointer		value;
+					void swap(const node & other)
+					{
+						if (this->parent == other->parent)
+							ft::swap(this->parent->child[LEFT], other->parent->child[RIGHT]);
+						else
+						{
+							if (this->parent && this->parent != other)
+							{
+								if (this->parent->child[LEFT] == this)
+									this->parent->child[LEFT] = other;
+								else
+									this->parent->child[RIGHT] = other;
+							}
+							if (other->parent && other->parent != this)
+							{
+								if (other->parent->child[LEFT] == other)
+									other->parent->child[LEFT] = this;
+								else
+									other->parent->child[RIGHT] = this;
+							}
+						}
+						if (this->child[LEFT] && this->child[LEFT] != other)
+							this->child[LEFT]->parent = other;
+						if (this->child[RIGHT] && this->child[RIGHT] != other)
+							this->child[RIGHT]->parent = other;
+						if (other->child[LEFT] && other->child[LEFT] != this)
+							other->child[LEFT]->parent = this;
+						if (other->child[RIGHT] && other->child[RIGHT] != this)
+							other->child[RIGHT]->parent = this;
+						if (this->parent != other && other->parent != this)
+						{
+							ft::swap(this->parent, other->parent);
+							ft::swap(this->child[LEFT], other->child[LEFT]);
+							ft::swap(this->child[RIGHT], other->child[RIGHT]);
+						}
+						else if (this->parent == other)
+						{
+							this->parent = other->parent;
+							other->parent = this;
+							if (other->child[LEFT] == this)
+							{
+								other->child[LEFT] = this->child[LEFT];
+								this->child[LEFT] = other;
+								ft::swap(other->child[RIGHT], this->child[RIGHT]);
+							}
+							else
+							{
+								other->child[RIGHT] = this->child[RIGHT];
+								this->child[RIGHT] = other;
+								ft::swap(other->child[LEFT], this->child[LEFT]);
+							}
+						}
+						else if (other->parent == this)
+						{
+							other->parent = this->parent;
+							this->parent = other;
+							if (this->child[LEFT] == other) 
+							{
+								this->child[LEFT] = other->child[LEFT];
+								other->child[LEFT] = this;
+								ft::swap(other->child[RIGHT], this->child[RIGHT]);
+							}
+							else
+							{
+								this->child[RIGHT] = other->child[RIGHT];
+								other->child[RIGHT] = this;
+								ft::swap(other->child[LEFT], this->child[LEFT]);
+							}
+						}
+						ft::swap(this->color, other->color);
+					}
+
 					private:
-						Allocator	_alloc;
+					Allocator	_alloc;
 				};
 
 				typedef node *							nodePTR;
@@ -127,7 +200,12 @@ namespace ft
 					this->_comp = Compare();
 					this->_size = 0;
 					this->_Nil = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_Nil, NULL);
+					value_type	val = value_type();
+					this->_nodealloc.construct(this->_Nil, val);
+					this->_alloc.destroy(this->_Nil->value);
+					this->_alloc.deallocate(this->_Nil->value, 1);
+					this->_Nil->value = NULL;
+					this->_Nil->parent = this->_Nil;
 				}
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator())
 				{
@@ -136,10 +214,14 @@ namespace ft
 					this->_alloc = alloc;
 					this->_comp = comp;
 					this->_size = 0;
-					this->_Nil = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_Nil, NULL);
+					value_type	val = value_type();
+					this->_nodealloc.construct(this->_Nil, val);
+					this->_alloc.destroy(this->_Nil->value);
+					this->_alloc.deallocate(this->_Nil->value, 1);
+					this->_Nil->value = NULL;
+					this->_Nil->parent = this->_Nil;
 				}
-				RbTree(const RbTree & copy): _alloc(copy._alloc), _start(copy._start), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size), _Nil(copy._Nil)
+				RbTree(const RbTree & copy): _start(copy._start), _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size), _Nil(copy._Nil)
 			{
 			}
 				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
@@ -150,8 +232,13 @@ namespace ft
 					this->_start = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_start, value);
 					this->_Nil = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_Nil, NULL);
+					value_type	val = value_type();
+					this->_nodealloc.construct(this->_Nil, val);
+					this->_alloc.destroy(this->_Nil->value);
+					this->_alloc.deallocate(this->_Nil->value, 1);
+					this->_Nil->value = NULL;
 					this->_Nil = this->_start;
+					this->_Nil->parent = this->_Nil;
 				}
 				~RbTree(void)
 				{
@@ -273,8 +360,6 @@ namespace ft
 						this->_nodealloc.construct(this->_start, value);
 						this->_start->color = BLACK;
 						this->_start->parent = this->_Nil;
-						this->_Nil = this->_nodealloc.allocate(1);
-						this->_nodealloc.construct(this->_Nil, NULL);
 						this->_Nil->parent = this->_start;
 						return (*this->_start->value);
 					}
@@ -388,11 +473,13 @@ namespace ft
 			public:
 				void erase(iterator pos)
 				{
-					node * to_del = *pos;
+					std::cout << "ERASE : " << (*pos).first << std::endl;
+					node * to_del = pos.base();
 					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
 					{
 						this->_Nil->parent = this->_Nil;
 						this->_delnode(this->_start);
+						this->_start = NULL;
 						return ;
 					}
 					else if (to_del->child[LEFT] && to_del->child[RIGHT])
@@ -400,20 +487,47 @@ namespace ft
 						node * tmp = to_del->child[RIGHT];
 						while (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
-						this->_swaaaaaap(to_del, tmp);
+						swap(to_del, tmp);
 					}
 					if (to_del->child[LEFT] || to_del->child[RIGHT])
 					{
+						if (to_del->child[RIGHT])
+						{
+							if (to_del->parent)
+							{
+								if (to_del == to_del->parent->child[LEFT])
+								{
+									to_del->parent->child[LEFT] = to_del->child[RIGHT];
+								}
+								else
+								{
+									to_del->parent->child[RIGHT] = to_del->child[RIGHT];
+								}
+							}
+							to_del->child[RIGHT]->parent = to_del->parent;
+							if (to_del == this->_start)
+								this->_start = to_del->child[RIGHT];
+							to_del->child[RIGHT]->color = BLACK;
+						}
 						if (to_del->child[LEFT])
 						{
-							to_del->child[LEFT];
-							this->_swaaaaaap(to_del, to_del->child[LEFT]);
+							if (to_del->parent)
+							{
+								if (to_del == to_del->parent->child[RIGHT])
+								{
+									to_del->parent->child[RIGHT] = to_del->child[LEFT];
+								}
+								else
+								{
+									to_del->parent->child[LEFT] = to_del->child[LEFT];
+								}
+							}
+							to_del->child[LEFT]->parent = to_del->parent;
+							if (to_del == this->_start)
+								this->_start = to_del->child[LEFT];
+							to_del->child[LEFT]->color = BLACK;
 						}
-						else
-						{
-							to_del->child[RIGHT];
-							this->_swaaaaaap(to_del, to_del->child[RIGHT]);
-						}
+						this->_delnode(to_del);
 					}
 					else if (to_del->color == BLACK)
 					{
@@ -435,25 +549,30 @@ namespace ft
 							C = sib->child[dir];
 							if (sib->color == RED)
 							{
-								this->_case_3(to_del, parent, sib, D, C, dir);
+								this->_case_3(parent, sib, D, C, dir);
 								this->_delnode(to_del);
+								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (D && D->color == RED)
 							{
-								this->_case_6(to_del, parent, sib, D, C, dir);
+								this->_case_6(parent, sib, D, dir);
 								this->_delnode(to_del);
+								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (C && C->color == RED)
 							{
-								this->_case_5(to_del, parent, sib, D, C, dir);
+								this->_case_5(parent, sib, D, C, dir);
 								this->_delnode(to_del);
+								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (parent->color == RED)
 							{
-								this->case_4(to_del, parent, sib, D, C);
+								sib->color = RED;
+								parent->color = BLACK;
+								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								this->_delnode(to_del);
 								return ;
 							}
@@ -462,6 +581,8 @@ namespace ft
 						}
 						while ((parent = to_del->parent) != NULL);
 						this->_delnode(to_del);
+						if (parent->value)
+							parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 						return ;
 					}
 					else
@@ -484,32 +605,40 @@ namespace ft
 			private:
 				void	_swaaaaaap(node * node1, node * node2)
 				{
-					node * tmp;
+					node * tmp = NULL;
 
-					tmp->child = node1->child;
+					tmp->child[LEFT] = node1->child[LEFT];
+					tmp->child[RIGHT] = node1->child[RIGHT];
 					tmp->parent = node1->parent;
 					tmp->value = node1->value;
 					tmp->color = node1->color;
 
 
-					node1->child = node2->child;
+					node1->child[LEFT] = node2->child[LEFT];
+					node1->child[RIGHT] = node2->child[RIGHT];
 					node1->parent = node2->parent;
 					node1->value = node2->value;
 					node1->color = node2->color;
 
 
-					node2->child = node1->child;
+					node2->child[LEFT] = node1->child[LEFT];
+					node2->child[RIGHT] = node1->child[RIGHT];
 					node2->parent = node1->parent;
 					node2->value = node1->value;
 					node2->color = node1->color;
 
 				}
-				void	_delnode(node * to_del)
+				void	_delnode(node * my_node)
 				{
+					node * to_del = my_node;
+
+					if (my_node->parent)
+						(my_node->parent->child[RIGHT] == my_node ? my_node->parent->child[RIGHT] : my_node->child[LEFT]) = NULL;
 					this->_nodealloc.destroy(to_del);
 					this->_nodealloc.deallocate(to_del, 1);
+					this->_size--;
 				}
-				void	_case_3(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				void	_case_3(node * parent, node * sib, node * D, node * C, int dir)
 				{
 					this->_rotateDirRoot(parent, dir);
 					parent->color = RED;
@@ -518,77 +647,77 @@ namespace ft
 					D = sib->child[1 - dir];
 					if (D && D->color == RED)
 					{
-						this->_case_6(to_del, parent, sib, D, C, dir);
+						this->_case_6(parent, sib, D, dir);
 						return ;
 					}
 					C = sib->child[dir];
 					if (C && C->color == RED)
 					{
-						this->_case_5(to_del, parent, sib, D, C, dir);
+						this->_case_5(parent, sib, D, C, dir);
 						return ;
 					}
 					sib->color = RED;
 					parent->color = BLACK;
 				}
-				void	_case_5(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				void	_case_5(node * parent, node * sib, node * D, node * C, int dir)
 				{
-					this->_rotateDirRoot*(sib, 1 - dir);
+					this->_rotateDirRoot(sib, 1 - dir);
 					sib->color = RED;
 					C->color = BLACK;
 					D = sib;
 					sib = C;
-					this->_case_6(to_del, parent, sib, D, C, dir);
+					this->_case_6(parent, sib, D, dir);
 				}
-				void	_case_6(node * to_del, node * parent, node * sib, node * D, node * C, int dir)
+				void	_case_6(node * parent, node * sib, node * D, int dir)
 				{
 					this->_rotateDirRoot(parent, dir);
 					sib->color = parent->color;
 					parent->color = BLACK;
 					D->color = BLACK;
 				}
-/*				void	_shift_node(node * U, node * C)
-				{
-					if (U->parent == this->_Nil)
-						this->_start = C;
-					else if (U == U->parent->child[LEFT])
-						U->parent->child[LEFT] = C;
-					else
-						U->parent->child[RIGHT] = C;
-					if (C != NULL)
-						C->parent = U->parent;
-				}
-				void	_basic_delete(iterator pos)
-				{
-					if (pos->child[LEFT] == NULL)
-						this->_shift_node(*pos, pos->child[RIGHT]);
-					else if (pos->child[RIGHT] == NULL)
-						this->_shift_node(*pos, pos->child[LEFT]);
-					else
-					{
-						node * U;
-						if (pos->child[RIGHT])
-						{
-							U = pos->child[RIGHT];
-							while (U->child[LEFT])
+				/*				void	_shift_node(node * U, node * C)
+								{
+								if (U->parent == this->_Nil)
+								this->_start = C;
+								else if (U == U->parent->child[LEFT])
+								U->parent->child[LEFT] = C;
+								else
+								U->parent->child[RIGHT] = C;
+								if (C != NULL)
+								C->parent = U->parent;
+								}
+								void	_basic_delete(iterator pos)
+								{
+								if (pos->child[LEFT] == NULL)
+								this->_shift_node(*pos, pos->child[RIGHT]);
+								else if (pos->child[RIGHT] == NULL)
+								this->_shift_node(*pos, pos->child[LEFT]);
+								else
+								{
+								node * U;
+								if (pos->child[RIGHT])
+								{
+								U = pos->child[RIGHT];
+								while (U->child[LEFT])
 								U = U->child[LEFT];
-						}
-						else
-						{
-							U = pos->child[LEFT];
-							while (U->child[RIGHT])
+								}
+								else
+								{
+								U = pos->child[LEFT];
+								while (U->child[RIGHT])
 								U = U->child[RIGHT];
-						}
-						if (U->parent != *pos)
-						{
-							this->_shift_node(U, U->child[RIGHT]);
-							U->child[RIGHT] = pos->child[RIGHT];
-							U->child[RIGHT]->parent = U;
-						}
-						this->_shift_node(*pos, U);
-						U->child[LEFT] = pos->child[LEFT];
-						U->chilf[LEFT]->parent = U;
-					}
-				}*/
+								}
+								if (U->parent != *pos)
+								{
+								this->_shift_node(U, U->child[RIGHT]);
+								U->child[RIGHT] = pos->child[RIGHT];
+								U->child[RIGHT]->parent = U;
+								}
+								this->_shift_node(*pos, U);
+								U->child[LEFT] = pos->child[LEFT];
+								U->chilf[LEFT]->parent = U;
+								}
+								}*/
 			public:
 				node*					_start;
 			private:
@@ -597,7 +726,7 @@ namespace ft
 				std::allocator<node>	_nodealloc;
 				size_type				_size;
 				node *					_Nil;
-				
+
 		};
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs );

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/09 19:33:05 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/10 17:15:15 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 #include <functional>
 #include <memory>
 #include "pair.hpp"
-#include "iterator.hpp"
 #include "reverse_iterator.hpp"
+#include "bidirectional_iterator.hpp"
 #include "rbTree.hpp"
 #include "lexicographical_compare.hpp"
 #include "enable_if.hpp"
@@ -43,10 +43,6 @@ namespace ft
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
 				//TODO Make bidirectionnal iterator for this bad boy
-				typedef ft::Iterator<T>							iterator;
-				typedef ft::Iterator<const T>					const_iterator;
-				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
-				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 				class value_compare : public std::binary_function<key_type, value_type, key_compare>
 			{
 				public:
@@ -62,6 +58,10 @@ namespace ft
 					Compare	comp;
 			};
 				typedef ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>	Tree;
+				typedef typename ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>::iterator						iterator;
+				typedef typename ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>::const_iterator						const_iterator;
+				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
+				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 				map(void)
 				{
 					std::allocator<Tree> rballoc;
@@ -69,7 +69,9 @@ namespace ft
 					this->_alloc = Allocator();
 					this->_comp = Compare();
 					this->_tree = rballoc.allocate(1);
-					rballoc.construct(this->_tree, this->_comp, this->alloc);
+					value_type val = value_type();
+					rballoc.construct(this->_tree, val);
+					this->_tree.erase(this->_tree.begin());
 				}
 				explicit map(const Compare & comp, const Allocator & alloc = Allocator()): _alloc(alloc), _size(0), _comp(comp)
 				{
@@ -175,11 +177,11 @@ namespace ft
 					}
 				void erase( iterator pos )
 				{
-					return (this->_tree->erase(pos));
+					this->_tree->erase(pos);
 				}
 				void erase( iterator first, iterator last )
 				{
-					return (this->_tree->erase(first, last));
+					this->_tree->erase(first, last);
 				}
 				size_type erase( const Key& key )
 				{
@@ -206,10 +208,10 @@ namespace ft
 
 
 			private:
-				Tree *	_tree;
-				Allocator			_alloc;
-				size_type			_size;
-				Compare				_comp;
+				Tree *		_tree;
+				Allocator	_alloc;
+				size_type	_size;
+				Compare		_comp;
 		};
 
 	template< class Key, class T, class Compare, class Alloc >
