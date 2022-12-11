@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/10 17:15:15 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/11 17:33:01 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,20 +110,20 @@ void swap(ptr & lhs, ptr & rhs)
 					node*		child[2];
 					bool		color;
 					pointer		value;
-					void swap(const node & other)
+					void swap(node * & other)
 					{
 						if (this->parent == other->parent)
 							ft::swap(this->parent->child[LEFT], other->parent->child[RIGHT]);
 						else
 						{
-							if (this->parent && this->parent != other)
+							if (this->parent->value && this->parent != other)
 							{
 								if (this->parent->child[LEFT] == this)
 									this->parent->child[LEFT] = other;
 								else
 									this->parent->child[RIGHT] = other;
 							}
-							if (other->parent && other->parent != this)
+							if (other->parent->value && other->parent != this)
 							{
 								if (other->parent->child[LEFT] == other)
 									other->parent->child[LEFT] = this;
@@ -179,7 +179,11 @@ void swap(ptr & lhs, ptr & rhs)
 								ft::swap(other->child[LEFT], this->child[LEFT]);
 							}
 						}
-						ft::swap(this->color, other->color);
+						if (this->color != other->color)
+						{
+							this->color = !this->color;
+							other->color = !other->color;
+						}
 					}
 
 					private:
@@ -246,8 +250,6 @@ void swap(ptr & lhs, ptr & rhs)
 					node * to_del;
 					to_del = this->_Nil;
 					this->_Nil = NULL;
-					this->_nodealloc.destroy(to_del);
-					this->_nodealloc.deallocate(to_del, 1);
 				}
 				RbTree& operator=(const RbTree & other)
 				{
@@ -350,6 +352,10 @@ void swap(ptr & lhs, ptr & rhs)
 					this->_nodealloc.destroy(to_del);
 					this->_nodealloc.deallocate(to_del, 1);
 				}
+				size_type size(void)
+				{
+					return (this->_size);
+				}
 				value_type	insert(const value_type & value)
 				{
 					node* tmp = this->_start;
@@ -361,6 +367,7 @@ void swap(ptr & lhs, ptr & rhs)
 						this->_start->color = BLACK;
 						this->_start->parent = this->_Nil;
 						this->_Nil->parent = this->_start;
+						this->_size++;
 						return (*this->_start->value);
 					}
 					while (tmp)
@@ -405,9 +412,7 @@ void swap(ptr & lhs, ptr & rhs)
 				{
 					node * G = P->parent;
 					node * S = P->child[1 - dir];
-					node * C;
-					assert(S != NULL);
-					C = S->child[dir];
+					node * C = S->child[dir];
 
 					P->child[1 - dir] = C;
 					if (C != NULL && C->value != NULL)
@@ -478,8 +483,8 @@ void swap(ptr & lhs, ptr & rhs)
 					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
 					{
 						this->_Nil->parent = this->_Nil;
-						this->_delnode(this->_start);
-						this->_start = NULL;
+						this->_delnode(this->_start, false);
+						this->_start = this->_Nil;
 						return ;
 					}
 					else if (to_del->child[LEFT] && to_del->child[RIGHT])
@@ -487,106 +492,90 @@ void swap(ptr & lhs, ptr & rhs)
 						node * tmp = to_del->child[RIGHT];
 						while (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
-						swap(to_del, tmp);
+						to_del->swap(tmp);
 					}
 					if (to_del->child[LEFT] || to_del->child[RIGHT])
 					{
 						if (to_del->child[RIGHT])
 						{
-							if (to_del->parent)
+							if (to_del->parent->value)
 							{
 								if (to_del == to_del->parent->child[LEFT])
-								{
 									to_del->parent->child[LEFT] = to_del->child[RIGHT];
-								}
 								else
-								{
 									to_del->parent->child[RIGHT] = to_del->child[RIGHT];
-								}
 							}
 							to_del->child[RIGHT]->parent = to_del->parent;
 							if (to_del == this->_start)
 								this->_start = to_del->child[RIGHT];
 							to_del->child[RIGHT]->color = BLACK;
 						}
-						if (to_del->child[LEFT])
+						else
 						{
-							if (to_del->parent)
+							if (to_del->parent->value)
 							{
-								if (to_del == to_del->parent->child[RIGHT])
-								{
-									to_del->parent->child[RIGHT] = to_del->child[LEFT];
-								}
-								else
-								{
+								if (to_del == to_del->parent->child[LEFT])
 									to_del->parent->child[LEFT] = to_del->child[LEFT];
-								}
+								else
+									to_del->parent->child[RIGHT] = to_del->child[LEFT];
 							}
 							to_del->child[LEFT]->parent = to_del->parent;
 							if (to_del == this->_start)
 								this->_start = to_del->child[LEFT];
 							to_del->child[LEFT]->color = BLACK;
 						}
-						this->_delnode(to_del);
+						this->_delnode(to_del, false);
 					}
 					else if (to_del->color == BLACK)
 					{
 						//TODO Delete cringe code wikipedia
 						int	dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
-						int did = 0;
 						node * parent = to_del->parent;
 						node * sib;
 						node * D;
 						node * C;
 						parent->child[dir] = NULL;
+						this->_delnode(to_del, true);
+						to_del = NULL;
 						do
 						{
-							if (did == 1)
+							if (to_del)
 								dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
-							did = 1;
 							sib = parent->child[1-dir];
 							D = sib->child[1-dir];
 							C = sib->child[dir];
 							if (sib->color == RED)
 							{
 								this->_case_3(parent, sib, D, C, dir);
-								this->_delnode(to_del);
-								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (D && D->color == RED)
 							{
 								this->_case_6(parent, sib, D, dir);
-								this->_delnode(to_del);
-								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (C && C->color == RED)
 							{
 								this->_case_5(parent, sib, D, C, dir);
-								this->_delnode(to_del);
-								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 								return ;
 							}
 							if (parent->color == RED)
 							{
 								sib->color = RED;
 								parent->color = BLACK;
-								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
-								this->_delnode(to_del);
 								return ;
 							}
 							sib->color = RED;
 							to_del = parent;
+							parent = to_del->parent;
 						}
-						while ((parent = to_del->parent) != NULL);
-						this->_delnode(to_del);
+						while (parent->value);
 						if (parent->value)
 							parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 						return ;
 					}
 					else
-						this->_delnode(to_del);
+						this->_delnode(to_del, true);
 				}
 				void erase(iterator first, iterator last)
 				{
@@ -603,7 +592,7 @@ void swap(ptr & lhs, ptr & rhs)
 					return (0);
 				}
 			private:
-				void	_swaaaaaap(node * node1, node * node2)
+/*				void	_swaaaaaap(node * node1, node * node2)
 				{
 					node * tmp = NULL;
 
@@ -628,12 +617,12 @@ void swap(ptr & lhs, ptr & rhs)
 					node2->color = node1->color;
 
 				}
-				void	_delnode(node * my_node)
+*/				void	_delnode(node * my_node, bool is_here)
 				{
 					node * to_del = my_node;
 
-					if (my_node->parent)
-						(my_node->parent->child[RIGHT] == my_node ? my_node->parent->child[RIGHT] : my_node->child[LEFT]) = NULL;
+					if (is_here && my_node->parent->value)
+						(my_node->parent->child[RIGHT] == my_node ? my_node->parent->child[RIGHT] : my_node->parent->child[LEFT]) = NULL;
 					this->_nodealloc.destroy(to_del);
 					this->_nodealloc.deallocate(to_del, 1);
 					this->_size--;
@@ -645,13 +634,13 @@ void swap(ptr & lhs, ptr & rhs)
 					sib->color = BLACK;
 					sib = C;
 					D = sib->child[1 - dir];
-					if (D && D->color == RED)
+					if (D != NULL && D->color == RED)
 					{
 						this->_case_6(parent, sib, D, dir);
 						return ;
 					}
 					C = sib->child[dir];
-					if (C && C->color == RED)
+					if (C != NULL && C->color == RED)
 					{
 						this->_case_5(parent, sib, D, C, dir);
 						return ;

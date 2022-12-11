@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/10 17:15:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/11 17:33:02 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void printnode(ft::RbTree<int, int, ft::pair<int, int> >::node * & tmp) {
 }
 
 void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
-	if (root == NULL)
+	if (!root || !root->value)
 		return ;
 	//    std::cout << "root : " << root->val.first << std::endl;
 	std::string prev_str = "         ";
@@ -101,28 +101,6 @@ void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
 
 /* END */
 
-void printHelper(ft::RbTree<int, int>::node* root, std::string indent, bool last)
-{
-	if (root)
-	{
-		std::cout << indent;
-		if (last)
-		{
-			std::cout << "R----";
-			indent += "   ";
-		}
-		else
-		{
-			std::cout << "L----";
-			indent += "|  ";
-		}
-		std::string sColor = root->color ? "RED" : "BLACK";
-		std::cout << root->value->first << "(" << sColor << ")" << std::endl;
-		printHelper(root->child[0], indent, false);
-		printHelper(root->child[1], indent, true);
-	}
-}
-
 void    do_map( void )
 {
 	ft::RbTree<int, int>    tree;
@@ -133,11 +111,13 @@ void    do_map( void )
 	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
 	{
+		std::cout << "size = " << tree.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
 		tree.insert(ft::make_pair(v[i], v[i]));
 		printTree(tree._start, NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
+	std::cout << "size = " << tree.size() << std::endl;
 	ft::RbTree<int, int>::iterator it = tree.end();
 	for (; it != tree.begin(); it--)
 	{
@@ -145,12 +125,17 @@ void    do_map( void )
 			std::cout << (*it).first << std::endl;
 
 	}
-	it++;
-	it++;
-	it++;
-	it++;
-	it++;
-	tree.erase(it);
+	it = tree.end();
+	it--;
+
+	while (tree.size())
+	{
+		ft::RbTree<int, int>::iterator it2(tree.begin());
+		std::cout << "size = " << tree.size() << std::endl;
+		tree.erase(it2);
+		printTree(tree._start, NULL, false);
+	}
+	std::cout << "size = " << tree.size() << std::endl;
 
 	printTree(tree._start, NULL, false);
 //	ft::map<int, int>	map;
