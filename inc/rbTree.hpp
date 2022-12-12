@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/11 17:33:01 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/12 15:34:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,26 @@ void swap(ptr & lhs, ptr & rhs)
 					this->_Nil = this->_start;
 					this->_Nil->parent = this->_Nil;
 				}
+				template<class InputIt>
+					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
+					{
+						this->_nodealloc = std::allocator<node>();
+						this->_start = NULL;
+						this->_alloc = alloc;
+						this->_comp = comp;
+						this->_size = 0;
+						value_type	val = value_type();
+						this->_nodealloc.construct(this->_Nil, val);
+						this->_alloc.destroy(this->_Nil->value);
+						this->_alloc.deallocate(this->_Nil->value, 1);
+						this->_Nil->value = NULL;
+						this->_Nil->parent = this->_Nil;
+						while (first != last)
+						{
+							this->insert(first);
+							first++;
+						}
+					}
 				~RbTree(void)
 				{
 					this->clear();
@@ -528,7 +548,6 @@ void swap(ptr & lhs, ptr & rhs)
 					}
 					else if (to_del->color == BLACK)
 					{
-						//TODO Delete cringe code wikipedia
 						int	dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
 						node * parent = to_del->parent;
 						node * sib;
@@ -591,33 +610,119 @@ void swap(ptr & lhs, ptr & rhs)
 						return (erase(iterator(key)), 1);
 					return (0);
 				}
-			private:
-/*				void	_swaaaaaap(node * node1, node * node2)
+				size_type count();
+				iterator find( const Key& key )
 				{
-					node * tmp = NULL;
+					node *	tmp = this->_start;
 
-					tmp->child[LEFT] = node1->child[LEFT];
-					tmp->child[RIGHT] = node1->child[RIGHT];
-					tmp->parent = node1->parent;
-					tmp->value = node1->value;
-					tmp->color = node1->color;
-
-
-					node1->child[LEFT] = node2->child[LEFT];
-					node1->child[RIGHT] = node2->child[RIGHT];
-					node1->parent = node2->parent;
-					node1->value = node2->value;
-					node1->color = node2->color;
-
-
-					node2->child[LEFT] = node1->child[LEFT];
-					node2->child[RIGHT] = node1->child[RIGHT];
-					node2->parent = node1->parent;
-					node2->value = node1->value;
-					node2->color = node1->color;
-
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (iterator(tmp));
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					return (this->end());
 				}
-*/				void	_delnode(node * my_node, bool is_here)
+				const_iterator find( const Key& key ) const
+				{
+					node *	tmp = this->_start;
+
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (const_iterator(tmp));
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					return (this->end());
+				}
+				value_type equal_range( const Key& key );
+				value_type equal_range( const Key& key ) const;
+				iterator lower_bound( const Key& key )
+				{
+					node * tmp = this->_start;
+					node * ret = NULL;
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (iterator(tmp));
+						if (!this->_comp(tmp->value, key))
+							ret = tmp;
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					if (ret)
+						return (iterator(ret));
+					return (this->end());
+				}
+				const_iterator lower_bound( const Key& key ) const
+				{
+					node * tmp = this->_start;
+					node * ret = NULL;
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (const_iterator(tmp));
+						if (!this->_comp(tmp->value, key))
+							ret = tmp;
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					if (ret)
+						return (const_iterator(ret));
+					return (this->end());
+				}
+
+				iterator upper_bound( const Key& key )
+				{
+					node * tmp = this->_start;
+					node * ret = NULL;
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (iterator(tmp));
+						if (this->_comp(tmp->value, key))
+							ret = tmp;
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					if (ret)
+						return (iterator(ret));
+					return (this->end());
+				}
+				const_iterator upper_bound( const Key& key ) const
+				{
+					node * tmp = this->_start;
+					node * ret = NULL;
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+							return (const_iterator(tmp));
+						if (this->_comp(tmp->value, key))
+							ret = tmp;
+						if (this->_comp(tmp->value, key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					if (ret)
+						return (const_iterator(ret));
+					return (this->end());
+				}
+
+			private:
+				void	_delnode(node * my_node, bool is_here)
 				{
 					node * to_del = my_node;
 
@@ -664,49 +769,6 @@ void swap(ptr & lhs, ptr & rhs)
 					parent->color = BLACK;
 					D->color = BLACK;
 				}
-				/*				void	_shift_node(node * U, node * C)
-								{
-								if (U->parent == this->_Nil)
-								this->_start = C;
-								else if (U == U->parent->child[LEFT])
-								U->parent->child[LEFT] = C;
-								else
-								U->parent->child[RIGHT] = C;
-								if (C != NULL)
-								C->parent = U->parent;
-								}
-								void	_basic_delete(iterator pos)
-								{
-								if (pos->child[LEFT] == NULL)
-								this->_shift_node(*pos, pos->child[RIGHT]);
-								else if (pos->child[RIGHT] == NULL)
-								this->_shift_node(*pos, pos->child[LEFT]);
-								else
-								{
-								node * U;
-								if (pos->child[RIGHT])
-								{
-								U = pos->child[RIGHT];
-								while (U->child[LEFT])
-								U = U->child[LEFT];
-								}
-								else
-								{
-								U = pos->child[LEFT];
-								while (U->child[RIGHT])
-								U = U->child[RIGHT];
-								}
-								if (U->parent != *pos)
-								{
-								this->_shift_node(U, U->child[RIGHT]);
-								U->child[RIGHT] = pos->child[RIGHT];
-								U->child[RIGHT]->parent = U;
-								}
-								this->_shift_node(*pos, U);
-								U->child[LEFT] = pos->child[LEFT];
-								U->chilf[LEFT]->parent = U;
-								}
-								}*/
 			public:
 				node*					_start;
 			private:
