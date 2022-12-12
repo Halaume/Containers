@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/11 17:33:02 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:40:18 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void    do_map( void )
 	std::cout << "size = " << tree.size() << std::endl;
 
 	printTree(tree._start, NULL, false);
-//	ft::map<int, int>	map;
+	ft::map<int, int>	map;
 /*	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
 	{

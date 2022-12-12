@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 15:34:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:37:22 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include "pair.hpp"
 #include "bidirectional_iterator.hpp"
 #include "reverse_iterator.hpp"
@@ -196,21 +197,6 @@ void swap(ptr & lhs, ptr & rhs)
 				typedef ft::Reverse_iterator<iterator>				reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>		const_reverse_iterator;
 
-				RbTree(void)
-				{
-					this->_nodealloc = std::allocator<node>();
-					this->_start = NULL;
-					this->_alloc = Allocator();
-					this->_comp = Compare();
-					this->_size = 0;
-					this->_Nil = this->_nodealloc.allocate(1);
-					value_type	val = value_type();
-					this->_nodealloc.construct(this->_Nil, val);
-					this->_alloc.destroy(this->_Nil->value);
-					this->_alloc.deallocate(this->_Nil->value, 1);
-					this->_Nil->value = NULL;
-					this->_Nil->parent = this->_Nil;
-				}
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator())
 				{
 					this->_nodealloc = std::allocator<node>();
@@ -284,8 +270,14 @@ void swap(ptr & lhs, ptr & rhs)
 				{
 					return (this->_alloc);
 				}
-				T& at( const Key& key );
-				T& operator[]( const Key& key );
+				value_type & at( const Key& key )
+				{
+					iterator tmp = this->find(key);
+
+					if (tmp == this->end())
+						throw std::out_of_range("Key not exist");
+					return (*tmp);
+				}
 				iterator begin(void)
 				{
 					if (!this->_start)
@@ -498,7 +490,7 @@ void swap(ptr & lhs, ptr & rhs)
 			public:
 				void erase(iterator pos)
 				{
-					std::cout << "ERASE : " << (*pos).first << std::endl;
+					std::cout << "ERASE : " << pos->first << std::endl;
 					node * to_del = pos.base();
 					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
 					{
@@ -610,7 +602,6 @@ void swap(ptr & lhs, ptr & rhs)
 						return (erase(iterator(key)), 1);
 					return (0);
 				}
-				size_type count();
 				iterator find( const Key& key )
 				{
 					node *	tmp = this->_start;
@@ -641,8 +632,6 @@ void swap(ptr & lhs, ptr & rhs)
 					}
 					return (this->end());
 				}
-				value_type equal_range( const Key& key );
-				value_type equal_range( const Key& key ) const;
 				iterator lower_bound( const Key& key )
 				{
 					node * tmp = this->_start;

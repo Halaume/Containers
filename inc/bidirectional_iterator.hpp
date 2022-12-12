@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/11 16:43:59 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:33:25 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ namespace ft
 		{
 			public:
 				typedef std::ptrdiff_t difference_type;
-				typedef T * pointer;
+				typedef value_type * pointer;
 				typedef value_type & reference;
 				typedef std::bidirectional_iterator_tag iterator_category;
 
@@ -129,7 +129,8 @@ namespace ft
 					return (tmp);
 				}
 				reference	operator*(void) const { return (*(this->_value->value)); }
-				pointer		operator->(void) const { return (this->_value->value); }
+				pointer		operator->(void) const { return (&(*(this->_value->value))); }
+				pointer		operator->(void) { return (&(*(this->_value->value))); }
 			private:
 				T		_value;
 		};

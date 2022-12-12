@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 15:42:10 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:42:27 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ namespace ft
 					Compare	comp;
 			};
 
-				typedef ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>	Tree;
-				typedef typename ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>::iterator						iterator;
-				typedef typename ft::RbTree<Key, T, ft::pair<Key, T>, value_compare, Allocator>::const_iterator						const_iterator;
+				typedef ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>	Tree;
+				typedef typename ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>::iterator						iterator;
+				typedef typename ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>::const_iterator						const_iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -76,11 +76,10 @@ namespace ft
 				{
 					std::allocator<Tree> rballoc;
 					this->_alloc = Allocator();
-					this->_comp = Compare();
+					this->_comp(Compare());
 					this->_tree = rballoc.allocate(1);
-					Tree val = Tree();
+					Tree val = Tree(this->_comp, this->_alloc);
 					rballoc.construct(this->_tree, val);
-					this->_tree->erase(this->_tree.begin());
 				}
 
 				explicit map(const Compare & comp, const Allocator & alloc = Allocator()): _alloc(alloc), _comp(comp)
@@ -133,7 +132,13 @@ namespace ft
 					return (this->_tree->at(key).second);
 				}
 
-				T& operator[]( const Key& key );
+				T& operator[]( const Key& key )
+				{
+					iterator tmp = this->find(key);
+					if (tmp != this->end())
+						return ((*tmp).second);
+					return (*(this->_tree->insert(ft::make_pair(key, T()))).second);
+				}
 
 				iterator begin()
 				{
@@ -233,7 +238,12 @@ namespace ft
 					this->_tree = other._tree;
 				}
 
-				size_type count( const Key& key ) const;
+				size_type count( const Key& key ) const
+				{
+					if (this->find(key) == this->end())
+						return (0);
+					return (1);
+				}
 				iterator find( const Key& key )
 				{
 					return (this->_tree->find(key));
@@ -243,33 +253,45 @@ namespace ft
 				{
 					return (this->_tree->find(key));
 				}
-				ft::pair<iterator,iterator> equal_range( const Key& key );
-				ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const;
+
+				ft::pair<iterator,iterator> equal_range( const Key& key )
+				{
+					return (ft::make_pair(this->lower_bound(key), this->upper_bound(key)));
+				}
+
+				ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
+				{
+					return (ft::make_pair(this->lower_bound(key), this->upper_bound(key)));
+				}
 				iterator lower_bound( const Key& key )
 				{
 					return (this->_tree->lower_bound(key));
 				}
+
 				const_iterator lower_bound( const Key& key ) const
 				{
 					return (this->_tree->lower_bound(key));
 				}
+
 				iterator upper_bound( const Key& key )
 				{
 					return (this->_tree->upper_bound(key));
 				}
+
 				const_iterator upper_bound( const Key& key ) const
 				{
 					return (this->_tree->upper_bound(key));
 				}
+
 				key_compare key_comp(void) const;
 				value_compare value_comp(void) const;
 
 
 
 			private:
-				Tree *		_tree;
-				Allocator	_alloc;
-				Compare		_comp;
+				Tree *			_tree;
+				Allocator		_alloc;
+				value_compare	_comp;
 		};
 
 	template< class Key, class T, class Compare, class Alloc >
