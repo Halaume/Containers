@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 16:07:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 17:20:41 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,15 +157,15 @@ void    do_map( void )
 	my_map.erase(my_map.begin());
 	printTree(my_map.base()._start, NULL, false);
 	
-//	std::cout << "----------------Copied Tree----------" << std::endl;
+	std::cout << "----------------Copied Tree----------" << std::endl;
 	
-//	printTree(my_map2.base()._start, NULL, false);
+	printTree(my_map2.base()._start, NULL, false);
 
-//	std::cout << "----------------Copied = Tree----------" << std::endl;
+	std::cout << "----------------Copied = Tree----------" << std::endl;
 	
-//	printTree(my_map3.base()._start, NULL, false);
+	printTree(my_map3.base()._start, NULL, false);
 	
-//	std::cout << "---------COPIED---------" << std::endl;
+	std::cout << "---------COPIED---------" << std::endl;
 
 
 	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
@@ -193,9 +193,9 @@ void    do_map( void )
 	while (my_map.size())
 	{
 		ft::map<int, int>::iterator it2(my_map.begin());
-//		std::cout << "size = " << my_map.size() << std::endl;
+		std::cout << "size = " << my_map.size() << std::endl;
 		my_map.erase(it2);
-//		printTree(my_map.base()._start, NULL, false);
+		printTree(my_map.base()._start, NULL, false);
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
 

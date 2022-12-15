@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 16:27:43 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 17:42:47 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,11 +321,16 @@ namespace ft
 		};
 
 	template< class Key, class T, class Compare, class Alloc >
-		bool operator==( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs );
+		bool operator==( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
+		{
+			if (lhs.size() != rhs.size())
+				return (false);
+			return (lhs._tree == rhs._tree);
+		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator!=( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(lhs == rhs));
+			return (!(lhs._tree == rhs.tree));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator<( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
