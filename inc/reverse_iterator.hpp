@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:57:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/06 16:30:08 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/14 15:49:32 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 #define REVERSE_ITERATOR_HPP
 
 #include <cstddef>
+#include <iterator>
 #include "iterator.hpp"
 #include <iostream>
 
 namespace ft
 {
 	template <class Iter>
-		class Reverse_iterator
+		class Reverse_iterator: public std::iterator<typename ft::iterator_traits<Iter>::iterator_category, typename ft::iterator_traits<Iter>::value_type, typename ft::iterator_traits<Iter>::difference_type, typename ft::iterator_traits<Iter>::pointer, typename ft::iterator_traits<Iter>::reference>
 		{
 			public:
 				typedef Iter iterator_type;
@@ -86,8 +87,8 @@ namespace ft
 					--*this;
 					return (tmp);
 				}
-				reference	operator*(void) { return (*(this->_current - 1)); }
-				pointer		operator->(void) { return (&(*(this->_current - 1))); }
+				reference	operator*(void) { Iter tmp = this->_current; return (*(--tmp)); }
+				pointer		operator->(void) { Iter tmp = this->_current; return (&(*(--tmp))); }
 				reference	operator[](int i)
 				{
 					return (*(*this + i));

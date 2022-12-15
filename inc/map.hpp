@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 17:42:27 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/14 18:43:17 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,10 @@ namespace ft
 
 				class value_compare : public std::binary_function<key_type, value_type, key_compare>
 			{
+				friend class map;
+
 				public:
-					bool	operator()(const value_type & lhs, const value_type & rhs) const 
+					bool	operator()(const value_type & lhs, const value_type & rhs) const
 					{
 						return (this->comp(lhs.first, rhs.first));
 					}
@@ -72,13 +74,17 @@ namespace ft
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
-				map(void)
+				Tree & base(void)
+				{
+					return (*(this->_tree));
+				}
+
+				map(void): _comp(Compare())
 				{
 					std::allocator<Tree> rballoc;
 					this->_alloc = Allocator();
-					this->_comp(Compare());
 					this->_tree = rballoc.allocate(1);
-					Tree val = Tree(this->_comp, this->_alloc);
+					Tree val(this->_comp, this->_alloc);
 					rballoc.construct(this->_tree, val);
 				}
 
@@ -100,11 +106,11 @@ namespace ft
 					rballoc.construct(this->_tree, val);
 				}
 
-				map(const map & copy): _alloc(copy._alloc), _comp(copy._comp)
+				map(const map & copy): _alloc(copy._alloc), _comp(copy._comp.comp)
 			{
 				std::allocator<Tree> rballoc;
 				this->_tree = rballoc.allocate(1);
-				rballoc.construct(this->_tree, copy._tree);
+				rballoc.construct(this->_tree, *(copy._tree));
 			}
 
 				~map(void)
@@ -118,16 +124,21 @@ namespace ft
 				{
 					if (this == &other)
 						return (*this);
-					this->_tree = other->_tree;
+					this->_tree = other._tree;
 					return (*this);
 				}
 
 				allocator_type get_allocator() const
 				{
-					return (this->_tree->get_allocator());
+					return (this->_alloc);
 				}
 
 				T& at( const Key& key )
+				{
+					return (this->_tree->at(key).second);
+				}
+
+				const T& at(const Key& key) const
 				{
 					return (this->_tree->at(key).second);
 				}
@@ -187,12 +198,12 @@ namespace ft
 
 				size_type size() const
 				{
-					return (this->_size());
+					return (this->_tree->size());
 				}
 
 				size_type max_size() const
 				{
-					return (this->_alloc.max_size());
+					return (this->tree->max_size());
 				}
 
 				void clear()
@@ -200,7 +211,7 @@ namespace ft
 					this->_tree->clear();
 				}
 
-				value_type	insert(const value_type & value)
+				ft::pair<iterator, bool>	insert(const value_type & value)
 				{
 					return (this->_tree->insert(value));
 				}

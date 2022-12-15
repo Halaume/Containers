@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 17:33:25 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/13 18:14:41 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,18 @@
 
 namespace ft
 {
-	template<typename T, class value_type>
+	template<typename T, class value_typee>
 		class bIterator
 		{
 			public:
-				typedef std::ptrdiff_t difference_type;
-				typedef value_type * pointer;
-				typedef value_type & reference;
-				typedef std::bidirectional_iterator_tag iterator_category;
+				typedef value_typee						value_type;
+				typedef std::ptrdiff_t					difference_type;
+				typedef value_type *					pointer;
+				typedef value_type &					reference;
+				typedef std::bidirectional_iterator_tag	iterator_category;
 
-				bIterator(void)
+				bIterator(void): _value()
 				{
-					this->_value();
-					this->_tree();
 				}
 
 				bIterator(const bIterator & copy): _value(copy._value)

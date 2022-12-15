@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 12:49:07 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 11:25:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/13 19:21:33 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ namespace ft
 					return (*this);
 				this->first = other.first;
 				this->second = other.second;
+				return (*this);
 			}
 			first_type	first;
 			second_type	second;

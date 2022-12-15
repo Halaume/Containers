@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 17:40:18 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 12:15:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void showTrunks(Trunk *p)
 	std::cout << p->str;
 }
 
-void printnode(ft::RbTree<int, int, ft::pair<int, int> >::node * & tmp) {
+void printnode(ft::map<int, int>::Tree::node * & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -61,7 +61,7 @@ void printnode(ft::RbTree<int, int, ft::pair<int, int> >::node * & tmp) {
 	std::cout << "Key : " << tmp->value->first << " | Val : " << tmp->value->second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
+void printTree(ft::map<int, int>::Tree::node * root, Trunk *prev, bool isLeft) {
 	if (!root || !root->value)
 		return ;
 	//    std::cout << "root : " << root->val.first << std::endl;
@@ -103,49 +103,97 @@ void printTree(ft::RbTree<int, int>::node * root, Trunk *prev, bool isLeft) {
 
 void    do_map( void )
 {
-	ft::RbTree<int, int>    tree;
-	NAMESPACE::vector<int>    v;
+	ft::map<int, int>		my_map;
+	NAMESPACE::vector<int>	v;
 
 	for (size_t i = 0; i < 20; i++)
 		v.push_back(i);
 	std::random_shuffle(v.begin(), v.end());
 	for (size_t i = 0; i < 20; i++)
 	{
-		std::cout << "size = " << tree.size() << std::endl;
+		std::cout << "size = " << my_map.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
-		tree.insert(ft::make_pair(v[i], v[i]));
-		printTree(tree._start, NULL, false);
+		my_map.insert(ft::make_pair<int, int>(v[i], v[i]));
+		printTree(my_map.base()._start, NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
-	std::cout << "size = " << tree.size() << std::endl;
-	ft::RbTree<int, int>::iterator it = tree.end();
-	for (; it != tree.begin(); it--)
+	std::cout << "size = " << my_map.size() << std::endl;
+	ft::map<int, int>::iterator it = my_map.end();
+	for (; it != my_map.begin(); it--)
 	{
-		if (it != tree.end())
+		if (it != my_map.end())
 			std::cout << (*it).first << std::endl;
 
 	}
-	it = tree.end();
+	it = my_map.end();
 	it--;
 
-	while (tree.size())
+	ft::map<int, int>::reverse_iterator it3 = my_map.rend();
+	std::cout << "-----------REVERSE---------" << std::endl;
+	for (; it3 != my_map.rbegin(); it3--)
 	{
-		ft::RbTree<int, int>::iterator it2(tree.begin());
-		std::cout << "size = " << tree.size() << std::endl;
-		tree.erase(it2);
-		printTree(tree._start, NULL, false);
+		if (it3 != my_map.rend())
+			std::cout << it3->first << std::endl;
 	}
-	std::cout << "size = " << tree.size() << std::endl;
+	std::cout << "-----------END--REVERSE-----" << std::endl;
 
-	printTree(tree._start, NULL, false);
-	ft::map<int, int>	map;
-/*	std::random_shuffle(v.begin(), v.end());
-	for (size_t i = 0; i < 20; i++)
+	std::cout << "---------COPY---------" << std::endl;
+
+
+	std::cout << "----------------Base Tree----------" << std::endl;
+	printTree(my_map.base()._start, NULL, false);
+
+	std::cout << "----------------Copied Tree----------" << std::endl;
+	ft::map<int, int>		my_map2(my_map);
+	printTree(my_map2.base()._start, NULL, false);
+
+	std::cout << "----------------Copied = Tree----------" << std::endl;
+
+	ft::map<int, int>		my_map3 = my_map;
+	printTree(my_map3.base()._start, NULL, false);
+
+	std::cout << "----------------Base Tree ERASE BEGIN----------" << std::endl;
+
+	my_map.erase(my_map.begin());
+	printTree(my_map.base()._start, NULL, false);
+	
+	std::cout << "----------------Copied Tree----------" << std::endl;
+	
+	printTree(my_map2.base()._start, NULL, false);
+
+	std::cout << "----------------Copied = Tree----------" << std::endl;
+	
+	printTree(my_map3.base()._start, NULL, false);
+	
+	std::cout << "---------COPIED---------" << std::endl;
+
+	std::cout << "---------Bound----------" << std::endl;
+	std::cout << "---------UPPER----------" << std::endl;
+	std::cout << "Upper Bound de 5 : ";
+	(my_map.upper_bound(5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.upper_bound(5))->first) << std::endl;
+	std::cout << "Upper Bound de 50 : ";
+	(my_map.upper_bound(50) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.upper_bound(50))->first) << std::endl;
+	std::cout << "Upper Bound de -5 : ";
+	(my_map.upper_bound(-5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.upper_bound(-5))->first) << std::endl;
+	std::cout << "---------LOWER----------" << std::endl;
+	std::cout << "Lower Bound de 5 : ";
+	(my_map.lower_bound(5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(5))->first) << std::endl;
+	std::cout << "Lower Bound de 50 : ";
+	(my_map.lower_bound(50) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(50))->first) << std::endl;
+	std::cout << "Lower Bound de -5 : ";
+	(my_map.lower_bound(-5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(-5))->first) << std::endl;
+	std::cout << "---------End Bound----------" << std::endl;
+
+	std::cout << "-----------ERASE---------" << std::endl;
+	while (my_map.size())
 	{
-		ft::RbTree<int, int>::iterator it(ft::make_pair(v[i], v[i]));
-		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
-		tree.erase(it);
-		printTree(tree._start, NULL, false);
-		std::cout << "-------------------------" << std::endl;
-	}*/
+		ft::map<int, int>::iterator it2(my_map.begin());
+//		std::cout << "size = " << my_map.size() << std::endl;
+		my_map.erase(it2);
+//		printTree(my_map.base()._start, NULL, false);
+	}
+	std::cout << "size = " << my_map.size() << std::endl;
+
+	printTree(my_map.base()._start, NULL, false);
+	std::cout << "-----------ERASED---------" << std::endl;
 }

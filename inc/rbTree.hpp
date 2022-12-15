@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/12 17:37:22 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 12:21:58 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void swap(ptr & lhs, ptr & rhs)
 	lhs = tmp;
 }
 
-	template <class Key, class T, class value_type = ft::pair<const Key, T>, class Compare = std::less<Key>, class Allocator = std::allocator<value_type> >
+	template <class Key, class T, class value_type, class Compare, class Allocator = std::allocator<value_type> >
 		class RbTree
 		{
 			public:
@@ -74,6 +74,13 @@ void swap(ptr & lhs, ptr & rhs)
 						else
 							this->value = NULL;
 					}
+					node(pointer val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
+					{
+						child[LEFT] = NULL;
+						child[RIGHT] = NULL;
+						this->_alloc = alloc;
+						this->value = val;
+					}
 					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
 						child[LEFT] = NULL;
@@ -90,23 +97,16 @@ void swap(ptr & lhs, ptr & rhs)
 							this->_alloc.deallocate(value, 1);
 						}
 					}
-					/*					node &	operator=(const node & src)
-										{
-					//TODO C dla merde
-					//
-					//
-					if (this == &src)
-					return (*this);
-					this->parent = src.parent;
-					this->child = src.child;
-					this->color = src.color;
-					this->value = src.value;
-					this->dir = src.dir;
-					}*/
-					//					bool operator==(const node & rhs)
-					//					{
-					//						return (this->value->first == rhs.value->first);
-					//					}
+					node &	operator=(const node & src)
+					{
+						if (this == &src)
+							return (*this);
+						this->parent = src.parent;
+						this->child = src.child;
+						this->color = src.color;
+						this->value = src.value;
+						this->dir = src.dir;
+					}
 					node*		parent;
 					node*		child[2];
 					bool		color;
@@ -197,65 +197,90 @@ void swap(ptr & lhs, ptr & rhs)
 				typedef ft::Reverse_iterator<iterator>				reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>		const_reverse_iterator;
 
-				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator())
+				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator()): _comp(comp)
 				{
+
 					this->_nodealloc = std::allocator<node>();
-					this->_start = NULL;
 					this->_alloc = alloc;
-					this->_comp = comp;
 					this->_size = 0;
-					value_type	val = value_type();
+					node	val(NULL, this->_alloc);
+					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, val);
-					this->_alloc.destroy(this->_Nil->value);
-					this->_alloc.deallocate(this->_Nil->value, 1);
-					this->_Nil->value = NULL;
 					this->_Nil->parent = this->_Nil;
+					this->_start = this->_Nil;
 				}
-				RbTree(const RbTree & copy): _start(copy._start), _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size), _Nil(copy._Nil)
+				RbTree(const RbTree & copy): _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc)
 			{
+					this->_Nil = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(this->_Nil, *(copy._Nil));
+					this->_start = NULL;
+					if (copy.begin() != copy.end())
+					{
+						this->_start = this->_copy(this->_start, copy._start);
+						this->_start->parent = this->_Nil;
+						this->_Nil->parent = this->_start;
+					}
+					else
+					{
+						this->_start = this->_Nil;
+						this->_Nil->parent = this->_Nil;
+					}
+					this->_size = 0;
 			}
-				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
+			private:
+				node *	_copy(node * root, node * my_node)
+				{
+					node * tmp = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(tmp, *(my_node));
+
+					tmp->parent = root;
+					if (my_node->child[LEFT])
+						tmp->child[LEFT] = this->_copy(tmp, my_node->child[LEFT]);
+					if (my_node->child[RIGHT])
+						tmp->child[RIGHT] = this->_copy(tmp, my_node->child[RIGHT]);
+					return (tmp);
+				}
+			public:
+				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
 				{
 					this->_nodealloc = std::allocator<node>();
-					this->_comp = comp;
 					this->_alloc = alloc;
 					this->_start = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_start, value);
 					this->_Nil = this->_nodealloc.allocate(1);
-					value_type	val = value_type();
+					node	val(NULL, this->_alloc);
+					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, val);
-					this->_alloc.destroy(this->_Nil->value);
-					this->_alloc.deallocate(this->_Nil->value, 1);
-					this->_Nil->value = NULL;
-					this->_Nil = this->_start;
+					this->_start = this->_Nil;
 					this->_Nil->parent = this->_Nil;
 				}
 				template<class InputIt>
-					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator())
+					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
 					{
 						this->_nodealloc = std::allocator<node>();
-						this->_start = NULL;
 						this->_alloc = alloc;
-						this->_comp = comp;
 						this->_size = 0;
-						value_type	val = value_type();
+						node	val(NULL, this->_alloc);
+						this->_Nil = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_Nil, val);
-						this->_alloc.destroy(this->_Nil->value);
-						this->_alloc.deallocate(this->_Nil->value, 1);
-						this->_Nil->value = NULL;
+						this->_start = this->_Nil;
 						this->_Nil->parent = this->_Nil;
+						this->_Nil->parent = this->_Nil;
+						this->_start = this->_Nil;
 						while (first != last)
 						{
-							this->insert(first);
+							this->insert(*first);
 							first++;
 						}
 					}
 				~RbTree(void)
 				{
 					this->clear();
-					node * to_del;
-					to_del = this->_Nil;
-					this->_Nil = NULL;
+					if (this->_Nil)
+					{
+						this->_nodealloc.destroy(this->_Nil);
+						this->_nodealloc.deallocate(this->_Nil, 1);
+					}
 				}
 				RbTree& operator=(const RbTree & other)
 				{
@@ -263,16 +288,30 @@ void swap(ptr & lhs, ptr & rhs)
 						return (*this);
 					if (this->_start)
 						this->clear();
-					this->_start = other._start;
-					this->_size = other._size;
-				}
-				allocator_type get_allocator() const
-				{
-					return (this->_alloc);
+					if (other._start != other._Nil)
+					{
+						this->_start = this->_nodealloc.allocate(1);
+						this->_nodealloc.construct(this->_start, *(other._start));
+						this->_Nil->parent = this->_start;
+						this->_copy(this->_start, other._start);
+					}
+					else
+					{
+						this->_start = this->_Nil;
+						this->_Nil->parent = this->_Nil;
+					}
 				}
 				value_type & at( const Key& key )
 				{
 					iterator tmp = this->find(key);
+
+					if (tmp == this->end())
+						throw std::out_of_range("Key not exist");
+					return (*tmp);
+				}
+				const value_type & at( const Key& key ) const
+				{
+					const_iterator tmp = this->find(key);
 
 					if (tmp == this->end())
 						throw std::out_of_range("Key not exist");
@@ -324,12 +363,20 @@ void swap(ptr & lhs, ptr & rhs)
 				{
 					return (!this->_start);
 				}
+				size_type size(void)
+				{
+					return (this->_size);
+				}
+				size_type max_size(void) const
+				{
+					return (this->_nodealloc.max_size());
+				}
 				void clear(void)
 				{
 					node*	tmp = this->_start;
 					node*	to_del;
 
-					while (tmp->value)
+					while (tmp && tmp->value)
 					{
 						if (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
@@ -337,10 +384,8 @@ void swap(ptr & lhs, ptr & rhs)
 							tmp = tmp->child[RIGHT];
 						else
 						{
-
-							if (tmp->parent->value)
+							if (tmp != this->_start)
 							{
-
 								to_del = tmp;
 								tmp = tmp->parent;
 								if (to_del == tmp->child[LEFT])
@@ -353,26 +398,22 @@ void swap(ptr & lhs, ptr & rhs)
 							else
 							{
 								to_del = tmp;
-								tmp = tmp->parent;
+								tmp = this->_Nil;
 								this->_nodealloc.destroy(to_del);
 								this->_nodealloc.deallocate(to_del, 1);
 							}
 						}
 					}
-					to_del = tmp;
-					tmp = NULL;
-					this->_nodealloc.destroy(to_del);
-					this->_nodealloc.deallocate(to_del, 1);
+					this->_size = 0;
+					this->_start = this->_Nil;
+					this->_Nil->parent = this->_Nil;
 				}
-				size_type size(void)
-				{
-					return (this->_size);
-				}
-				value_type	insert(const value_type & value)
+				ft::pair<iterator, bool>	insert(const value_type & value)
 				{
 					node* tmp = this->_start;
-					node* tmpp = NULL;
-					if (!tmp)
+					node* tmpp = this->_Nil;
+
+					if (!tmp || !tmp->value)
 					{
 						this->_start = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_start, value);
@@ -380,30 +421,37 @@ void swap(ptr & lhs, ptr & rhs)
 						this->_start->parent = this->_Nil;
 						this->_Nil->parent = this->_start;
 						this->_size++;
-						return (*this->_start->value);
+						return (ft::make_pair(iterator(tmp), true));
 					}
-					while (tmp)
+					while (tmp && tmp->value)
 					{
 						tmpp = tmp;
-						if (value.first > tmp->value->first)
+						if (!this->_comp(value, *(tmp->value)))
 							tmp = tmp->child[RIGHT];
-						else
+						else if (this->_comp(value, *(tmp->value)))
 							tmp = tmp->child[LEFT];
+						else
+							return (ft::make_pair(iterator(tmp), false));
 					}
 					tmp = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(tmp, value);
 					tmp->parent = tmpp;
-					if (tmp->value->first > tmpp->value->first)
+					if (tmpp != this->_Nil)
 					{
-						tmp->parent->child[RIGHT] = tmp;
-					}
-					else
-					{
-						tmp->parent->child[LEFT] = tmp;
+						if (!this->_comp(value, *(tmpp->value)))
+							tmp->parent->child[RIGHT] = tmp;
+						else if (this->_comp(value, *(tmpp->value)))
+							tmp->parent->child[LEFT] = tmp;
+						else
+						{
+							this->_nodealloc.destroy(tmp);
+							this->_nodealloc.deallocate(tmp, 1);
+							return (ft::make_pair(iterator(tmp), false));
+						}
 					}
 					this->_balance(tmp, tmp->parent);
 					this->_size++;
-					return (*tmp->value);
+					return (ft::make_pair(iterator(tmp), true));
 				}
 				iterator insert( iterator pos, const value_type& value )
 				{
@@ -466,7 +514,7 @@ void swap(ptr & lhs, ptr & rhs)
 						{
 							return ;
 						}
-						if (gparent->value == NULL)
+						if (gparent == NULL)
 						{
 							parent->color = BLACK;
 							return ;
@@ -490,7 +538,6 @@ void swap(ptr & lhs, ptr & rhs)
 			public:
 				void erase(iterator pos)
 				{
-					std::cout << "ERASE : " << pos->first << std::endl;
 					node * to_del = pos.base();
 					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
 					{
@@ -608,9 +655,9 @@ void swap(ptr & lhs, ptr & rhs)
 
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+						if (this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0)
 							return (iterator(tmp));
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
@@ -623,9 +670,9 @@ void swap(ptr & lhs, ptr & rhs)
 
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+						if (this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0)
 							return (const_iterator(tmp));
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
@@ -638,11 +685,11 @@ void swap(ptr & lhs, ptr & rhs)
 					node * ret = NULL;
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+						if (this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0)
 							return (iterator(tmp));
-						if (!this->_comp(tmp->value, key))
+						if (!this->_comp(*(tmp->value), key))
 							ret = tmp;
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
@@ -657,11 +704,11 @@ void swap(ptr & lhs, ptr & rhs)
 					node * ret = NULL;
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
+						if (this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0)
 							return (const_iterator(tmp));
-						if (!this->_comp(tmp->value, key))
+						if (!this->_comp(*(tmp->value), key))
 							ret = tmp;
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
@@ -677,11 +724,9 @@ void swap(ptr & lhs, ptr & rhs)
 					node * ret = NULL;
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
-							return (iterator(tmp));
-						if (this->_comp(tmp->value, key))
+						if (!this->_comp(*(tmp->value), key) && !(this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0))
 							ret = tmp;
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
@@ -696,11 +741,9 @@ void swap(ptr & lhs, ptr & rhs)
 					node * ret = NULL;
 					while (tmp && tmp->value)
 					{
-						if (this->_comp(tmp->value, key) == 0 && this->_comp(key, tmp->value) == 0)
-							return (const_iterator(tmp));
-						if (this->_comp(tmp->value, key))
+						if (!this->_comp(*(tmp->value), key) && !(this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0))
 							ret = tmp;
-						if (this->_comp(tmp->value, key))
+						if (this->_comp(*(tmp->value), key))
 							tmp = tmp->child[RIGHT];
 						else
 							tmp = tmp->child[LEFT];
