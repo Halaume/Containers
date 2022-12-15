@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 12:15:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 16:07:44 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,15 +157,20 @@ void    do_map( void )
 	my_map.erase(my_map.begin());
 	printTree(my_map.base()._start, NULL, false);
 	
-	std::cout << "----------------Copied Tree----------" << std::endl;
+//	std::cout << "----------------Copied Tree----------" << std::endl;
 	
-	printTree(my_map2.base()._start, NULL, false);
+//	printTree(my_map2.base()._start, NULL, false);
 
-	std::cout << "----------------Copied = Tree----------" << std::endl;
+//	std::cout << "----------------Copied = Tree----------" << std::endl;
 	
-	printTree(my_map3.base()._start, NULL, false);
+//	printTree(my_map3.base()._start, NULL, false);
 	
-	std::cout << "---------COPIED---------" << std::endl;
+//	std::cout << "---------COPIED---------" << std::endl;
+
+
+	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
+	ft::map<int, int>		my_map4(my_map.begin(), my_map.end());
+	printTree(my_map4.base()._start, NULL, false);
 
 	std::cout << "---------Bound----------" << std::endl;
 	std::cout << "---------UPPER----------" << std::endl;

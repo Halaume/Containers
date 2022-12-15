@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/14 18:43:17 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 16:27:43 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ namespace ft
 				template<class InputIt>
 					map(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _alloc(alloc), _comp(comp)
 				{
-
 					std::allocator<Tree> rballoc;
 					this->_tree = rballoc.allocate(1);
 					Tree val = Tree(first, last, this->_comp, this->_alloc);
@@ -124,7 +123,23 @@ namespace ft
 				{
 					if (this == &other)
 						return (*this);
-					this->_tree = other._tree;
+					std::allocator<Tree> rballoc;
+					if (other._tree == NULL)
+					{
+						if (this->_tree)
+						{
+							rballoc.destroy(this->_tree);
+							rballoc.deallocate(this->_tree, 1);
+						}
+						this->_tree = NULL;
+					}
+					else if (this->_tree)
+						*(this->_tree) = *(other._tree);
+					else
+					{
+						this->_tree = rballoc.allocate(1);
+						rballoc.construct(this->_tree, *(other._tree));
+					}
 					return (*this);
 				}
 

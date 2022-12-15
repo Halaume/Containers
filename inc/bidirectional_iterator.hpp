@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/13 18:14:41 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 16:33:33 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ namespace ft
 					--*this;
 					return (tmp);
 				}
-				reference	operator*(void) const { return (*(this->_value->value)); }
+				reference	operator*(void) const { return (*(this->_value->value)); ;}
 				pointer		operator->(void) const { return (&(*(this->_value->value))); }
 				pointer		operator->(void) { return (&(*(this->_value->value))); }
 			private:

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 12:21:58 by ghanquer         ###   ########.fr       */
+/*   Updated: 2022/12/15 16:39:21 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,6 @@ void swap(ptr & lhs, ptr & rhs)
 
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator()): _comp(comp)
 				{
-
 					this->_nodealloc = std::allocator<node>();
 					this->_alloc = alloc;
 					this->_size = 0;
@@ -209,11 +208,11 @@ void swap(ptr & lhs, ptr & rhs)
 					this->_Nil->parent = this->_Nil;
 					this->_start = this->_Nil;
 				}
-				RbTree(const RbTree & copy): _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc)
+				RbTree(const RbTree & copy): _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size)
 			{
 					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, *(copy._Nil));
-					this->_start = NULL;
+					this->_start = this->_Nil;
 					if (copy.begin() != copy.end())
 					{
 						this->_start = this->_copy(this->_start, copy._start);
@@ -225,7 +224,6 @@ void swap(ptr & lhs, ptr & rhs)
 						this->_start = this->_Nil;
 						this->_Nil->parent = this->_Nil;
 					}
-					this->_size = 0;
 			}
 			private:
 				node *	_copy(node * root, node * my_node)
@@ -246,13 +244,13 @@ void swap(ptr & lhs, ptr & rhs)
 					this->_nodealloc = std::allocator<node>();
 					this->_alloc = alloc;
 					this->_start = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_start, value);
+					this->_nodealloc.construct(this->_start, node(value, this->_alloc));
 					this->_Nil = this->_nodealloc.allocate(1);
+					this->_size = 1;
 					node	val(NULL, this->_alloc);
 					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, val);
-					this->_start = this->_Nil;
-					this->_Nil->parent = this->_Nil;
+					this->_Nil->parent = this->_start;
 				}
 				template<class InputIt>
 					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
@@ -260,18 +258,14 @@ void swap(ptr & lhs, ptr & rhs)
 						this->_nodealloc = std::allocator<node>();
 						this->_alloc = alloc;
 						this->_size = 0;
+
 						node	val(NULL, this->_alloc);
 						this->_Nil = this->_nodealloc.allocate(1);
 						this->_nodealloc.construct(this->_Nil, val);
 						this->_start = this->_Nil;
 						this->_Nil->parent = this->_Nil;
-						this->_Nil->parent = this->_Nil;
-						this->_start = this->_Nil;
-						while (first != last)
-						{
-							this->insert(*first);
-							first++;
-						}
+
+						this->insert(first, last);
 					}
 				~RbTree(void)
 				{
@@ -290,16 +284,16 @@ void swap(ptr & lhs, ptr & rhs)
 						this->clear();
 					if (other._start != other._Nil)
 					{
-						this->_start = this->_nodealloc.allocate(1);
-						this->_nodealloc.construct(this->_start, *(other._start));
+						this->_start = this->_copy(this->_Nil, other._start);
 						this->_Nil->parent = this->_start;
-						this->_copy(this->_start, other._start);
 					}
 					else
 					{
 						this->_start = this->_Nil;
 						this->_Nil->parent = this->_Nil;
 					}
+					this->_size = other._size;
+					return (*this);
 				}
 				value_type & at( const Key& key )
 				{
@@ -319,7 +313,7 @@ void swap(ptr & lhs, ptr & rhs)
 				}
 				iterator begin(void)
 				{
-					if (!this->_start)
+					if (this->_start == this->_Nil)
 						return (iterator(this->_Nil));
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
@@ -328,7 +322,7 @@ void swap(ptr & lhs, ptr & rhs)
 				}
 				const_iterator begin(void) const
 				{
-					if (!this->_start)
+					if (this->_start == this->_Nil)
 						return (const_iterator(this->_Nil));
 					node * tmp = this->_start;
 					while (tmp && tmp->child[LEFT])
@@ -416,7 +410,7 @@ void swap(ptr & lhs, ptr & rhs)
 					if (!tmp || !tmp->value)
 					{
 						this->_start = this->_nodealloc.allocate(1);
-						this->_nodealloc.construct(this->_start, value);
+						this->_nodealloc.construct(this->_start, node(value, this->_alloc));
 						this->_start->color = BLACK;
 						this->_start->parent = this->_Nil;
 						this->_Nil->parent = this->_start;
@@ -434,7 +428,7 @@ void swap(ptr & lhs, ptr & rhs)
 							return (ft::make_pair(iterator(tmp), false));
 					}
 					tmp = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(tmp, value);
+					this->_nodealloc.construct(tmp, node(value, this->_alloc));
 					tmp->parent = tmpp;
 					if (tmpp != this->_Nil)
 					{
