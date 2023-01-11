@@ -28,6 +28,7 @@
 #include "reverse_iterator.hpp"
 #include "lexicographical_compare.hpp"
 #include "is_same.hpp"
+#include "equal.hpp"
 
 namespace ft
 {
@@ -806,7 +807,10 @@ void swap(ptr & lhs, ptr & rhs)
 
 		};
 	template< class Key, class T, class Compare, class Alloc >
-		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs );
+		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+		{
+			return ((lhs.size() == rhs.size()) && ft::equal(lhs.begin, lhs.end(), rhs.begin()));
+		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator!=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
 		{
@@ -815,22 +819,22 @@ void swap(ptr & lhs, ptr & rhs)
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator<( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
 		{
-			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator<=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
 		{
-			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
+			return (!(lhs > rhs));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator>( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) && lhs != rhs);
+			return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator>=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) || lhs == rhs);
+			return (!(lhs < rhs));
 		}
 
 	template< class Key, class T, class Compare, class Alloc >

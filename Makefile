@@ -20,13 +20,13 @@ OBJ_DIR = 		obj_ft
 
 OBJ_DIR_STD = 		obj_std
 
-INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair Iterator_traits reverse_iterator remove_cv is_same bidirectional_iterator)
+INC =			$(addsuffix .hpp, stack vector map rbTree set enable_if is_integral integral_constant lexicographical_compare pair Iterator_traits reverse_iterator remove_cv is_same bidirectional_iterator equal)
 
 SRC =			$(SRC_FT:%=./%.cpp)
 
 OBJ =			$(SRC:./%.cpp=$(OBJ_DIR)/%.o)
 
-OBJ_STD =			$(SRC:./%.cpp=$(OBJ_DIR_STD)/%.o)
+OBJ_STD =		$(SRC:./%.cpp=$(OBJ_DIR_STD)/%.o)
 
 OBJ_DIRS =		$(OBJ_DIR)
 

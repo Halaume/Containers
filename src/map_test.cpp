@@ -32,10 +32,10 @@ struct Trunk
 	Trunk *prev;
 	std::string str;
 
-	Trunk(Trunk *prev, std::string str)
+	Trunk(Trunk *previ, std::string stri)
 	{
-		this->prev = prev;
-		this->str = str;
+		this->prev = previ;
+		this->str = stri;
 	}
 };
 
