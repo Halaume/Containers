@@ -323,34 +323,32 @@ namespace ft
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator==( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			if (lhs.size() != rhs.size())
-				return (false);
-			return (lhs._tree == rhs._tree);
+			return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator!=( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(lhs._tree == rhs.tree));
+			return (!(lhs == rhs));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator<( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) && lhs != rhs);
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator<=( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()) || lhs == rhs);
+			return (!(lhs > rhs));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator>( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) && lhs != rhs);
+			return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 		}
 	template< class Key, class T, class Compare, class Alloc >
 		bool operator>=( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs )
 		{
-			return (!(ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())) || lhs == rhs);
+			return (!(lhs < rhs));
 		}
 
 	template< class Key, class T, class Compare, class Alloc >
