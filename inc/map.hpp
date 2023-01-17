@@ -68,9 +68,9 @@ namespace ft
 					Compare	comp;
 			};
 
-				typedef ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>	Tree;
-				typedef typename ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>::iterator						iterator;
-				typedef typename ft::RbTree<Key, T, ft::pair<const Key, T>, value_compare, Allocator>::const_iterator						const_iterator;
+				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>	Tree;
+				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>::iterator						iterator;
+				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>::const_iterator						const_iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -218,7 +218,7 @@ namespace ft
 
 				size_type max_size() const
 				{
-					return (this->tree->max_size());
+					return (this->_tree->max_size());
 				}
 
 				void clear()
