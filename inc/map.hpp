@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 19:37:57 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 14:04:35 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,9 @@ namespace ft
 					iterator tmp = this->find(key);
 					if (tmp != this->end())
 						return ((*tmp).second);
-					return (*(this->_tree->insert(ft::make_pair(key, T()))).second);
+					value_type	tmp2 = ft::make_pair(key, T());
+					this->_tree->insert(tmp2); 
+					return (tmp2.second);
 				}
 
 				iterator begin()
@@ -259,9 +261,7 @@ namespace ft
 
 				void swap( map& other )
 				{
-					map<Key, T, Compare, Allocator>	tmp;
-					tmp._tree = this->_tree;
-					this->_tree = other._tree;
+					ft::swap(this->_tree, other._tree);
 				}
 
 				size_type count( const Key& key ) const

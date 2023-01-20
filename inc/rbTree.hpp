@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 19:37:57 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 13:53:12 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,7 +356,7 @@ void swap(ptr & lhs, ptr & rhs)
 				}
 				bool empty(void) const
 				{
-					return (!this->_start);
+					return (this->_start == this->_Nil);
 				}
 				size_type size(void)
 				{
@@ -451,7 +451,7 @@ void swap(ptr & lhs, ptr & rhs)
 				iterator insert( iterator pos, const value_type& value )
 				{
 					(void)pos;
-					return (iterator(this->insert(value)));
+					return (this->insert(value).first);
 				}
 				template< class InputIt >
 					void insert( InputIt first, InputIt last )

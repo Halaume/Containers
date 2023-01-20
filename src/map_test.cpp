@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/15 19:37:59 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 12:41:31 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,9 @@ void    do_map( void )
 	std::cout << "Lower Bound de -5 : ";
 	(my_map.lower_bound(-5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(-5))->first) << std::endl;
 	std::cout << "---------End Bound----------" << std::endl;
-
+	ft::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator>	eqr = my_map.equal_range(5);
+	if (eqr.first != my_map.lower_bound(5) || eqr.second != my_map.upper_bound(5))
+		std::cout << "Wrong equal range" << std::endl;
 	std::cout << "-----------ERASE---------" << std::endl;
 	while (my_map.size())
 	{
