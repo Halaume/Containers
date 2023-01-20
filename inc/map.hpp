@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 14:04:35 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 15:43:27 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,9 +163,8 @@ namespace ft
 					iterator tmp = this->find(key);
 					if (tmp != this->end())
 						return ((*tmp).second);
-					value_type	tmp2 = ft::make_pair(key, T());
-					this->_tree->insert(tmp2); 
-					return (tmp2.second);
+					this->_tree->insert(ft::make_pair(key, T()));
+					return ((*(this->find(key))).second);
 				}
 
 				iterator begin()
@@ -175,7 +174,7 @@ namespace ft
 
 				const_iterator begin() const
 				{
-					return (this->_tree->begin());
+					return (this->_tree->constbegin());
 				}
 
 				iterator end()
@@ -185,7 +184,7 @@ namespace ft
 
 				const_iterator end() const
 				{
-					return (this->_tree->end());
+					return (this->_tree->constend());
 				}
 
 				reverse_iterator rbegin()
@@ -195,7 +194,7 @@ namespace ft
 
 				const_reverse_iterator rbegin() const
 				{
-					return (this->_tree->rbegin());
+					return (this->_tree->rconstbegin());
 				}
 
 				reverse_iterator rend()
@@ -205,7 +204,7 @@ namespace ft
 
 				const_reverse_iterator rend() const
 				{
-					return (this->_tree->rend());
+					return (this->_tree->rconstend());
 				}
 
 				bool empty() const
@@ -277,7 +276,7 @@ namespace ft
 
 				const_iterator find( const Key& key ) const
 				{
-					return (this->_tree->find(key));
+					return (this->_tree->constfind(key));
 				}
 
 				ft::pair<iterator,iterator> equal_range( const Key& key )

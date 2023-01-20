@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 13:20:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 15:49:27 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ namespace ft
 				{
 					return (bIterator<iterator_category, value_type>(this->_value));
 				}
-
 				bIterator &	operator=(const bIterator & src)
 				{
 					if (this == &src)

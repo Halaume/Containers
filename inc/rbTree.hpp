@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 13:53:12 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 15:57:49 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,15 +87,15 @@ void swap(ptr & lhs, ptr & rhs)
 						child[LEFT] = NULL;
 						child[RIGHT] = NULL;
 						this->_alloc = alloc;
-						value = this->_alloc.allocate(1);
-						this->_alloc.construct(value, val);
+						this->value = this->_alloc.allocate(1);
+						this->_alloc.construct(this->value, val);
 					}
 					~node(void)
 					{
-						if (value)
+						if (this->value)
 						{
-							this->_alloc.destroy(value);
-							this->_alloc.deallocate(value, 1);
+							this->_alloc.destroy(this->value);
+							this->_alloc.deallocate(this->value, 1);
 						}
 					}
 					node &	operator=(const node & src)
@@ -105,8 +105,18 @@ void swap(ptr & lhs, ptr & rhs)
 						this->parent = src.parent;
 						this->child = src.child;
 						this->color = src.color;
-						this->value = src.value;
-						this->dir = src.dir;
+						if (this->value)
+						{
+							this->_alloc.destroy(this->value);
+							this->_alloc.deallocate(this->value);
+						}
+						if (src.value)
+						{
+							this->value = this->_alloc.allocate(1);
+							this->_alloc.construct(this->value, src.value);
+						}
+						else
+							this->value = NULL;
 					}
 					node*		parent;
 					node*		child[2];
@@ -330,11 +340,24 @@ void swap(ptr & lhs, ptr & rhs)
 						tmp = tmp->child[LEFT];
 					return (const_iterator(tmp));
 				}
+				const_iterator constbegin(void) const
+				{
+					if (this->_start == this->_Nil)
+						return (const_iterator(this->_Nil));
+					node * tmp = this->_start;
+					while (tmp && tmp->child[LEFT])
+						tmp = tmp->child[LEFT];
+					return (const_iterator(tmp));
+				}
 				iterator end(void)
 				{
 					return (iterator(this->_Nil));
 				}
 				const_iterator end(void) const
+				{
+					return (const_iterator(this->_Nil));
+				}
+				const_iterator constend(void) const
 				{
 					return (const_iterator(this->_Nil));
 				}
@@ -346,11 +369,19 @@ void swap(ptr & lhs, ptr & rhs)
 				{
 					return (const_reverse_iterator(this->end()));
 				}
+				const_reverse_iterator rconstbegin(void) const
+				{
+					return (const_reverse_iterator(this->end()));
+				}
 				reverse_iterator rend(void)
 				{
 					return (reverse_iterator(this->begin()));
 				}
 				const_reverse_iterator rend(void) const
+				{
+					return (const_reverse_iterator(this->begin()));
+				}
+				const_reverse_iterator rconstend(void) const
 				{
 					return (const_reverse_iterator(this->begin()));
 				}
@@ -660,6 +691,21 @@ void swap(ptr & lhs, ptr & rhs)
 					return (this->end());
 				}
 				const_iterator find( const Key& key ) const
+				{
+					node *	tmp = this->_start;
+
+					while (tmp && tmp->value)
+					{
+						if (this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0)
+							return (const_iterator(tmp));
+						if (this->_comp(*(tmp->value), key))
+							tmp = tmp->child[RIGHT];
+						else
+							tmp = tmp->child[LEFT];
+					}
+					return (this->end());
+				}
+				const_iterator constfind( const Key& key ) const
 				{
 					node *	tmp = this->_start;
 
