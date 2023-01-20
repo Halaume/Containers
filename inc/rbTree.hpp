@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 17:28:37 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 18:24:39 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,6 +438,8 @@ void swap(ptr & lhs, ptr & rhs)
 				{
 					node* tmp = this->_start;
 					node* tmpp = this->_Nil;
+					if (this->find(value) != this->end())
+						return (ft::make_pair(iterator(tmp), false));
 
 					if (!tmp || !tmp->value)
 					{
