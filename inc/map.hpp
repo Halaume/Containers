@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 15:43:27 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 17:03:51 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ namespace ft
 					Compare	comp;
 			};
 
-				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>	Tree;
-				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>::iterator						iterator;
-				typedef typename ft::RbTree<Key, T, value_type, value_compare, Allocator>::const_iterator						const_iterator;
+				typedef typename ft::RbTree<value_type, value_compare, Allocator>	Tree;
+				typedef typename ft::RbTree<value_type, value_compare, Allocator>::iterator						iterator;
+				typedef typename ft::RbTree<value_type, value_compare, Allocator>::const_iterator						const_iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
@@ -150,12 +150,12 @@ namespace ft
 
 				T& at( const Key& key )
 				{
-					return (this->_tree->at(key).second);
+					return (this->_tree->at(ft::make_pair(key, T())).second);
 				}
 
 				const T& at(const Key& key) const
 				{
-					return (this->_tree->at(key).second);
+					return (this->_tree->at(ft::make_pair(key, T())).second);
 				}
 
 				T& operator[]( const Key& key )
@@ -255,7 +255,7 @@ namespace ft
 
 				size_type erase( const Key& key )
 				{
-					return (this->_tree->erase(key));
+					return (this->_tree->erase(ft::make_pair(key, T())));
 				}
 
 				void swap( map& other )
@@ -271,12 +271,12 @@ namespace ft
 				}
 				iterator find( const Key& key )
 				{
-					return (this->_tree->find(key));
+					return (this->_tree->find(ft::make_pair(key, T())));
 				}
 
 				const_iterator find( const Key& key ) const
 				{
-					return (this->_tree->constfind(key));
+					return (this->_tree->constfind(ft::make_pair(key, T())));
 				}
 
 				ft::pair<iterator,iterator> equal_range( const Key& key )
@@ -286,26 +286,26 @@ namespace ft
 
 				ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
 				{
-					return (ft::make_pair(this->lower_bound(key), this->upper_bound(key)));
+					return (ft::make_pair(this->lower_bound(ft::make_pair(key, T())), this->upper_bound(ft::make_pair(key, T()))));
 				}
 				iterator lower_bound( const Key& key )
 				{
-					return (this->_tree->lower_bound(key));
+					return (this->_tree->lower_bound(ft::make_pair(key, T())));
 				}
 
 				const_iterator lower_bound( const Key& key ) const
 				{
-					return (this->_tree->lower_bound(key));
+					return (this->_tree->lower_bound(ft::make_pair(key, T())));
 				}
 
 				iterator upper_bound( const Key& key )
 				{
-					return (this->_tree->upper_bound(key));
+					return (this->_tree->upper_bound(ft::make_pair(key, T())));
 				}
 
 				const_iterator upper_bound( const Key& key ) const
 				{
-					return (this->_tree->upper_bound(key));
+					return (this->_tree->upper_bound(ft::make_pair(key, T())));
 				}
 
 				key_compare key_comp(void) const;

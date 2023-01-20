@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 15:57:49 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/20 17:28:37 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,11 @@ void swap(ptr & lhs, ptr & rhs)
 	lhs = tmp;
 }
 
-	template <class Key, class T, class value_type, class Compare, class Allocator = std::allocator<value_type> >
+	template <class value_type, class Compare, class Allocator = std::allocator<value_type> >
 		class RbTree
 		{
 			public:
-				typedef Key										key_type;
-				typedef T										mapped_type;
+				typedef value_type								key_type;
 				typedef Allocator								allocator_type;
 				typedef std::size_t								size_type;
 				typedef Compare									key_compare;
@@ -103,7 +102,8 @@ void swap(ptr & lhs, ptr & rhs)
 						if (this == &src)
 							return (*this);
 						this->parent = src.parent;
-						this->child = src.child;
+						this->child[LEFT] = src.child[LEFT];
+						this->child[RIGHT] = src.child[RIGHT];
 						this->color = src.color;
 						if (this->value)
 						{
@@ -204,7 +204,7 @@ void swap(ptr & lhs, ptr & rhs)
 
 				typedef node *							nodePTR;
 				typedef ft::bIterator<nodePTR, value_type>			iterator;
-				typedef ft::bIterator<const nodePTR, value_type>	const_iterator;
+				typedef ft::bIterator<nodePTR, const value_type>	const_iterator;
 				typedef ft::Reverse_iterator<iterator>				reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>		const_reverse_iterator;
 
@@ -306,7 +306,7 @@ void swap(ptr & lhs, ptr & rhs)
 					this->_size = other._size;
 					return (*this);
 				}
-				value_type & at( const Key& key )
+				value_type & at( const key_type& key )
 				{
 					iterator tmp = this->find(key);
 
@@ -314,7 +314,7 @@ void swap(ptr & lhs, ptr & rhs)
 						throw std::out_of_range("Key not exist");
 					return (*tmp);
 				}
-				const value_type & at( const Key& key ) const
+				const value_type & at( const key_type& key ) const
 				{
 					const_iterator tmp = this->find(key);
 
@@ -669,13 +669,13 @@ void swap(ptr & lhs, ptr & rhs)
 						first++;
 					}
 				}
-				size_type erase(const Key & key)
+				size_type erase(const key_type & key)
 				{
 					if (this->find(key) != this->end())
-						return (erase(iterator(key)), 1);
+						return (erase(iterator(this->find(key).base())), 1);
 					return (0);
 				}
-				iterator find( const Key& key )
+				iterator find( const key_type& key )
 				{
 					node *	tmp = this->_start;
 
@@ -690,7 +690,7 @@ void swap(ptr & lhs, ptr & rhs)
 					}
 					return (this->end());
 				}
-				const_iterator find( const Key& key ) const
+				const_iterator find( const key_type& key ) const
 				{
 					node *	tmp = this->_start;
 
@@ -705,7 +705,7 @@ void swap(ptr & lhs, ptr & rhs)
 					}
 					return (this->end());
 				}
-				const_iterator constfind( const Key& key ) const
+				const_iterator constfind( const key_type& key ) const
 				{
 					node *	tmp = this->_start;
 
@@ -720,7 +720,7 @@ void swap(ptr & lhs, ptr & rhs)
 					}
 					return (this->end());
 				}
-				iterator lower_bound( const Key& key )
+				iterator lower_bound( const key_type& key )
 				{
 					node * tmp = this->_start;
 					node * ret = NULL;
@@ -739,7 +739,7 @@ void swap(ptr & lhs, ptr & rhs)
 						return (iterator(ret));
 					return (this->end());
 				}
-				const_iterator lower_bound( const Key& key ) const
+				const_iterator lower_bound( const key_type& key ) const
 				{
 					node * tmp = this->_start;
 					node * ret = NULL;
@@ -759,7 +759,7 @@ void swap(ptr & lhs, ptr & rhs)
 					return (this->end());
 				}
 
-				iterator upper_bound( const Key& key )
+				iterator upper_bound( const key_type& key )
 				{
 					node * tmp = this->_start;
 					node * ret = NULL;
@@ -776,7 +776,7 @@ void swap(ptr & lhs, ptr & rhs)
 						return (iterator(ret));
 					return (this->end());
 				}
-				const_iterator upper_bound( const Key& key ) const
+				const_iterator upper_bound( const key_type& key ) const
 				{
 					node * tmp = this->_start;
 					node * ret = NULL;
@@ -852,39 +852,39 @@ void swap(ptr & lhs, ptr & rhs)
 				node *					_Nil;
 
 		};
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator==( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator==( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return ((lhs.size() == rhs.size()) && ft::equal(lhs.begin, lhs.end(), rhs.begin()));
 		}
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator!=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator!=( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return (!(lhs == rhs));
 		}
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator<( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator<( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 		}
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator<=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator<=( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return (!(lhs > rhs));
 		}
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator>( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator>( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));
 		}
-	template< class Key, class T, class Compare, class Alloc >
-		bool operator>=( const RbTree<Key,T,Compare,Alloc>& lhs, const RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		bool operator>=( const RbTree<T,Compare,Alloc>& lhs, const RbTree<T,Compare,Alloc>& rhs )
 		{
 			return (!(lhs < rhs));
 		}
 
-	template< class Key, class T, class Compare, class Alloc >
-		void swap( RbTree<Key,T,Compare,Alloc>& lhs, RbTree<Key,T,Compare,Alloc>& rhs )
+	template< class T, class Compare, class Alloc >
+		void swap( RbTree<T,Compare,Alloc>& lhs, RbTree<T,Compare,Alloc>& rhs )
 		{
 			lhs.swap(rhs);
 		}
