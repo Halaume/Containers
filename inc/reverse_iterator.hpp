@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:57:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/14 15:49:32 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/21 17:10:04 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ namespace ft
 				}
 				reference	operator*(void) { Iter tmp = this->_current; return (*(--tmp)); }
 				pointer		operator->(void) { Iter tmp = this->_current; return (&(*(--tmp))); }
+				pointer		operator->(void) const { Iter tmp = this->_current; return (&(*(--tmp))); }
 				reference	operator[](int i)
 				{
 					return (*(*this + i));

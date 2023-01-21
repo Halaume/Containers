@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 12:41:31 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/21 17:10:05 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,15 @@
 #include "../inc/map.hpp"
 #include "../inc/pair.hpp"
 
+#include "../../bdetune_42ftcontainers_tester/map/includes/customCompare.hpp"
+#include "../../bdetune_42ftcontainers_tester/map/includes/ConstClass.hpp"
+
 #include <stack>
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <list>
+#include <map>
 
 #ifndef NAMESPACE
 #define NAMESPACE ft
@@ -192,6 +197,7 @@ void    do_map( void )
 	if (eqr.first != my_map.lower_bound(5) || eqr.second != my_map.upper_bound(5))
 		std::cout << "Wrong equal range" << std::endl;
 	std::cout << "-----------ERASE---------" << std::endl;
+	
 	while (my_map.size())
 	{
 		ft::map<int, int>::iterator it2(my_map.begin());
@@ -203,4 +209,45 @@ void    do_map( void )
 
 	printTree(my_map.base()._start, NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
+
+			std::list<NAMESPACE::pair<ConstClass<int>, ConstClass<int> > > tab;
+			for (int i = 0; i < 25; i++)
+			{
+				tab.push_back(NAMESPACE::pair<ConstClass<int>, ConstClass<int> >(ConstClass<int>(i), ConstClass<int>(i)));
+			}
+			for (int i = 50; i > 25; i--)
+			{
+				tab.push_back(NAMESPACE::pair<ConstClass<int>, ConstClass<int> >(ConstClass<int>(i), ConstClass<int>(i)));
+			}
+			{
+				NAMESPACE::map<ConstClass<int>, ConstClass<int> > 	test(tab.begin(), tab.end());
+				NAMESPACE::map<ConstClass<int>, ConstClass<int> > ::iterator		iter;
+				NAMESPACE::map<ConstClass<int>, ConstClass<int> > ::const_iterator	other;
+
+				iter = test.begin();
+				iter++;
+				other = iter;
+				iter++;
+				test.erase(iter);
+				std::cout << other->first << " : " << other->second << std::endl;
+				other++;
+				std::cout << other->first << " : " << other->second << std::endl;
+				test.erase(--(test.end()));
+				test.erase(test.begin());
+				other = test.begin();
+				for (; other != test.end(); other++)
+				{
+					std::cout << other->first << " : " << other->second << std::endl;
+				}
+				while (test.begin() != test.end())
+				{
+					test.erase(test.begin());
+				}
+				other = test.begin();
+				for (; other != test.end(); other++)
+				{
+					std::cout << other->first << " : " << other->second << std::endl;
+				}
+			}
+
 }

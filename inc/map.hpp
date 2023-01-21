@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/20 17:03:51 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/21 17:10:03 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ namespace ft
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
 
+				//TODO DEL THIS BEFORE END!
 				Tree & base(void)
 				{
 					return (*(this->_tree));
@@ -286,7 +287,7 @@ namespace ft
 
 				ft::pair<const_iterator,const_iterator> equal_range( const Key& key ) const
 				{
-					return (ft::make_pair(this->lower_bound(ft::make_pair(key, T())), this->upper_bound(ft::make_pair(key, T()))));
+					return (ft::make_pair(this->lower_bound(key), this->upper_bound(key)));
 				}
 				iterator lower_bound( const Key& key )
 				{
@@ -308,8 +309,14 @@ namespace ft
 					return (this->_tree->upper_bound(ft::make_pair(key, T())));
 				}
 
-				key_compare key_comp(void) const;
-				value_compare value_comp(void) const;
+				key_compare key_comp(void) const
+				{
+					return (Compare());
+				}
+				value_compare value_comp(void) const
+				{
+					return (value_compare(Compare()));
+				}
 
 
 
