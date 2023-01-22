@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/21 17:10:03 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/22 16:07:15 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ namespace ft
 					{
 						return (this->comp(lhs.first, rhs.first));
 					}
-					bool	operator()(const key_type & lhs, const value_type & rhs) const 
+					/*bool	operator()(const key_type & lhs, const value_type & rhs) const 
 					{
 						return (this->comp(lhs, rhs.first));
 					}
 					bool	operator()(const value_type & lhs, const key_type & rhs) const 
 					{
 						return (this->comp(lhs.first, rhs));
-					}
+					}*/
 				protected:
 					value_compare(Compare c)
 					{

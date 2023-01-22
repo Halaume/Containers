@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/22 15:23:37 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/22 17:03:20 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -603,6 +603,7 @@ namespace ft
 							to_del->child[RIGHT]->color = BLACK;
 							this->_nodealloc.destroy(to_del);
 							this->_nodealloc.deallocate(to_del, 1);
+							this->_size--;
 						}
 						else
 						{
@@ -623,6 +624,7 @@ namespace ft
 							to_del->child[LEFT]->color = BLACK;
 							this->_nodealloc.destroy(to_del);
 							this->_nodealloc.deallocate(to_del, 1);
+							this->_size--;
 						}
 					}
 					else if (to_del->parent->value)
@@ -637,6 +639,7 @@ namespace ft
 							parent->child[dir] = NULL;
 							this->_nodealloc.destroy(to_del);
 							this->_nodealloc.deallocate(to_del, 1);
+							this->_size--;
 							to_del = NULL;
 							do
 							{
@@ -682,6 +685,7 @@ namespace ft
 								to_del->parent->child[RIGHT] = NULL;
 							this->_nodealloc.destroy(to_del);
 							this->_nodealloc.deallocate(to_del, 1);
+							this->_size--;
 						}
 					}
 					else
@@ -690,21 +694,27 @@ namespace ft
 						this->_nodealloc.deallocate(to_del, 1);
 						this->_Nil->parent = this->_Nil;
 						this->_start = this->_Nil;
+						this->_size--;
 					}
-					this->_size--;
 				}
 				void erase(iterator first, iterator last)
 				{
+					iterator	it;
 					while (first != last)
 					{
-						this->erase(*first);
+						it = first;
 						first++;
+						this->erase(it);
 					}
 				}
 				size_type erase(const key_type & key)
 				{
-					if (this->find(key) != this->end())
-						return (erase(iterator(this->find(key).base())), 1);
+					const_iterator	it = find(key);
+					if (it != this->end())
+					{
+						erase(this->find(key));
+						return (1);
+					}
 					return (0);
 				}
 				iterator find( const key_type& key )
@@ -794,36 +804,52 @@ namespace ft
 				iterator upper_bound( const key_type& key )
 				{
 					node * tmp = this->_start;
-					node * ret = NULL;
-					while (tmp && tmp->value)
-					{
-						if (!this->_comp(*(tmp->value), key) && !(this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0))
+					node * ret = this->_Nil;
+
+					while (tmp->value) {
+						if (this->_comp(key, *tmp->value)) {
 							ret = tmp;
-						if (this->_comp(*(tmp->value), key))
-							tmp = tmp->child[RIGHT];
-						else
-							tmp = tmp->child[LEFT];
+							if (tmp->child[LEFT])
+								tmp = tmp->child[LEFT];
+							else
+								return (iterator(tmp));
+						} else if (this->_comp(*(tmp->value), key)) {
+							if (tmp->child[RIGHT])
+								tmp = tmp->child[RIGHT];
+							else
+								return (iterator(ret));
+						} else {
+							iterator it(tmp);
+							it++;
+							return (it);
+						}
 					}
-					if (ret)
-						return (iterator(ret));
-					return (this->end());
+					return (iterator(this->_Nil));
 				}
 				const_iterator upper_bound( const key_type& key ) const
 				{
 					node * tmp = this->_start;
-					node * ret = NULL;
-					while (tmp && tmp->value)
-					{
-						if (!this->_comp(*(tmp->value), key) && !(this->_comp(*(tmp->value), key) == 0 && this->_comp(key, *(tmp->value)) == 0))
+					node * ret = this->_Nil;
+
+					while (tmp->value) {
+						if (this->_comp(key, *tmp->value)) {
 							ret = tmp;
-						if (this->_comp(*(tmp->value), key))
-							tmp = tmp->child[RIGHT];
-						else
-							tmp = tmp->child[LEFT];
+							if (tmp->child[LEFT])
+								tmp = tmp->child[LEFT];
+							else
+								return (iterator(tmp));
+						} else if (this->_comp(*tmp->value, key)) {
+							if (tmp->child[RIGHT])
+								tmp = tmp->child[RIGHT];
+							else
+								return (iterator(ret));
+						} else {
+							iterator it(tmp);
+							it++;
+							return (it);
+						}
 					}
-					if (ret)
-						return (const_iterator(ret));
-					return (this->end());
+					return (iterator(this->_Nil));
 				}
 
 			private:

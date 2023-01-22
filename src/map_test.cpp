@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/21 17:10:05 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/22 17:33:57 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,76 @@ void printTree(ft::map<int, int>::Tree::node * root, Trunk *prev, bool isLeft) {
 }
 
 /* END */
+template <typename T>
+std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
+{
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
+}
+
+template <typename T_MAP>
+void	printSize(T_MAP const &mp, bool print_content = 1)
+{
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
+	if (print_content)
+	{
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << printPair(it, false) << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
+}
+static int iter = 0;
+template <typename MAP, typename U>
+void	ft_insert(MAP &mp, U param)
+{
+	ft::pair<ft::map<int, std::string>::iterator, bool> tmp;
+
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	tmp = mp.insert(param);
+	std::cout << "insert return: " << printPair(tmp.first);
+	std::cout << "Created new node: " << tmp.second << std::endl;
+	printSize(mp);
+}
+
+template <typename MAP, typename U, typename V>
+void	ft_insert(MAP &mp, U param, V param2)
+{
+	ft::map<int, std::string>::iterator tmp;
+
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	tmp = mp.insert(param, param2);
+	std::cout << "insert return: " << printPair(tmp);
+	printSize(mp);
+}
+
+int		test_mli(void)
+{
+	ft::map<int, std::string> mp, mp2;
+
+	ft_insert(mp, ft::map<int, std::string>::value_type(42, "lol"));
+	ft_insert(mp, ft::map<int, std::string>::value_type(42, "mdr"));
+
+	ft_insert(mp, ft::map<int, std::string>::value_type(50, "mdr"));
+	ft_insert(mp, ft::map<int, std::string>::value_type(35, "funny"));
+
+	ft_insert(mp, ft::map<int, std::string>::value_type(45, "bunny"));
+	ft_insert(mp, ft::map<int, std::string>::value_type(21, "fizz"));
+	ft_insert(mp, ft::map<int, std::string>::value_type(38, "buzz"));
+
+	ft_insert(mp, mp.begin(), ft::map<int, std::string>::value_type(55, "fuzzy"));
+
+	ft_insert(mp2, mp2.begin(), ft::map<int, std::string>::value_type(1337, "beauty"));
+	ft_insert(mp2, mp2.end(), ft::map<int, std::string>::value_type(1000, "Hello"));
+	ft_insert(mp2, mp2.end(), ft::map<int, std::string>::value_type(1500, "World"));
+
+	return (0);
+}
+
 
 void    do_map( void )
 {
@@ -210,44 +280,6 @@ void    do_map( void )
 	printTree(my_map.base()._start, NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
-			std::list<NAMESPACE::pair<ConstClass<int>, ConstClass<int> > > tab;
-			for (int i = 0; i < 25; i++)
-			{
-				tab.push_back(NAMESPACE::pair<ConstClass<int>, ConstClass<int> >(ConstClass<int>(i), ConstClass<int>(i)));
-			}
-			for (int i = 50; i > 25; i--)
-			{
-				tab.push_back(NAMESPACE::pair<ConstClass<int>, ConstClass<int> >(ConstClass<int>(i), ConstClass<int>(i)));
-			}
-			{
-				NAMESPACE::map<ConstClass<int>, ConstClass<int> > 	test(tab.begin(), tab.end());
-				NAMESPACE::map<ConstClass<int>, ConstClass<int> > ::iterator		iter;
-				NAMESPACE::map<ConstClass<int>, ConstClass<int> > ::const_iterator	other;
-
-				iter = test.begin();
-				iter++;
-				other = iter;
-				iter++;
-				test.erase(iter);
-				std::cout << other->first << " : " << other->second << std::endl;
-				other++;
-				std::cout << other->first << " : " << other->second << std::endl;
-				test.erase(--(test.end()));
-				test.erase(test.begin());
-				other = test.begin();
-				for (; other != test.end(); other++)
-				{
-					std::cout << other->first << " : " << other->second << std::endl;
-				}
-				while (test.begin() != test.end())
-				{
-					test.erase(test.begin());
-				}
-				other = test.begin();
-				for (; other != test.end(); other++)
-				{
-					std::cout << other->first << " : " << other->second << std::endl;
-				}
-			}
+	test_mli();
 
 }
