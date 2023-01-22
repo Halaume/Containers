@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/21 17:10:03 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/22 15:23:37 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,14 @@
 
 namespace ft
 {
-template<typename ptr>
-void swap(ptr & lhs, ptr & rhs)
-{
-	ptr tmp;
-	tmp = rhs;
-	rhs = lhs;
-	lhs = tmp;
-}
+	template<typename ptr>
+		void swap(ptr & lhs, ptr & rhs)
+		{
+			ptr tmp;
+			tmp = rhs;
+			rhs = lhs;
+			lhs = tmp;
+		}
 
 	template <class value_type, class Compare, class Allocator = std::allocator<value_type> >
 		class RbTree
@@ -209,32 +209,32 @@ void swap(ptr & lhs, ptr & rhs)
 				typedef ft::Reverse_iterator<const_iterator>		const_reverse_iterator;
 
 				explicit RbTree(const Compare & comp, const Allocator & alloc = Allocator()): _comp(comp)
-				{
-					this->_nodealloc = std::allocator<node>();
-					this->_alloc = alloc;
-					this->_size = 0;
-					node	val(NULL, this->_alloc);
-					this->_Nil = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_Nil, val);
-					this->_Nil->parent = this->_Nil;
-					this->_start = this->_Nil;
-				}
+			{
+				this->_nodealloc = std::allocator<node>();
+				this->_alloc = alloc;
+				this->_size = 0;
+				node	val(NULL, this->_alloc);
+				this->_Nil = this->_nodealloc.allocate(1);
+				this->_nodealloc.construct(this->_Nil, val);
+				this->_Nil->parent = this->_Nil;
+				this->_start = this->_Nil;
+			}
 				RbTree(const RbTree & copy): _alloc(copy._alloc), _comp(copy._comp), _nodealloc(copy._nodealloc), _size(copy._size)
 			{
-					this->_Nil = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_Nil, *(copy._Nil));
+				this->_Nil = this->_nodealloc.allocate(1);
+				this->_nodealloc.construct(this->_Nil, *(copy._Nil));
+				this->_start = this->_Nil;
+				if (copy.begin() != copy.end())
+				{
+					this->_start = this->_copy(this->_start, copy._start);
+					this->_start->parent = this->_Nil;
+					this->_Nil->parent = this->_start;
+				}
+				else
+				{
 					this->_start = this->_Nil;
-					if (copy.begin() != copy.end())
-					{
-						this->_start = this->_copy(this->_start, copy._start);
-						this->_start->parent = this->_Nil;
-						this->_Nil->parent = this->_start;
-					}
-					else
-					{
-						this->_start = this->_Nil;
-						this->_Nil->parent = this->_Nil;
-					}
+					this->_Nil->parent = this->_Nil;
+				}
 			}
 			private:
 				node *	_copy(node * root, node * my_node)
@@ -251,33 +251,33 @@ void swap(ptr & lhs, ptr & rhs)
 				}
 			public:
 				RbTree(value_type & value, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
+			{
+				this->_nodealloc = std::allocator<node>();
+				this->_alloc = alloc;
+				this->_start = this->_nodealloc.allocate(1);
+				this->_nodealloc.construct(this->_start, node(value, this->_alloc));
+				this->_Nil = this->_nodealloc.allocate(1);
+				this->_size = 1;
+				node	val(NULL, this->_alloc);
+				this->_Nil = this->_nodealloc.allocate(1);
+				this->_nodealloc.construct(this->_Nil, val);
+				this->_Nil->parent = this->_start;
+			}
+				template<class InputIt>
+					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
 				{
 					this->_nodealloc = std::allocator<node>();
 					this->_alloc = alloc;
-					this->_start = this->_nodealloc.allocate(1);
-					this->_nodealloc.construct(this->_start, node(value, this->_alloc));
-					this->_Nil = this->_nodealloc.allocate(1);
-					this->_size = 1;
+					this->_size = 0;
+
 					node	val(NULL, this->_alloc);
 					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, val);
-					this->_Nil->parent = this->_start;
+					this->_start = this->_Nil;
+					this->_Nil->parent = this->_Nil;
+
+					this->insert(first, last);
 				}
-				template<class InputIt>
-					RbTree(InputIt first, InputIt last, const Compare & comp = Compare(), const Allocator & alloc = Allocator()): _comp(comp)
-					{
-						this->_nodealloc = std::allocator<node>();
-						this->_alloc = alloc;
-						this->_size = 0;
-
-						node	val(NULL, this->_alloc);
-						this->_Nil = this->_nodealloc.allocate(1);
-						this->_nodealloc.construct(this->_Nil, val);
-						this->_start = this->_Nil;
-						this->_Nil->parent = this->_Nil;
-
-						this->insert(first, last);
-					}
 				~RbTree(void)
 				{
 					this->clear();
@@ -567,19 +567,20 @@ void swap(ptr & lhs, ptr & rhs)
 				void erase(iterator pos)
 				{
 					node * to_del = pos.base();
-					if (to_del == this->_start && !this->_start->child[RIGHT] && !this->_start->child[LEFT])
-					{
-						this->_Nil->parent = this->_Nil;
-						this->_delnode(this->_start, false);
-						this->_start = this->_Nil;
-						return ;
-					}
-					else if (to_del->child[LEFT] && to_del->child[RIGHT])
+					if (to_del->child[LEFT] && to_del->child[RIGHT])
 					{
 						node * tmp = to_del->child[RIGHT];
 						while (tmp->child[LEFT])
 							tmp = tmp->child[LEFT];
-						to_del->swap(tmp);
+						if (to_del == this->_start)
+						{
+							this->_start = tmp;
+							to_del->swap(tmp);
+							this->_Nil->parent = this->_start;
+							this->_start->parent = this->_Nil;
+						}
+						else
+							to_del->swap(tmp);
 					}
 					if (to_del->child[LEFT] || to_del->child[RIGHT])
 					{
@@ -594,8 +595,14 @@ void swap(ptr & lhs, ptr & rhs)
 							}
 							to_del->child[RIGHT]->parent = to_del->parent;
 							if (to_del == this->_start)
+							{
 								this->_start = to_del->child[RIGHT];
+								this->_Nil->parent = this->_start;
+								this->_start->parent = this->_Nil;
+							}
 							to_del->child[RIGHT]->color = BLACK;
+							this->_nodealloc.destroy(to_del);
+							this->_nodealloc.deallocate(to_del, 1);
 						}
 						else
 						{
@@ -608,60 +615,83 @@ void swap(ptr & lhs, ptr & rhs)
 							}
 							to_del->child[LEFT]->parent = to_del->parent;
 							if (to_del == this->_start)
+							{
 								this->_start = to_del->child[LEFT];
+								this->_Nil->parent = this->_start;
+								this->_start->parent = this->_Nil;
+							}
 							to_del->child[LEFT]->color = BLACK;
+							this->_nodealloc.destroy(to_del);
+							this->_nodealloc.deallocate(to_del, 1);
 						}
-						this->_delnode(to_del, false);
 					}
-					else if (to_del->color == BLACK)
+					else if (to_del->parent->value)
 					{
-						int	dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
-						node * parent = to_del->parent;
-						node * sib;
-						node * D;
-						node * C;
-						parent->child[dir] = NULL;
-						this->_delnode(to_del, true);
-						to_del = NULL;
-						do
+						if (to_del->color == BLACK)
 						{
-							if (to_del)
-								dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
-							sib = parent->child[1-dir];
-							D = sib->child[1-dir];
-							C = sib->child[dir];
-							if (sib->color == RED)
+							int	dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
+							node * parent = to_del->parent;
+							node * sib;
+							node * D;
+							node * C;
+							parent->child[dir] = NULL;
+							this->_nodealloc.destroy(to_del);
+							this->_nodealloc.deallocate(to_del, 1);
+							to_del = NULL;
+							do
 							{
-								this->_case_3(parent, sib, D, C, dir);
-								return ;
-							}
-							if (D && D->color == RED)
-							{
-								this->_case_6(parent, sib, D, dir);
-								return ;
-							}
-							if (C && C->color == RED)
-							{
-								this->_case_5(parent, sib, D, C, dir);
-								return ;
-							}
-							if (parent->color == RED)
-							{
+								if (to_del)
+									dir = to_del->parent->child[RIGHT] == to_del ? RIGHT : LEFT;
+								sib = parent->child[1-dir];
+								D = sib->child[1-dir];
+								C = sib->child[dir];
+								if (sib->color == RED)
+								{
+									this->_case_3(parent, sib, D, C, dir);
+									return ;
+								}
+								if (D && D->color == RED)
+								{
+									this->_case_6(parent, sib, D, dir);
+									return ;
+								}
+								if (C && C->color == RED)
+								{
+									this->_case_5(parent, sib, D, C, dir);
+									return ;
+								}
+								if (parent->color == RED)
+								{
+									sib->color = RED;
+									parent->color = BLACK;
+									return ;
+								}
 								sib->color = RED;
-								parent->color = BLACK;
-								return ;
+								to_del = parent;
+								parent = to_del->parent;
 							}
-							sib->color = RED;
-							to_del = parent;
-							parent = to_del->parent;
+							while (parent->value);
+							if (parent->value)
+								parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
 						}
-						while (parent->value);
-						if (parent->value)
-							parent->child[RIGHT] == to_del ? parent->child[RIGHT] : parent->child[LEFT] = NULL;
-						return ;
+						else
+						{
+							if (to_del->parent->child[LEFT] == to_del)
+								to_del->parent->child[LEFT] = NULL;
+							else
+								to_del->parent->child[RIGHT] = NULL;
+							this->_nodealloc.destroy(to_del);
+							this->_nodealloc.deallocate(to_del, 1);
+						}
 					}
 					else
-						this->_delnode(to_del, true);
+					{
+						this->_nodealloc.destroy(to_del);
+						this->_nodealloc.deallocate(to_del, 1);
+						this->_Nil->parent = this->_Nil;
+						this->_start = this->_Nil;
+					}
+					this->_size--;
 				}
 				void erase(iterator first, iterator last)
 				{
@@ -797,16 +827,6 @@ void swap(ptr & lhs, ptr & rhs)
 				}
 
 			private:
-				void	_delnode(node * my_node, bool is_here)
-				{
-					node * to_del = my_node;
-
-					if (is_here && my_node->parent->value)
-						(my_node->parent->child[RIGHT] == my_node ? my_node->parent->child[RIGHT] : my_node->parent->child[LEFT]) = NULL;
-					this->_nodealloc.destroy(to_del);
-					this->_nodealloc.deallocate(to_del, 1);
-					this->_size--;
-				}
 				void	_case_3(node * parent, node * sib, node * D, node * C, int dir)
 				{
 					this->_rotateDirRoot(parent, dir);
