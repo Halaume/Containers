@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/22 17:03:20 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/23 12:21:39 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,7 +439,7 @@ namespace ft
 					node* tmp = this->_start;
 					node* tmpp = this->_Nil;
 					if (this->find(value) != this->end())
-						return (ft::make_pair(iterator(tmp), false));
+						return (ft::make_pair(find(value), false));
 
 					if (!tmp || !tmp->value)
 					{
@@ -449,7 +449,7 @@ namespace ft
 						this->_start->parent = this->_Nil;
 						this->_Nil->parent = this->_start;
 						this->_size++;
-						return (ft::make_pair(iterator(tmp), true));
+						return (ft::make_pair(iterator(this->_start), true));
 					}
 					while (tmp && tmp->value)
 					{

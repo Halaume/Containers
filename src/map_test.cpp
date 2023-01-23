@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/22 17:33:57 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/23 11:45:30 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <list>
 #include <map>
+#include <string>
 
 #ifndef NAMESPACE
 #define NAMESPACE ft
@@ -54,7 +55,7 @@ void showTrunks(Trunk *p)
 	std::cout << p->str;
 }
 
-void printnode(ft::map<int, int>::Tree::node * & tmp) {
+void printnode(ft::map<int, std::string>::Tree::node * & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -66,7 +67,7 @@ void printnode(ft::map<int, int>::Tree::node * & tmp) {
 	std::cout << "Key : " << tmp->value->first << " | Val : " << tmp->value->second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::map<int, int>::Tree::node * root, Trunk *prev, bool isLeft) {
+void printTree(ft::map<int, std::string>::Tree::node * root, Trunk *prev, bool isLeft) {
 	if (!root || !root->value)
 		return ;
 	//    std::cout << "root : " << root->val.first << std::endl;
@@ -93,7 +94,7 @@ void printTree(ft::map<int, int>::Tree::node * root, Trunk *prev, bool isLeft) {
 		std::cout << "\033[0;90m"; 
 	else
 		std::cout << "\033[0;91m";
-	std::cout << " " << root->value->first << "\033[0m" << std::endl;
+	std::cout << " " << root->value->first << " | " << root->value->second << "\033[0m" << std::endl;
 
 	if (prev) {
 		prev->str = prev_str;
@@ -108,7 +109,9 @@ void printTree(ft::map<int, int>::Tree::node * root, Trunk *prev, bool isLeft) {
 template <typename T>
 std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
 {
-	o << "key: " << iterator->first << " | value: " << iterator->second;
+	o << "key: " << std::endl;
+	o << iterator->first << " | value: "<< std::endl;
+	o << iterator->second;
 	if (nl)
 		o << std::endl;
 	return ("");
@@ -136,6 +139,7 @@ void	ft_insert(MAP &mp, U param)
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param);
+	printTree(mp.base()._start, NULL, false);
 	std::cout << "insert return: " << printPair(tmp.first);
 	std::cout << "Created new node: " << tmp.second << std::endl;
 	printSize(mp);
@@ -178,8 +182,9 @@ int		test_mli(void)
 
 void    do_map( void )
 {
-	ft::map<int, int>		my_map;
+	ft::map<int, std::string>		my_map;
 	NAMESPACE::vector<int>	v;
+	ft::map<int, std::string>::iterator ouatt;
 
 	for (size_t i = 0; i < 20; i++)
 		v.push_back(i);
@@ -188,12 +193,13 @@ void    do_map( void )
 	{
 		std::cout << "size = " << my_map.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
-		my_map.insert(ft::make_pair<int, int>(v[i], v[i]));
+		ouatt = my_map.insert(ft::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32))).first;
+		std::cout << "Ouatt : " << ouatt->first << " | " << ouatt->second << std::endl;
 		printTree(my_map.base()._start, NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
-	ft::map<int, int>::iterator it = my_map.end();
+	ft::map<int, std::string>::iterator it = my_map.end();
 	for (; it != my_map.begin(); it--)
 	{
 		if (it != my_map.end())
@@ -203,7 +209,7 @@ void    do_map( void )
 	it = my_map.end();
 	it--;
 
-	ft::map<int, int>::reverse_iterator it3 = my_map.rend();
+	ft::map<int, std::string>::reverse_iterator it3 = my_map.rend();
 	std::cout << "-----------REVERSE---------" << std::endl;
 	for (; it3 != my_map.rbegin(); it3--)
 	{
@@ -219,12 +225,12 @@ void    do_map( void )
 	printTree(my_map.base()._start, NULL, false);
 
 	std::cout << "----------------Copied Tree----------" << std::endl;
-	ft::map<int, int>		my_map2(my_map);
+	ft::map<int, std::string>		my_map2(my_map);
 	printTree(my_map2.base()._start, NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 
-	ft::map<int, int>		my_map3 = my_map;
+	ft::map<int, std::string>		my_map3 = my_map;
 	printTree(my_map3.base()._start, NULL, false);
 
 	std::cout << "----------------Base Tree ERASE BEGIN----------" << std::endl;
@@ -244,7 +250,7 @@ void    do_map( void )
 
 
 	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
-	ft::map<int, int>		my_map4(my_map.begin(), my_map.end());
+	ft::map<int, std::string>		my_map4(my_map.begin(), my_map.end());
 	printTree(my_map4.base()._start, NULL, false);
 
 	std::cout << "---------Bound----------" << std::endl;
@@ -263,14 +269,14 @@ void    do_map( void )
 	std::cout << "Lower Bound de -5 : ";
 	(my_map.lower_bound(-5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(-5))->first) << std::endl;
 	std::cout << "---------End Bound----------" << std::endl;
-	ft::pair<ft::map<int, int>::iterator, ft::map<int, int>::iterator>	eqr = my_map.equal_range(5);
+	ft::pair<ft::map<int, std::string>::iterator, ft::map<int, std::string>::iterator>	eqr = my_map.equal_range(5);
 	if (eqr.first != my_map.lower_bound(5) || eqr.second != my_map.upper_bound(5))
 		std::cout << "Wrong equal range" << std::endl;
 	std::cout << "-----------ERASE---------" << std::endl;
 	
 	while (my_map.size())
 	{
-		ft::map<int, int>::iterator it2(my_map.begin());
+		ft::map<int, std::string>::iterator it2(my_map.begin());
 		std::cout << "size = " << my_map.size() << std::endl;
 		my_map.erase(it2);
 		printTree(my_map.base()._start, NULL, false);
