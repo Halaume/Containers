@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/21 17:10:05 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/23 14:57:26 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 #include <cstddef>
 #include <iterator>
 #include "Iterator_traits.hpp"
-#include "enable_if.hpp"
-#include "is_same.hpp"
-#include "pair.hpp"
 #include <iostream>
 
 #define LEFT 0

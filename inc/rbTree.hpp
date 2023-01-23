@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/23 12:21:39 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/23 17:10:21 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,12 @@ namespace ft
 						else
 							this->value = NULL;
 					}
-					node(pointer val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
+					node(const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
 						child[LEFT] = NULL;
 						child[RIGHT] = NULL;
 						this->_alloc = alloc;
-						this->value = val;
+						this->value = NULL;
 					}
 					node(const value_type & val, const Allocator & alloc = Allocator()): parent(NULL), color(RED)
 					{
@@ -202,7 +202,7 @@ namespace ft
 					Allocator	_alloc;
 				};
 
-				typedef node *							nodePTR;
+				typedef node *										nodePTR;
 				typedef ft::bIterator<nodePTR, value_type>			iterator;
 				typedef ft::bIterator<nodePTR, const value_type>	const_iterator;
 				typedef ft::Reverse_iterator<iterator>				reverse_iterator;
@@ -213,7 +213,7 @@ namespace ft
 				this->_nodealloc = std::allocator<node>();
 				this->_alloc = alloc;
 				this->_size = 0;
-				node	val(NULL, this->_alloc);
+				node	val(this->_alloc);
 				this->_Nil = this->_nodealloc.allocate(1);
 				this->_nodealloc.construct(this->_Nil, val);
 				this->_Nil->parent = this->_Nil;
@@ -258,7 +258,7 @@ namespace ft
 				this->_nodealloc.construct(this->_start, node(value, this->_alloc));
 				this->_Nil = this->_nodealloc.allocate(1);
 				this->_size = 1;
-				node	val(NULL, this->_alloc);
+				node	val(this->_alloc);
 				this->_Nil = this->_nodealloc.allocate(1);
 				this->_nodealloc.construct(this->_Nil, val);
 				this->_Nil->parent = this->_start;
@@ -270,7 +270,7 @@ namespace ft
 					this->_alloc = alloc;
 					this->_size = 0;
 
-					node	val(NULL, this->_alloc);
+					node	val(this->_alloc);
 					this->_Nil = this->_nodealloc.allocate(1);
 					this->_nodealloc.construct(this->_Nil, val);
 					this->_start = this->_Nil;
@@ -481,7 +481,7 @@ namespace ft
 					this->_size++;
 					return (ft::make_pair(iterator(tmp), true));
 				}
-				iterator insert( iterator pos, const value_type& value )
+				iterator insert( const_iterator pos, const value_type& value )
 				{
 					(void)pos;
 					return (this->insert(value).first);
@@ -564,7 +564,7 @@ namespace ft
 					while (parent->value != NULL);
 				}
 			public:
-				void erase(iterator pos)
+				void erase(const_iterator pos)
 				{
 					node * to_del = pos.base();
 					if (to_del->child[LEFT] && to_del->child[RIGHT])
@@ -697,9 +697,9 @@ namespace ft
 						this->_size--;
 					}
 				}
-				void erase(iterator first, iterator last)
+				void erase(const_iterator first, const_iterator last)
 				{
-					iterator	it;
+					const_iterator	it;
 					while (first != last)
 					{
 						it = first;
