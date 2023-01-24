@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 14:12:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/27 13:04:58 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 15:05:03 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,10 @@ namespace ft
 				{
 				}
 
+				const pointer & base(void) const
+				{
+					return (_value);
+				}
 				operator Iterator<const T>()
 				{
 					return (Iterator<const T>(this->_value));

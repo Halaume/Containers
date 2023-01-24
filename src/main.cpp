@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 13:23:53 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/12/02 17:18:23 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 12:57:18 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	do_map(void);
 int main(void)
 {
 //	do_stack();
-//	do_vector();
-	do_map();
+	do_vector();
+//	do_map();
 
 	return (0);
 }

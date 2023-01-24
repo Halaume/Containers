@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/28 14:12:50 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 12:58:06 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,35 @@ void	print_comp_vec(T	v1, T	v2)
 	std::cout << "v1 <= v2 : " << (v1 <= v2 ? "true" : "false") << std::endl;
 	std::cout << "v1 > v2 : " << (v1 > v2 ? "true" : "false") << std::endl;
 	std::cout << "v1 >= v2 : " << (v1 >= v2 ? "true" : "false") << std::endl;
+}
+
+#include "../../bdetune_42ftcontainers_tester/vector/includes/ConstClass.hpp"
+
+void	test_bdetune(void)
+{
+			NAMESPACE::vector<ConstClass<int> >	test;
+
+			test.reserve(15);
+			test.assign(10, ConstClass<int>(10));
+			std::cout << test.size() << std::endl;
+			std::cout << test.capacity() << std::endl;
+			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
+			{
+				std::cout << *start << std::endl;
+			}
+			test.assign(3, ConstClass<int>(2));
+			std::cout << test.size() << std::endl;
+			std::cout << test.capacity() << std::endl;
+			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
+			{
+				std::cout << *start << std::endl;
+			}
+			test.assign(20, ConstClass<int>(5));
+			std::cout << test.size() << std::endl;
+			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
+			{
+				std::cout << *start << std::endl;
+			}
 }
 
 void	do_vector()
@@ -124,4 +153,8 @@ void	do_vector()
 	print_vec(v2);
 	std::cout << "AFTER" << std::endl;
 	print_vec(v2);
+
+	std::cout << std::endl << "-----TEST BDETUNE-----" << std::endl << std::endl;
+
+	test_bdetune();
 }

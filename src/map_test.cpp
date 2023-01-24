@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/23 11:45:30 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 12:55:49 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,6 +286,6 @@ void    do_map( void )
 	printTree(my_map.base()._start, NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
-	test_mli();
+	//test_mli();
 
 }
