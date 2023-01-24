@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 12:55:49 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 16:14:15 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void	ft_insert(MAP &mp, U param)
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param);
-	printTree(mp.base()._start, NULL, false);
+	printTree(mp.begin().base(), NULL, false);
 	std::cout << "insert return: " << printPair(tmp.first);
 	std::cout << "Created new node: " << tmp.second << std::endl;
 	printSize(mp);
@@ -195,7 +195,7 @@ void    do_map( void )
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
 		ouatt = my_map.insert(ft::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32))).first;
 		std::cout << "Ouatt : " << ouatt->first << " | " << ouatt->second << std::endl;
-		printTree(my_map.base()._start, NULL, false);
+		printTree(my_map.begin().base(), NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
@@ -222,36 +222,36 @@ void    do_map( void )
 
 
 	std::cout << "----------------Base Tree----------" << std::endl;
-	printTree(my_map.base()._start, NULL, false);
+	printTree(my_map.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied Tree----------" << std::endl;
 	ft::map<int, std::string>		my_map2(my_map);
-	printTree(my_map2.base()._start, NULL, false);
+	printTree(my_map2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 
 	ft::map<int, std::string>		my_map3 = my_map;
-	printTree(my_map3.base()._start, NULL, false);
+	printTree(my_map3.begin().base(), NULL, false);
 
 	std::cout << "----------------Base Tree ERASE BEGIN----------" << std::endl;
 
 	my_map.erase(my_map.begin());
-	printTree(my_map.base()._start, NULL, false);
+	printTree(my_map.begin().base(), NULL, false);
 	
 	std::cout << "----------------Copied Tree----------" << std::endl;
 	
-	printTree(my_map2.base()._start, NULL, false);
+	printTree(my_map2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 	
-	printTree(my_map3.base()._start, NULL, false);
+	printTree(my_map3.begin().base(), NULL, false);
 	
 	std::cout << "---------COPIED---------" << std::endl;
 
 
 	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
 	ft::map<int, std::string>		my_map4(my_map.begin(), my_map.end());
-	printTree(my_map4.base()._start, NULL, false);
+	printTree(my_map4.begin().base(), NULL, false);
 
 	std::cout << "---------Bound----------" << std::endl;
 	std::cout << "---------UPPER----------" << std::endl;
@@ -279,11 +279,11 @@ void    do_map( void )
 		ft::map<int, std::string>::iterator it2(my_map.begin());
 		std::cout << "size = " << my_map.size() << std::endl;
 		my_map.erase(it2);
-		printTree(my_map.base()._start, NULL, false);
+		printTree(my_map.begin().base(), NULL, false);
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
 
-	printTree(my_map.base()._start, NULL, false);
+	printTree(my_map.begin().base(), NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
 	//test_mli();

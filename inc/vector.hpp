@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 16:09:56 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 16:59:03 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,13 @@ namespace ft
 						{
 							this->_size = 0;
 							this->_capacity = 0;
-							for (;first != last; first++)
-								this->push_back(*first);
+							if (first == last)
+								this->_tab = NULL;
+							else
+							{
+								for (;first != last; first++)
+									this->push_back(*first);
+							}
 						}
 					}
 
@@ -599,29 +604,26 @@ namespace ft
 				template<class InputIt>
 					iterator insert(iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = NULL)
 					{
-						typedef typename iterator_traits<InputIt>::iterator_category	category;
 						if (!this->_capacity) 
 						{
 							this->assign(first, last);
 							return (iterator(this->_tab));
 						}
-						return (iterator(this->_insert_range(pos, first, last, category())));
+						difference_type dist = this->_distit(first, last);
+						if (dist == -1)
+						{
+							vector tmp(first, last);
+							return (this->_insert_range(pos, tmp.begin(), tmp.end(), tmp.end() - tmp.begin()));
+						}
+						return (iterator(this->_insert_range(pos, first, last, static_cast<size_type>(dist))));
 					}
 
 			private:
 				template<class InputIt>
-					iterator _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag) 
-					{
-						vector tmp(first, last);
-						return (this->_insert_range(pos, tmp.begin(), tmp.end(), std::random_access_iterator_tag()));
-					}
-
-				template<class InputIt>
-					iterator _insert_range(iterator pos, InputIt first, InputIt last, std::random_access_iterator_tag) 
+					iterator _insert_range(iterator pos, InputIt first, InputIt last, size_type dist) 
 					{
 						if (first == last)
 							return (pos);
-						size_type	dist = last - first;
 						if (this->_size + dist > this->_alloc.max_size())
 							throw (std::length_error("max size exceeded"));
 						if (!this->_size) 
@@ -824,15 +826,7 @@ namespace ft
 				pointer		_tab;
 				size_type	_size;
 				size_type	_capacity;
-				/*	template<class InputIt>
-					difference_type	_distit(InputIt first, InputIt last)
-					{
-					if (ft::is_same<typename iterator_traits<InputIt>::iterator_category, std::input_iterator_tag>::value)
-					return (-1);
-					difference_type	i = 0;
-					for (InputIt	tmp = first; tmp != last; tmp++, i++);
-					return (i);
-					}*/
+
 				template<class It>
 					difference_type	_distit(It  first, It  last, typename ft::enable_if<ft::is_same<typename iterator_traits<It>::iterator_category, std::input_iterator_tag>::value, It>::type* = NULL)
 					{

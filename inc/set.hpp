@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/23 17:10:21 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/24 16:11:07 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,6 @@ namespace ft
 				typedef const_iterator							iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::Reverse_iterator<const_iterator>	const_reverse_iterator;
-
-				//TODO DEL THIS BEFORE END!
-				Tree & base(void)
-				{
-					return (*(this->_tree));
-				}
 
 				set(void): _comp(Compare())
 				{
