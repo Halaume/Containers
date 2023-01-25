@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2023/01/25 16:02:38 by ghanquer         ###   ########.fr        #
+#    Updated: 2023/01/25 17:43:19 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,10 +60,10 @@ $(OBJ_DIRS):
 	mkdir -p $@
 
 $(OBJ_DIR)/%.o: ./%.cpp
-	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) -c $< -o $@
+	$(CXX) -DNAMESPACE=ft -c $< -o $@
 
 $(FT): $(SRC) $(OBJ_DIRS) $(SRC) $(OBJ)
-	$(CXX) -DNAMESPACE=ft -DPREC=$(PREC) $(OBJ) -o $@
+	$(CXX) -DNAMESPACE=ft $(OBJ) -o $@
 
 $(OBJ_STD) : $(INC) | $(OBJ_DIR_STD)
 
@@ -71,10 +71,10 @@ $(OBJ_DIRS_STD):
 	mkdir -p $@
 
 $(OBJ_DIR_STD)/%.o: ./%.cpp
-	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) -c $< -o $@
+	$(CXX) -DNAMESPACE=std -c $< -o $@
 
 $(STD): $(OBJ_DIRS_STD) $(SRC) $(OBJ_STD)
-	$(CXX) -DNAMESPACE=std -DPREC=$(PREC) $(OBJ_STD) -o $@
+	$(CXX) -DNAMESPACE=std $(OBJ_STD) -o $@
 
 test: $(FT) $(STD)
 	sh test.sh
