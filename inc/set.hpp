@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 16:11:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 15:06:52 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,9 @@ namespace ft
 				typedef typename Allocator::pointer				pointer;
 				typedef typename Allocator::const_pointer		const_pointer;
 
+			private:
 				typedef typename ft::RbTree<value_type, value_compare, Allocator>					Tree;
+			public:
 				typedef typename ft::RbTree<value_type, value_compare, Allocator>::const_iterator	const_iterator;
 				typedef const_iterator							iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;

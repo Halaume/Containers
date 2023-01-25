@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 16:59:03 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 16:26:23 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,15 +446,15 @@ namespace ft
 					}
 					else 
 					{
-						if (_size == _capacity) 
+						if (this->_size == this->_capacity) 
 						{
-							pointer new_tab = this->_alloc.allocate(_capacity * 2);
+							pointer new_tab = this->_alloc.allocate(this->_capacity * 2);
 							pointer new_end = new_tab;
 							pointer tmp = this->_tab;
 
 							while (tmp != &(*pos)) 
 							{
-								_alloc.construct(new_end, *tmp);
+								this->_alloc.construct(new_end, *tmp);
 								new_end++;
 								tmp++;
 							}
@@ -463,7 +463,7 @@ namespace ft
 							new_end++;
 							while (tmp != this->_tab + this->_size) 
 							{
-								_alloc.construct(new_end, *tmp);
+								this->_alloc.construct(new_end, *tmp);
 								tmp++;
 								new_end++;
 							}
@@ -725,35 +725,30 @@ namespace ft
 			public:
 				iterator	erase(iterator pos)
 				{
-					this->_alloc.destroy(&(*pos));
-					for (iterator start = pos; (start + 1) != this->end(); start++)
-					{
-						this->_alloc.construct(&(*start), *(start + 1));
-						this->_alloc.destroy(&(*(start + 1)));
-					}
-
-					this->_size--;
-					return (pos);
+					return (erase(pos, pos + 1));
 				}
 				iterator	erase(iterator first, iterator last)
 				{
 					if (first == last)
 						return (last);
-
-					size_type i = 0;
-
-					for (;this->_tab + i != &(*first);i++);
-					for (;last != this->end(); i++, last++)
-					{
-						this->_alloc.destroy(this->_tab + i);
-						this->_alloc.construct(this->_tab + i, *last);
-					}
-					size_type newsize = i;
-					for (;i < this->size(); i++)
-						this->_alloc.destroy(this->_tab + i);
-					this->_size = newsize;
+					iterator new_end = this->_copy(last, this->end(), first);
+					size_type	i = 0;
+					for (;new_end != this->end(); new_end++, i++)
+						this->_alloc.destroy(&(*new_end));
+					this->_size -= i;
 					return (first);
 				}
+
+			private:
+				template<class InputIt, class OutputIt>
+					OutputIt _copy(InputIt first, InputIt last, OutputIt d_first)
+					{
+						for (; first != last; (void)++first, (void)++d_first)
+							*d_first = *first;
+						return d_first;
+					}
+
+			public:
 				void	push_back(const T & value)
 				{
 					if (this->size() + 1 > this->max_size())

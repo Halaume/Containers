@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/24 10:57:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/21 17:10:04 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 15:06:50 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ namespace ft
 					return (*this);
 				}
 
-				operator Reverse_iterator<const Iter>()
+				operator Reverse_iterator<const Iter>() const
 				{
 					return (Reverse_iterator<const Iter>(this->_current));
 				}
@@ -88,6 +88,7 @@ namespace ft
 					return (tmp);
 				}
 				reference	operator*(void) { Iter tmp = this->_current; return (*(--tmp)); }
+				reference	operator*(void) const { Iter tmp = this->_current; return (*(--tmp)); }
 				pointer		operator->(void) { Iter tmp = this->_current; return (&(*(--tmp))); }
 				pointer		operator->(void) const { Iter tmp = this->_current; return (&(*(--tmp))); }
 				reference	operator[](int i)

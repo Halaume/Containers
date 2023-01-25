@@ -6,7 +6,7 @@
 #    By: ghanquer <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/13 12:52:11 by ghanquer          #+#    #+#              #
-#    Updated: 2022/12/09 14:03:26 by ghanquer         ###   ########.fr        #
+#    Updated: 2023/01/25 16:02:38 by ghanquer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,6 +49,7 @@ CXXFLAGS = -Wall -Wextra -Werror -Wshadow -Wpedantic -O3 -g -std=c++98
 SRC_FT = main \
 		 map_test \
 		 vector_test \
+		 set_test \
 		 stack_test
 
 all: $(STD) $(FT) 

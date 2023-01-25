@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:59:23 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 16:11:07 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 16:01:45 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ namespace ft
 					Compare	comp;
 			};
 
+			private:
 				typedef typename ft::RbTree<value_type, value_compare, Allocator>	Tree;
+			public:
 				typedef typename ft::RbTree<value_type, value_compare, Allocator>::iterator						iterator;
 				typedef typename ft::RbTree<value_type, value_compare, Allocator>::const_iterator						const_iterator;
 				typedef ft::Reverse_iterator<iterator>			reverse_iterator;

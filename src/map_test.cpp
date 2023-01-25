@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/24 16:14:15 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 16:18:52 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,31 +31,31 @@
 #define NAMESPACE ft
 #endif
 
-/* TRYING TNATON DISPLAY */
-
-struct Trunk
+struct Trunkm
 {
-	Trunk *prev;
+	Trunkm *prev;
 	std::string str;
 
-	Trunk(Trunk *previ, std::string stri)
+	Trunkm(Trunkm *previ, std::string stri)
 	{
 		this->prev = previ;
 		this->str = stri;
 	}
 };
 
-void showTrunks(Trunk *p)
+void showTrunkms(Trunkm *p)
 {
 	if (p == NULL) {
 		return;
 	}
 
-	showTrunks(p->prev);
+	showTrunkms(p->prev);
 	std::cout << p->str;
 }
 
-void printnode(ft::map<int, std::string>::Tree::node * & tmp) {
+typedef ft::RbTree<ft::map<int, std::string>::value_type, ft::map<int, std::string>::value_compare, ft::map<int, std::string>::allocator_type> Tree;
+
+void printnode(Tree::node * & tmp) {
 	if (!tmp) {
 		std::cout << "Invalide insert" << std::endl;
 		return ;
@@ -67,12 +67,11 @@ void printnode(ft::map<int, std::string>::Tree::node * & tmp) {
 	std::cout << "Key : " << tmp->value->first << " | Val : " << tmp->value->second << "\033[0m" << std::endl;
 }
 
-void printTree(ft::map<int, std::string>::Tree::node * root, Trunk *prev, bool isLeft) {
+void printTree(Tree::node * root, Trunkm *prev, bool isLeft) {
 	if (!root || !root->value)
 		return ;
-	//    std::cout << "root : " << root->val.first << std::endl;
 	std::string prev_str = "         ";
-	Trunk *trunk = new Trunk(prev, prev_str);
+	Trunkm *trunk = new Trunkm(prev, prev_str);
 
 	printTree(root->child[1], trunk, true);
 
@@ -89,7 +88,7 @@ void printTree(ft::map<int, std::string>::Tree::node * root, Trunk *prev, bool i
 		prev->str = prev_str;
 	}
 
-	showTrunks(trunk);
+	showTrunkms(trunk);
 	if (!root->color)
 		std::cout << "\033[0;90m"; 
 	else
@@ -105,7 +104,6 @@ void printTree(ft::map<int, std::string>::Tree::node * root, Trunk *prev, bool i
 	delete trunk;
 }
 
-/* END */
 template <typename T>
 std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
 {
@@ -156,7 +154,7 @@ void	ft_insert(MAP &mp, U param, V param2)
 	printSize(mp);
 }
 
-int		test_mli(void)
+int		test_mli_map(void)
 {
 	ft::map<int, std::string> mp, mp2;
 
@@ -184,7 +182,6 @@ void    do_map( void )
 {
 	ft::map<int, std::string>		my_map;
 	NAMESPACE::vector<int>	v;
-	ft::map<int, std::string>::iterator ouatt;
 
 	for (size_t i = 0; i < 20; i++)
 		v.push_back(i);
@@ -193,8 +190,7 @@ void    do_map( void )
 	{
 		std::cout << "size = " << my_map.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
-		ouatt = my_map.insert(ft::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32))).first;
-		std::cout << "Ouatt : " << ouatt->first << " | " << ouatt->second << std::endl;
+		my_map.insert(ft::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32)));
 		printTree(my_map.begin().base(), NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
@@ -286,6 +282,6 @@ void    do_map( void )
 	printTree(my_map.begin().base(), NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
-	//test_mli();
+	test_mli_map();
 
 }

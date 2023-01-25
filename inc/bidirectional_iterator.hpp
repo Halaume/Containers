@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/06 14:59:51 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/23 14:57:26 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/25 16:15:46 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,9 @@ namespace ft
 				{
 				}
 
-				operator bIterator<T, const value_type>()
+				operator bIterator<T, const value_type>() const
 				{
 					return (bIterator<T, const value_type>(this->_value));
-				}
-				operator	bIterator<iterator_category, value_type>(void) const
-				{
-					return (bIterator<iterator_category, value_type>(this->_value));
 				}
 				bIterator &	operator=(const bIterator & src)
 				{
