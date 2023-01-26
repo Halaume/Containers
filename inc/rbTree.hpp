@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/25 15:06:51 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/26 18:04:13 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@
 
 namespace ft
 {
+struct Trunkm
+{
+	Trunkm *prev;
+	std::string str;
+
+	Trunkm(Trunkm *previ, std::string stri)
+	{
+		this->prev = previ;
+		this->str = stri;
+	}
+};
+
 	template<typename ptr>
 		void swap(ptr & lhs, ptr & rhs)
 		{
@@ -438,8 +450,6 @@ namespace ft
 				{
 					node* tmp = this->_start;
 					node* tmpp = this->_Nil;
-					if (this->find(value) != this->end())
-						return (ft::make_pair(find(value), false));
 
 					if (!tmp || !tmp->value)
 					{
@@ -454,10 +464,10 @@ namespace ft
 					while (tmp && tmp->value)
 					{
 						tmpp = tmp;
-						if (!this->_comp(value, *(tmp->value)))
-							tmp = tmp->child[RIGHT];
-						else if (this->_comp(value, *(tmp->value)))
+						if (this->_comp(value, *(tmp->value)))
 							tmp = tmp->child[LEFT];
+						else if (this->_comp(*(tmp->value), value))
+							tmp = tmp->child[RIGHT];
 						else
 							return (ft::make_pair(iterator(tmp), false));
 					}
@@ -466,26 +476,27 @@ namespace ft
 					tmp->parent = tmpp;
 					if (tmpp != this->_Nil)
 					{
-						if (!this->_comp(value, *(tmpp->value)))
-							tmp->parent->child[RIGHT] = tmp;
-						else if (this->_comp(value, *(tmpp->value)))
+						if (this->_comp(value, *(tmpp->value)))
 							tmp->parent->child[LEFT] = tmp;
 						else
-						{
-							this->_nodealloc.destroy(tmp);
-							this->_nodealloc.deallocate(tmp, 1);
-							return (ft::make_pair(iterator(tmp), false));
-						}
+							tmp->parent->child[RIGHT] = tmp;
 					}
 					this->_balance(tmp, tmp->parent);
 					this->_size++;
 					return (ft::make_pair(iterator(tmp), true));
 				}
+
 				iterator insert( const_iterator pos, const value_type& value )
 				{
-					(void)pos;
-					return (this->insert(value).first);
+					if (pos == this->begin())
+						return (insert(value).first);
+					const_iterator before(pos);
+					before--;
+					if (_comp(*(before.base()->value), value) && (pos == this->end() || _comp(value, *(pos.base()->value))))
+						return (this->_insert_from(before, value));
+					return (insert(value).first);
 				}
+
 				template< class InputIt >
 					void insert( InputIt first, InputIt last )
 					{
@@ -496,6 +507,46 @@ namespace ft
 						}
 					}
 			private:
+				iterator	_insert_from(const_iterator pos, const value_type& value)
+				{
+					node* tmp = pos.base();
+					node* tmpp = tmp->parent;
+
+					if (tmp == this->_Nil)
+					{
+						tmp = this->_nodealloc.allocate(1);
+						this->_nodealloc.construct(tmp, value);
+						this->_start = tmp;
+						this->_Nil->parent = this->_start;
+						this->_Nil->value = NULL;
+						this->_start->parent = this->_Nil;
+						this->_size++;
+						return iterator(tmp);
+					}
+					while (tmp && tmp->value)
+					{
+						tmpp = tmp;
+						if (this->_comp(value, *(tmp->value)))
+							tmp = tmp->child[LEFT];
+						else if (this->_comp(*(tmp->value), value))
+							tmp = tmp->child[RIGHT];
+						else
+							return (iterator(tmp));
+					}
+					tmp = this->_nodealloc.allocate(1);
+					this->_nodealloc.construct(tmp, node(value, this->_alloc));
+					tmp->parent = tmpp;
+					if (tmpp != this->_Nil)
+					{
+						if (this->_comp(value, *(tmpp->value)))
+							tmp->parent->child[LEFT] = tmp;
+						else
+							tmp->parent->child[RIGHT] = tmp;
+					}
+					this->_balance(tmp, tmp->parent);
+					this->_size++;
+					return (tmp);
+				}
 				node * _rotateDirRoot(node * P, int dir)
 				{
 					node * G = P->parent;
@@ -539,9 +590,7 @@ namespace ft
 						if (parent->value)
 							gparent = parent->parent;
 						if (parent->color == BLACK)
-						{
 							return ;
-						}
 						if (gparent == NULL)
 						{
 							parent->color = BLACK;

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:32:35 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/25 16:15:44 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:31:48 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ template <typename T_set>
 void	printSize(T_set const &mp, bool print_content = 1)
 {
 	std::cout << "size: " << mp.size() << std::endl;
-	std::cout << "max_size: " << mp.max_size() << std::endl;
 	if (print_content)
 	{
 		typename T_set::const_iterator it = mp.begin(), ite = mp.end();
@@ -132,11 +131,11 @@ static int iter = 0;
 template <typename set, typename U>
 void	ft_insert(set &mp, U param)
 {
-	ft::pair<ft::set<int>::iterator, bool>	tmp;
+	NAMESPACE::pair<NAMESPACE::set<int>::iterator, bool>	tmp;
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param);
-	printTree(mp.begin().base(), NULL, false);
+	//printTree(mp.begin().base(), NULL, false);
 	std::cout << "insert return: " << printPair(tmp.first);
 	std::cout << "Created new node: " << *(tmp.first) << std::endl;
 	printSize(mp);
@@ -145,7 +144,7 @@ void	ft_insert(set &mp, U param)
 template <typename set, typename U, typename V>
 void	ft_insert(set &mp, U param, V param2)
 {
-	ft::set<int>::iterator tmp;
+	NAMESPACE::set<int>::iterator tmp;
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param, param2);
@@ -155,23 +154,23 @@ void	ft_insert(set &mp, U param, V param2)
 
 int		test_mli(void)
 {
-	ft::set<int> mp, mp2;
+	NAMESPACE::set<int> mp, mp2;
 
-	ft_insert(mp, ft::set<int>::value_type(42));
-	ft_insert(mp, ft::set<int>::value_type(42));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(42));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(42));
 
-	ft_insert(mp, ft::set<int>::value_type(50));
-	ft_insert(mp, ft::set<int>::value_type(35));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(50));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(35));
 
-	ft_insert(mp, ft::set<int>::value_type(45));
-	ft_insert(mp, ft::set<int>::value_type(21));
-	ft_insert(mp, ft::set<int>::value_type(38));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(45));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(21));
+	ft_insert(mp, NAMESPACE::set<int>::value_type(38));
 
-	ft_insert(mp, mp.begin(), ft::set<int>::value_type(55));
+	ft_insert(mp, mp.begin(), NAMESPACE::set<int>::value_type(55));
 
-	ft_insert(mp2, mp2.begin(), ft::set<int>::value_type(1337));
-	ft_insert(mp2, mp2.end(), ft::set<int>::value_type(1000));
-	ft_insert(mp2, mp2.end(), ft::set<int>::value_type(1500));
+	ft_insert(mp2, mp2.begin(), NAMESPACE::set<int>::value_type(1337));
+	ft_insert(mp2, mp2.end(), NAMESPACE::set<int>::value_type(1000));
+	ft_insert(mp2, mp2.end(), NAMESPACE::set<int>::value_type(1500));
 
 	return (0);
 }
@@ -179,7 +178,7 @@ int		test_mli(void)
 
 void    do_set( void )
 {
-	ft::set<int>		my_set;
+	NAMESPACE::set<int>		my_set;
 	NAMESPACE::vector<int>	v;
 
 	for (size_t i = 0; i < 20; i++)
@@ -190,11 +189,11 @@ void    do_set( void )
 		std::cout << "size = " << my_set.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
 		my_set.insert(v[i]);
-		printTree(my_set.begin().base(), NULL, false);
+		//printTree(my_set.begin().base(), NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
 	std::cout << "size = " << my_set.size() << std::endl;
-	ft::set<int>::iterator it = my_set.end();
+	NAMESPACE::set<int>::iterator it = my_set.end();
 	for (; it != my_set.begin(); it--)
 	{
 		if (it != my_set.end())
@@ -204,7 +203,7 @@ void    do_set( void )
 	it = my_set.end();
 	it--;
 
-	ft::set<int>::reverse_iterator it3 = my_set.rend();
+	NAMESPACE::set<int>::reverse_iterator it3 = my_set.rend();
 	std::cout << "-----------REVERSE---------" << std::endl;
 	for (; it3 != my_set.rbegin(); it3--)
 	{
@@ -217,36 +216,36 @@ void    do_set( void )
 
 
 	std::cout << "----------------Base Tree----------" << std::endl;
-	printTree(my_set.begin().base(), NULL, false);
+	//printTree(my_set.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied Tree----------" << std::endl;
-	ft::set<int>		my_set2(my_set);
-	printTree(my_set2.begin().base(), NULL, false);
+	NAMESPACE::set<int>		my_set2(my_set);
+	//printTree(my_set2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 
-	ft::set<int>		my_set3 = my_set;
-	printTree(my_set3.begin().base(), NULL, false);
+	NAMESPACE::set<int>		my_set3 = my_set;
+	//printTree(my_set3.begin().base(), NULL, false);
 
 	std::cout << "----------------Base Tree ERASE BEGIN----------" << std::endl;
 
 	my_set.erase(my_set.begin());
-	printTree(my_set.begin().base(), NULL, false);
+	//printTree(my_set.begin().base(), NULL, false);
 	
 	std::cout << "----------------Copied Tree----------" << std::endl;
 	
-	printTree(my_set2.begin().base(), NULL, false);
+	//printTree(my_set2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 	
-	printTree(my_set3.begin().base(), NULL, false);
+	//printTree(my_set3.begin().base(), NULL, false);
 	
 	std::cout << "---------COPIED---------" << std::endl;
 
 
 	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
-	ft::set<int>		my_set4(my_set.begin(), my_set.end());
-	printTree(my_set4.begin().base(), NULL, false);
+	NAMESPACE::set<int>		my_set4(my_set.begin(), my_set.end());
+	//printTree(my_set4.begin().base(), NULL, false);
 
 	std::cout << "---------Bound----------" << std::endl;
 	std::cout << "---------UPPER----------" << std::endl;
@@ -264,21 +263,21 @@ void    do_set( void )
 	std::cout << "Lower Bound de -5 : ";
 	(my_set.lower_bound(-5) == my_set.end() ? std::cout << "Not found" : std::cout << *(my_set.lower_bound(-5))) << std::endl;
 	std::cout << "---------End Bound----------" << std::endl;
-	ft::pair<ft::set<int>::iterator, ft::set<int>::iterator>	eqr = my_set.equal_range(5);
+	NAMESPACE::pair<NAMESPACE::set<int>::iterator, NAMESPACE::set<int>::iterator>	eqr = my_set.equal_range(5);
 	if (eqr.first != my_set.lower_bound(5) || eqr.second != my_set.upper_bound(5))
 		std::cout << "Wrong equal range" << std::endl;
 	std::cout << "-----------ERASE---------" << std::endl;
 	
 	while (my_set.size())
 	{
-		ft::set<int>::iterator it2(my_set.begin());
+		NAMESPACE::set<int>::iterator it2(my_set.begin());
 		std::cout << "size = " << my_set.size() << std::endl;
 		my_set.erase(it2);
-		printTree(my_set.begin().base(), NULL, false);
+		//printTree(my_set.begin().base(), NULL, false);
 	}
 	std::cout << "size = " << my_set.size() << std::endl;
 
-	printTree(my_set.begin().base(), NULL, false);
+	//printTree(my_set.begin().base(), NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
 	test_mli();

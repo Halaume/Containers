@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 17:40:05 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/25 16:18:52 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/26 15:31:48 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,6 @@ template <typename T_MAP>
 void	printSize(T_MAP const &mp, bool print_content = 1)
 {
 	std::cout << "size: " << mp.size() << std::endl;
-	std::cout << "max_size: " << mp.max_size() << std::endl;
 	if (print_content)
 	{
 		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
@@ -133,11 +132,11 @@ static int iter = 0;
 template <typename MAP, typename U>
 void	ft_insert(MAP &mp, U param)
 {
-	ft::pair<ft::map<int, std::string>::iterator, bool> tmp;
+	NAMESPACE::pair<NAMESPACE::map<int, std::string>::iterator, bool> tmp;
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param);
-	printTree(mp.begin().base(), NULL, false);
+//	printTree(mp.begin().base(), NULL, false);
 	std::cout << "insert return: " << printPair(tmp.first);
 	std::cout << "Created new node: " << tmp.second << std::endl;
 	printSize(mp);
@@ -146,7 +145,7 @@ void	ft_insert(MAP &mp, U param)
 template <typename MAP, typename U, typename V>
 void	ft_insert(MAP &mp, U param, V param2)
 {
-	ft::map<int, std::string>::iterator tmp;
+	NAMESPACE::map<int, std::string>::iterator tmp;
 
 	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
 	tmp = mp.insert(param, param2);
@@ -156,23 +155,23 @@ void	ft_insert(MAP &mp, U param, V param2)
 
 int		test_mli_map(void)
 {
-	ft::map<int, std::string> mp, mp2;
+	NAMESPACE::map<int, std::string> mp, mp2;
 
-	ft_insert(mp, ft::map<int, std::string>::value_type(42, "lol"));
-	ft_insert(mp, ft::map<int, std::string>::value_type(42, "mdr"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(42, "lol"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(42, "mdr"));
 
-	ft_insert(mp, ft::map<int, std::string>::value_type(50, "mdr"));
-	ft_insert(mp, ft::map<int, std::string>::value_type(35, "funny"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(50, "mdr"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(35, "funny"));
 
-	ft_insert(mp, ft::map<int, std::string>::value_type(45, "bunny"));
-	ft_insert(mp, ft::map<int, std::string>::value_type(21, "fizz"));
-	ft_insert(mp, ft::map<int, std::string>::value_type(38, "buzz"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(45, "bunny"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(21, "fizz"));
+	ft_insert(mp, NAMESPACE::map<int, std::string>::value_type(38, "buzz"));
 
-	ft_insert(mp, mp.begin(), ft::map<int, std::string>::value_type(55, "fuzzy"));
+	ft_insert(mp, mp.begin(), NAMESPACE::map<int, std::string>::value_type(55, "fuzzy"));
 
-	ft_insert(mp2, mp2.begin(), ft::map<int, std::string>::value_type(1337, "beauty"));
-	ft_insert(mp2, mp2.end(), ft::map<int, std::string>::value_type(1000, "Hello"));
-	ft_insert(mp2, mp2.end(), ft::map<int, std::string>::value_type(1500, "World"));
+	ft_insert(mp2, mp2.begin(), NAMESPACE::map<int, std::string>::value_type(1337, "beauty"));
+	ft_insert(mp2, mp2.end(), NAMESPACE::map<int, std::string>::value_type(1000, "Hello"));
+	ft_insert(mp2, mp2.end(), NAMESPACE::map<int, std::string>::value_type(1500, "World"));
 
 	return (0);
 }
@@ -180,7 +179,7 @@ int		test_mli_map(void)
 
 void    do_map( void )
 {
-	ft::map<int, std::string>		my_map;
+	NAMESPACE::map<int, std::string>		my_map;
 	NAMESPACE::vector<int>	v;
 
 	for (size_t i = 0; i < 20; i++)
@@ -190,12 +189,12 @@ void    do_map( void )
 	{
 		std::cout << "size = " << my_map.size() << std::endl;
 		std::cout << v[i] << std::endl << "-------------------------" << std::endl;
-		my_map.insert(ft::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32)));
-		printTree(my_map.begin().base(), NULL, false);
+		my_map.insert(NAMESPACE::map<int, std::string>::value_type(v[i], std::string(1, v[i] + 32)));
+//		printTree(my_map.begin().base(), NULL, false);
 		std::cout << "-------------------------" << std::endl;
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
-	ft::map<int, std::string>::iterator it = my_map.end();
+	NAMESPACE::map<int, std::string>::iterator it = my_map.end();
 	for (; it != my_map.begin(); it--)
 	{
 		if (it != my_map.end())
@@ -205,7 +204,7 @@ void    do_map( void )
 	it = my_map.end();
 	it--;
 
-	ft::map<int, std::string>::reverse_iterator it3 = my_map.rend();
+	NAMESPACE::map<int, std::string>::reverse_iterator it3 = my_map.rend();
 	std::cout << "-----------REVERSE---------" << std::endl;
 	for (; it3 != my_map.rbegin(); it3--)
 	{
@@ -218,36 +217,36 @@ void    do_map( void )
 
 
 	std::cout << "----------------Base Tree----------" << std::endl;
-	printTree(my_map.begin().base(), NULL, false);
+//	printTree(my_map.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied Tree----------" << std::endl;
-	ft::map<int, std::string>		my_map2(my_map);
-	printTree(my_map2.begin().base(), NULL, false);
+	NAMESPACE::map<int, std::string>		my_map2(my_map);
+//	printTree(my_map2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 
-	ft::map<int, std::string>		my_map3 = my_map;
-	printTree(my_map3.begin().base(), NULL, false);
+	NAMESPACE::map<int, std::string>		my_map3 = my_map;
+//	printTree(my_map3.begin().base(), NULL, false);
 
 	std::cout << "----------------Base Tree ERASE BEGIN----------" << std::endl;
 
 	my_map.erase(my_map.begin());
-	printTree(my_map.begin().base(), NULL, false);
+//	printTree(my_map.begin().base(), NULL, false);
 	
 	std::cout << "----------------Copied Tree----------" << std::endl;
 	
-	printTree(my_map2.begin().base(), NULL, false);
+//	printTree(my_map2.begin().base(), NULL, false);
 
 	std::cout << "----------------Copied = Tree----------" << std::endl;
 	
-	printTree(my_map3.begin().base(), NULL, false);
+//	printTree(my_map3.begin().base(), NULL, false);
 	
 	std::cout << "---------COPIED---------" << std::endl;
 
 
 	std::cout << "---------GET THIS ITERATOR CONSTRUCTOR BABY---------" << std::endl;
-	ft::map<int, std::string>		my_map4(my_map.begin(), my_map.end());
-	printTree(my_map4.begin().base(), NULL, false);
+	NAMESPACE::map<int, std::string>		my_map4(my_map.begin(), my_map.end());
+//	printTree(my_map4.begin().base(), NULL, false);
 
 	std::cout << "---------Bound----------" << std::endl;
 	std::cout << "---------UPPER----------" << std::endl;
@@ -265,21 +264,21 @@ void    do_map( void )
 	std::cout << "Lower Bound de -5 : ";
 	(my_map.lower_bound(-5) == my_map.end() ? std::cout << "Not found" : std::cout << (my_map.lower_bound(-5))->first) << std::endl;
 	std::cout << "---------End Bound----------" << std::endl;
-	ft::pair<ft::map<int, std::string>::iterator, ft::map<int, std::string>::iterator>	eqr = my_map.equal_range(5);
+	NAMESPACE::pair<NAMESPACE::map<int, std::string>::iterator, NAMESPACE::map<int, std::string>::iterator>	eqr = my_map.equal_range(5);
 	if (eqr.first != my_map.lower_bound(5) || eqr.second != my_map.upper_bound(5))
 		std::cout << "Wrong equal range" << std::endl;
 	std::cout << "-----------ERASE---------" << std::endl;
 	
 	while (my_map.size())
 	{
-		ft::map<int, std::string>::iterator it2(my_map.begin());
+		NAMESPACE::map<int, std::string>::iterator it2(my_map.begin());
 		std::cout << "size = " << my_map.size() << std::endl;
 		my_map.erase(it2);
-		printTree(my_map.begin().base(), NULL, false);
+//		printTree(my_map.begin().base(), NULL, false);
 	}
 	std::cout << "size = " << my_map.size() << std::endl;
 
-	printTree(my_map.begin().base(), NULL, false);
+//	printTree(my_map.begin().base(), NULL, false);
 	std::cout << "-----------ERASED---------" << std::endl;
 
 	test_mli_map();

@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:08:10 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/25 18:01:04 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/26 17:34:40 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ namespace ft
 
 				reference at(std::size_t pos)
 				{
-					if (pos < 0 || pos >= this->_size)
+					if (pos >= this->_size)
 						throw std::out_of_range("ft::vector");
 					return (this->_tab[pos]);
 				}
