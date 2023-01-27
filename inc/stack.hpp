@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/12 09:01:38 by ghanquer          #+#    #+#             */
-/*   Updated: 2022/11/20 11:18:52 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:16:43 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <vector>
 namespace ft
 {
-	template<class T, class Container = std::vector<T> >
+	template<class T, class Container = ft::vector<T> >
 		class stack
 		{
 			public:

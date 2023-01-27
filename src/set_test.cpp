@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/25 15:32:35 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/26 15:31:48 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:18:10 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 #include "../inc/rbTree.hpp"
 #include "../inc/set.hpp"
 #include "../inc/pair.hpp"
-
-#include "../../bdetune_42ftcontainers_tester/set/includes/customCompare.hpp"
-#include "../../bdetune_42ftcontainers_tester/set/includes/ConstClass.hpp"
 
 #include <stack>
 #include <iostream>

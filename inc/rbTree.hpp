@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/28 14:41:09 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/26 18:04:13 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:17:57 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,6 @@
 
 namespace ft
 {
-struct Trunkm
-{
-	Trunkm *prev;
-	std::string str;
-
-	Trunkm(Trunkm *previ, std::string stri)
-	{
-		this->prev = previ;
-		this->str = stri;
-	}
-};
-
 	template<typename ptr>
 		void swap(ptr & lhs, ptr & rhs)
 		{

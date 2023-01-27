@@ -6,7 +6,7 @@
 /*   By: ghanquer <ghanquer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 13:41:02 by ghanquer          #+#    #+#             */
-/*   Updated: 2023/01/25 16:29:37 by ghanquer         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:21:30 by ghanquer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,33 +43,25 @@ void	print_comp_vec(T	v1, T	v2)
 	std::cout << "v1 >= v2 : " << (v1 >= v2 ? "true" : "false") << std::endl;
 }
 
-#include "../../bdetune_42ftcontainers_tester/vector/includes/ConstClass.hpp"
-
-void	test_bdetune(void)
+void	test_freestyle(void)
 {
-			NAMESPACE::vector<ConstClass<int> >	test;
+			NAMESPACE::vector<int>	test;
 
 			test.reserve(15);
-			test.assign(10, ConstClass<int>(10));
+			test.assign(10, 10);
 			std::cout << test.size() << std::endl;
 			std::cout << test.capacity() << std::endl;
-			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
-			{
+			for (NAMESPACE::vector<int>::iterator start = test.begin(); start != test.end(); start++)
 				std::cout << *start << std::endl;
-			}
-			test.assign(3, ConstClass<int>(2));
+			test.assign(3, (2));
 			std::cout << test.size() << std::endl;
 			std::cout << test.capacity() << std::endl;
-			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
-			{
+			for (NAMESPACE::vector<int>::iterator start = test.begin(); start != test.end(); start++)
 				std::cout << *start << std::endl;
-			}
-			test.assign(20, ConstClass<int>(5));
+			test.assign(20, (5));
 			std::cout << test.size() << std::endl;
-			for (NAMESPACE::vector<ConstClass<int> >::iterator start = test.begin(); start != test.end(); start++)
-			{
+			for (NAMESPACE::vector<int>::iterator start = test.begin(); start != test.end(); start++)
 				std::cout << *start << std::endl;
-			}
 }
 
 void	do_vector()
@@ -156,5 +148,5 @@ void	do_vector()
 
 	std::cout << std::endl << "-----TEST BDETUNE-----" << std::endl << std::endl;
 
-	test_bdetune();
+	test_freestyle();
 }
