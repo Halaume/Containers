@@ -1,3 +1,0 @@
-WARN  2022-11-22T10:02:35.023 76646 log_path_init:95: Failed to create directory /mnt/nfs/homes/ghanquer/.cache for writing logs: Unknown system error 1
-WARN  2022-11-22T10:02:53.402 76732 log_path_init:95: Failed to create directory /mnt/nfs/homes/ghanquer/.cache for writing logs: Unknown system error 1
-WARN  2022-11-22T10:03:31.478 76814 log_path_init:95: Failed to create directory /mnt/nfs/homes/ghanquer/.cache for writing logs: Unknown system error 1
